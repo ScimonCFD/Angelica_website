@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -206,6 +206,50 @@
               in $P'$. The key step — and what distinguishes element types — is expressing
               $V'$ as a function of $P'$. For laminar flow this relation is <em>exact</em>.
               For nonlinear elements it requires an approximation that holds exactly at convergence.
+            </p>
+          </div>
+
+          <div class="method-block" id="derivation-steps">
+            <h3>Substituting into continuity</h3>
+            <p>
+              Replacing every $\dot{m}_f$ with $\dot{m}^*_f + \dot{m}'_f$ in the
+              continuity equation at node $C$ and grouping known and unknown terms:
+            </p>
+            <div class="eq-display">
+              $$\underbrace{\sum_{\mathrm{in}} \dot{m}^*_f - \sum_{\mathrm{out}} \dot{m}^*_f}_{b_C}
+                \;+\; \sum_{\mathrm{in}} \dot{m}'_f - \sum_{\mathrm{out}} \dot{m}'_f \;=\; 0$$
+            </div>
+            <p>
+              The first group is $b_C$ — the mass-flux residual computed from the
+              current velocity estimate. The second group must cancel it, so the
+              mass-flow corrections must satisfy:
+            </p>
+            <div class="eq-display">
+              $$\sum_{\mathrm{in}} \dot{m}'_f - \sum_{\mathrm{out}} \dot{m}'_f \;=\; -b_C$$
+            </div>
+            <p>
+              It remains to express each $\dot{m}'_f$ in terms of the unknown
+              pressure corrections $P'$. Every element law relates $\dot{m}$ to the
+              nodal pressure difference, so linearising around $V^*$ gives
+              $\dot{m}'_f$ directly. For a laminar pipe the Poiseuille relation is
+              linear in $\Delta P$ — the step is <em>exact</em>:
+            </p>
+            <div class="eq-display">
+              $$\dot{m}'_f \;=\; c_f\,(P'_F - P'_C), \qquad c_f = \frac{\rho A D^2}{32\,\mu\,l}$$
+            </div>
+            <p>
+              Substituting and collecting over all faces of node $C$, then defining
+              $a_f = -c_f$ and $a_C = -\sum_f a_f$:
+            </p>
+            <div class="eq-display eq-central">
+              $$\sum_f c_f(P'_F - P'_C) = b_C
+                \;\;\Longrightarrow\;\;
+                a_C\,P'_C + \sum_f a_f\,P'_F = b_C$$
+            </div>
+            <p>
+              For nonlinear elements the same structure holds but $c_f$ — and
+              therefore $a_f$ — depends on $V^*$ and is updated every iteration.
+              At convergence, $V^* \to V$ and the approximation becomes exact.
             </p>
           </div>
 
