@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -211,6 +211,20 @@
 
           <div class="method-block" id="derivation-steps">
             <h3>Substituting into continuity</h3>
+            <p>
+              Consider node $C$ connected by two pipes, each with a control volume
+              bounded by faces $w$ (west) and $e$ (east).
+            </p>
+            <figure class="node-cv-figure">
+              <img src="assets/node_cv.svg?v=1"
+                   alt="Pipe network: nodes W, C, E connected by Pipe 1 and Pipe 2. The control volume around node C is hatched, bounded by dashed face lines w and e."
+                   class="node-cv-img"/>
+              <figcaption>
+                Figure&nbsp;2 &mdash; Node $C$ and its two connecting pipe elements.
+                Faces $w$ and $e$ define the control-volume boundary used to apply
+                mass conservation.
+              </figcaption>
+            </figure>
             <p>
               Replacing every $\dot{m}_f$ with $\dot{m}^*_f + \dot{m}'_f$ in the
               continuity equation at node $C$ and grouping known and unknown terms:
