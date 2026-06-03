@@ -195,16 +195,31 @@
               $$\frac{1}{\sqrt{f}} = -2\log_{10}\!\left(\frac{\varepsilon}{3.7\,D} + \frac{2.51}{Re\sqrt{f}}\right)$$
             </div>
             <p>
-              Because $f$ appears on both sides, it cannot be solved in closed form.
-              Angelica evaluates it with a Newton-Raphson iteration at each SIMPLE step,
-              using the current $V^*$ to compute $Re = \rho V^* D / \mu$.
-              Convergence is fast — typically two or three inner iterations suffice.
+              Because $f$ appears on both sides — and $Re$ itself depends on $V^*$ — the
+              closure requires two nested loops at each SIMPLE step:
+            </p>
+            <ul class="method-list">
+              <li>
+                <strong>Inner loop</strong> — finds $f$ for a fixed $V^*$.
+                Angelica solves on the log-transformed variable $\ln f$,
+                which is more numerically stable than solving for $f$ directly.
+                Default solver: Newton-Raphson.
+              </li>
+              <li>
+                <strong>Outer loop</strong> — finds $V^*$ consistent with $f(V^*)$,
+                since updating $V^*$ changes $Re$ and therefore $f$.
+                Default solver: fixed-point iteration.
+              </li>
+            </ul>
+            <p>
+              Both loops accept Newton-Raphson, secant, or fixed-point as the nonlinear
+              solver — selectable per run. At convergence of the outer SIMPLE loop,
+              $V^*$, $Re$, and $f$ are all mutually consistent.
             </p>
             <p>
-              At convergence of the outer SIMPLE loop, $Re$ and $f$ are mutually consistent
-              with the converged velocity field. The same closure principle applies to other
-              turbulent models: Hazen-Williams replaces Colebrook-White with an explicit
-              power-law relation, but the structure of the outer algorithm is unchanged.
+              Hazen-Williams replaces Colebrook-White with an explicit power-law relation,
+              so no inner iteration is needed — the outer algorithm structure is otherwise
+              identical.
             </p>
           </div>
         </section>

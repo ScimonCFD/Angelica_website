@@ -993,6 +993,19 @@ a {
   margin-bottom: 0;
 }
 
+.method-list {
+  margin: 12px 0 16px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.method-list li {
+  line-height: 1.6;
+  color: inherit;
+}
+
 .method-block h3 {
   margin: 0 0 10px;
   font-size: 1.05rem;
