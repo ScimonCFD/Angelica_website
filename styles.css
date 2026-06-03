@@ -703,6 +703,26 @@ a {
   flex-wrap: wrap;
 }
 
+/* References */
+.ref-section {
+  background: rgba(255, 252, 245, 0.55);
+}
+
+.ref-list {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 820px;
+}
+
+.ref-list li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
 /* Footer */
 .site-footer {
   margin-top: 26px;
