@@ -183,6 +183,30 @@
               </article>
             </div>
           </div>
+
+          <div class="method-block">
+            <h3>Turbulent closure — Colebrook-White</h3>
+            <p>
+              The Darcy-Weisbach equation requires the friction factor $f$, which for
+              turbulent flow depends on both the Reynolds number $Re$ and the relative
+              roughness $\varepsilon/D$. The Colebrook-White relation gives $f$ implicitly:
+            </p>
+            <div class="eq-display">
+              $$\frac{1}{\sqrt{f}} = -2\log_{10}\!\left(\frac{\varepsilon}{3.7\,D} + \frac{2.51}{Re\sqrt{f}}\right)$$
+            </div>
+            <p>
+              Because $f$ appears on both sides, it cannot be solved in closed form.
+              Angelica evaluates it with a Newton-Raphson iteration at each SIMPLE step,
+              using the current $V^*$ to compute $Re = \rho V^* D / \mu$.
+              Convergence is fast — typically two or three inner iterations suffice.
+            </p>
+            <p>
+              At convergence of the outer SIMPLE loop, $Re$ and $f$ are mutually consistent
+              with the converged velocity field. The same closure principle applies to other
+              turbulent models: Hazen-Williams replaces Colebrook-White with an explicit
+              power-law relation, but the structure of the outer algorithm is unchanged.
+            </p>
+          </div>
         </section>
 
         <!-- PRESSURE CORRECTION -->
@@ -195,8 +219,12 @@
           <div class="method-block" id="simple-decomposition">
             <h3>The SIMPLE decomposition</h3>
             <p>
-              The solver assumes an initial pressure field $P^*$ and estimates velocities $V^*$.
-              The true solution is related to the estimate by corrections $P'$ and $V'$:
+              The solver begins with an initial pressure field $P^*$. With $P^*$ fixed,
+              each element's constitutive law — Poiseuille for laminar pipes, Darcy-Weisbach
+              for turbulent, $K_L$ for fittings, or the pump curve — determines $V^*$
+              directly. $V^*$ is not guessed independently; it is the velocity that the
+              element law prescribes for the current $P^*$.
+              The true solution is then related to these estimates by additive corrections:
             </p>
             <div class="eq-display">
               $$P = P^* + P', \qquad V = V^* + V'$$
