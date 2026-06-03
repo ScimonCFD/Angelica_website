@@ -704,6 +704,19 @@ a {
 }
 
 /* References */
+.cite {
+  font-size: 0.78em;
+  vertical-align: super;
+  line-height: 0;
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cite:hover {
+  text-decoration: underline;
+}
+
 .ref-section {
   background: rgba(255, 252, 245, 0.55);
 }

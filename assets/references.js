@@ -9,7 +9,9 @@
   var root = document.getElementById('references-root');
   if (!root) return;
 
-  var items = refs.map(function (r) { return '<li>' + r + '</li>'; }).join('\n        ');
+  var items = refs.map(function (r, i) {
+    return '<li id="ref-' + (i + 1) + '">' + r + '</li>';
+  }).join('\n        ');
 
   root.innerHTML =
     '<section class="section ref-section" id="references">' +

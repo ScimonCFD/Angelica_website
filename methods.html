@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -47,7 +47,7 @@
           <p class="eyebrow">Numerical Method</p>
           <h1>The hydraulic loop at the core of Angelica.</h1>
           <p class="methods-subtitle">
-            Pressure-correction adapted from the SIMPLE method (Patankar, 1980),
+            Pressure-correction adapted from the SIMPLE method (Patankar, 1980 <a href="#ref-3" class="cite">[3]</a>),
             applied to networks of pipes, fittings, and pumps.
           </p>
         </div>
@@ -203,7 +203,7 @@
           </div>
 
           <div class="method-block">
-            <h3>Turbulent closure — Colebrook-White</h3>
+            <h3>Turbulent closure — Colebrook-White <a href="#ref-1" class="cite">[1]</a></h3>
             <p>
               The Darcy-Weisbach equation requires the friction factor $f$, which for
               turbulent flow depends on both the Reynolds number $Re$ and the relative
@@ -371,7 +371,7 @@
             </div>
             <p>
               The preset $K_L$ values built into Angelica are taken from
-              Munson et al. (2013).
+              Munson et al. <a href="#ref-2" class="cite">[2]</a>.
             </p>
           </div>
 
