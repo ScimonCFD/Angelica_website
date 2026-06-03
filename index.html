@@ -230,6 +230,18 @@
               <p>32-junction, 34-pipe network solved with Darcy-Weisbach and
                 Colebrook-White. Nodal heads and link flows validated against
                 the published EPANET reference solution.</p>
+              <table class="bench-table">
+                <thead>
+                  <tr><th>Node</th><th>EPANET (m)</th><th>Angelica (m)</th><th>&Delta;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>100.00</td><td>100.00</td><td>0.00</td></tr>
+                  <tr><td>6</td><td>69.36</td><td>69.50</td><td>+0.14</td></tr>
+                  <tr><td>10</td><td>45.89</td><td>46.16</td><td>+0.27</td></tr>
+                  <tr><td>13</td><td>28.21</td><td>28.59</td><td>+0.38</td></tr>
+                </tbody>
+              </table>
+              <p class="bench-note">Max head deviation 0.38 m across all 32 nodes &middot; link flows within 0.1 m&sup3;/h</p>
             </article>
             <article class="info-card">
               <h3>EPANET pump benchmark</h3>

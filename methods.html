@@ -145,7 +145,7 @@
                     In Stage 2, the Darcy-Weisbach equation is inverted with the friction
                     factor $f^*$ frozen at its current iterate. Because $f^*$ depends on
                     $Re^* = \rho|V^*|D/\mu$, $V^*$ and $f^*$ are resolved together by the
-                    nested loops described below.
+                    two nested loops described in the Colebrook-White closure section below.
                   </p>
                 </div>
                 <div class="eq-display vstar-eq">
@@ -304,25 +304,11 @@
                 a_C\,P'_C + \sum_f a_f\,P'_F = b_C$$
             </div>
             <p>
-              For nonlinear elements the same structure holds but $c_f$ — and
-              therefore $a_f$ — depends on $V^*$ and is updated every iteration.
+              where $a_f = -c_f$, $\;a_C = -\displaystyle\sum_f a_f$, and
+              $\;b_C = \displaystyle\sum_{\mathrm{in}}\dot{m}^*_f - \sum_{\mathrm{out}}\dot{m}^*_f$.
+              For nonlinear elements the same structure holds but $c_f$ — and therefore $a_f$ —
+              depends on $V^*$ and is updated every iteration.
               At convergence, $V^* \to V$ and the approximation becomes exact.
-            </p>
-          </div>
-
-          <div class="method-block">
-            <h3>The nodal pressure-correction system</h3>
-            <p>
-              Every element contributes a coefficient $a_f$ to the pressure-correction equation
-              of each node it connects. The nodal system takes the same form regardless of element type:
-            </p>
-            <div class="eq-display eq-central">
-              $$a_C\,P'_C \;+\; \sum_f a_f\,P'_F \;=\; b_C$$
-            </div>
-            <p>
-              where $\;a_C = -\displaystyle\sum_f a_f\;$ and
-              $\;b_C = \displaystyle\sum_{in}\dot{m}^*_f - \sum_{out}\dot{m}^*_f$.
-              What changes between element types is the expression for $a_f$.
             </p>
           </div>
 
@@ -333,7 +319,7 @@
               exactly in terms of $P'$. The coefficient $c$ is constant for each pipe:
             </p>
             <div class="eq-display">
-              $$c = \frac{\rho A D^2}{32\,\mu\,l} \qquad \Longrightarrow \qquad a_f = -c_f$$
+              $$c_f = \frac{\rho A D^2}{32\,\mu\,l} \qquad \Longrightarrow \qquad a_f = -c_f$$
             </div>
             <p>
               Because $a_f$ is constant, the pressure-correction system is linear and a network

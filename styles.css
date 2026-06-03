@@ -317,6 +317,45 @@ a {
   gap: 18px;
 }
 
+.bench-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 8px;
+  font-size: 0.82rem;
+}
+
+.bench-table th,
+.bench-table td {
+  padding: 5px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+
+.bench-table th:first-child,
+.bench-table td:first-child {
+  text-align: left;
+}
+
+.bench-table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--line);
+}
+
+.bench-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bench-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
 .cards.four-up {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
