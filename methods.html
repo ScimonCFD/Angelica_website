@@ -185,6 +185,24 @@
           </div>
 
           <div class="method-block">
+            <h3>Under-relaxation</h3>
+            <p>
+              After each pressure-correction step, the new pressure field is applied as:
+            </p>
+            <div class="eq-display">
+              $$P^{\,\text{new}} = P^* + \alpha\,P'$$
+            </div>
+            <p>
+              where $\alpha \in (0,\,1]$ is the pressure relaxation factor. With $\alpha = 1$
+              the full correction is applied — this is the default and works well for most
+              networks. Reducing $\alpha$ below 1 damps the update, which improves stability
+              for stiff cases such as networks with pumps operating near their shut-off head or
+              networks with steep pump curves. Typical values when relaxation is needed are
+              $\alpha \approx 0.3$–$0.7$.
+            </p>
+          </div>
+
+          <div class="method-block">
             <h3>Turbulent closure — Colebrook-White</h3>
             <p>
               The Darcy-Weisbach equation requires the friction factor $f$, which for
@@ -351,6 +369,11 @@
             <div class="eq-display">
               $$\Delta P = K_L\,\frac{\rho V^2}{2} \qquad \Longrightarrow \qquad a_f = -\!\left(\frac{2A}{K_L|V^*|}\right)_{\!f}$$
             </div>
+            <p>
+              The preset $K_L$ values built into Angelica are taken from
+              Munson, B.&nbsp;R., Okiishi, T.&nbsp;H., Huebsch, W.&nbsp;W., &amp; Rothmayer, A.&nbsp;P.
+              (2013). <em>Fundamentals of Fluid Mechanics</em> (7th&nbsp;ed.). Wiley.
+            </p>
           </div>
 
           <div class="method-block" id="pump">
