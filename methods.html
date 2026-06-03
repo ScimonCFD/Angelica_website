@@ -142,15 +142,15 @@
                 <div class="vstar-copy">
                   <h3>Turbulent pipes</h3>
                   <p>
-                    In Stage 2, $V^*$ depends on the turbulent equation selected by the
-                    user. When Colebrook-White is selected, the Darcy-Weisbach relation is
-                    closed through the Colebrook friction factor. If another model is
-                    selected, such as Hazen-Williams, $V^*$ is evaluated using that
-                    selected relation instead.
+                    In Stage 2, the Darcy-Weisbach equation is inverted with the friction
+                    factor $f^*$ frozen at its current iterate. Because $f^*$ depends on
+                    $Re^* = \rho|V^*|D/\mu$, $V^*$ and $f^*$ are resolved together by the
+                    nested loops described below.
                   </p>
                 </div>
                 <div class="eq-display vstar-eq">
-                  $$\Delta P - \rho g \Delta z = \frac{\rho f L}{2D}\,V\,|V|$$
+                  $$V^* = \operatorname{sign}(\Delta P')\sqrt{\frac{2D\,|\Delta P'|}{\rho\,f^*\!L}},
+                    \quad \Delta P' = \Delta P - \rho g\,\Delta z$$
                 </div>
               </article>
 
