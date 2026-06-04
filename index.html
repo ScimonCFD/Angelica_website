@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=12" />
+    <link rel="stylesheet" href="styles.css?v=13" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -39,6 +39,7 @@
             <a href="#benchmarks">Benchmarks</a>
             <a href="methods.html">Methods</a>
             <a href="#roadmap">Roadmap</a>
+            <a href="#download">Download</a>
           </div>
           <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
         </nav>
@@ -284,6 +285,51 @@
           </div>
         </section>
 
+        <!-- DOWNLOAD -->
+        <section id="download" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Download</p>
+            <h2>Get Angelica.</h2>
+          </div>
+          <div class="download-grid">
+
+            <div class="download-card download-card--featured">
+              <div class="download-os-label">
+                <svg class="download-os-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.85"/>
+                </svg>
+                Windows
+              </div>
+              <h3>One-click installer</h3>
+              <p>No Python required. Installs to your user folder — no admin rights needed. Includes a Start&nbsp;Menu shortcut and uninstaller.</p>
+              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v0.1.0</p>
+              <a class="button primary download-btn"
+                 href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup-0.1.0.exe"
+                 target="_blank" rel="noreferrer">
+                Download AngelicaSetup-0.1.0.exe &darr;
+              </a>
+            </div>
+
+            <div class="download-card">
+              <div class="download-os-label">
+                <svg class="download-os-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+                  <polyline points="4 17 10 11 4 5"/>
+                  <line x1="12" y1="19" x2="20" y2="19"/>
+                </svg>
+                Linux &nbsp;&middot;&nbsp; macOS
+              </div>
+              <h3>Install with pip</h3>
+              <p>Requires Python&nbsp;3.8 or later. Run the two commands below in a terminal:</p>
+              <pre class="download-code">pip install git+https://github.com/ScimonCFD/Angelica.git
+angelica-gui</pre>
+              <p class="download-meta">
+                Installs numpy, sv&#8209;ttk, and openpyxl automatically.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
         <!-- ROADMAP -->
         <section id="roadmap" class="section dark">
           <div class="section-head">
@@ -349,6 +395,7 @@
           <a href="#capabilities">Capabilities</a>
           <a href="#benchmarks">Benchmarks</a>
           <a href="methods.html">Methods</a>
+          <a href="#download">Download</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
