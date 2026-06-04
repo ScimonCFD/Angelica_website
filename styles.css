@@ -357,6 +357,17 @@ a {
   padding-top: 8px;
 }
 
+.tutorial-case-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .cards.four-up {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -807,6 +818,17 @@ a {
 
   .hero h1 {
     max-width: 100%;
+  }
+
+  /* Roadmap: inline grid-column/grid-row attrs override grid-template-columns,
+     so strip them explicitly and hide the arrows — items stack in source order. */
+  .roadmap-grid > * {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .roadmap-arrow {
+    display: none !important;
   }
 }
 
