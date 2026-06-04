@@ -655,6 +655,7 @@ a {
   margin-top: 20px;
   padding: 16px 22px;
   border: 1px solid rgba(12, 108, 107, 0.22);
+  border-left: 3px solid var(--brand);
   border-radius: var(--radius-sm);
   background: rgba(12, 108, 107, 0.04);
 }
