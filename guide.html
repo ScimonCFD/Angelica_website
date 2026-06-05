@@ -12,7 +12,8 @@
     <meta property="og:title"       content="Angelica — User Guide" />
     <meta property="og:description" content="Build and solve pipe networks in Angelica. Learn nodes, links, devices, and settings panels." />
     <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/guide.html" />
-    <meta name="twitter:card"       content="summary" />
+    <meta name="twitter:card"       content="summary_large_image" />
+    <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
@@ -69,6 +70,7 @@
           </a>
           <div class="toplinks">
             <a href="index.html">Home</a>
+            <a href="guide.html">Guide</a>
             <a href="methods.html">Methods</a>
             <a href="#nodes">Nodes &amp; Links</a>
             <a href="#panels">Settings</a>
@@ -104,8 +106,7 @@
           <div class="code-block">python -m angelica.gui</div>
 
           <p><strong>Windows (installer)</strong></p>
-          <p>Double-click the <em>Angelica</em> shortcut in the Start menu, or run:</p>
-          <div class="code-block">AngelicaSetup-0.1.1.exe  <span class="comment"># from Start Menu shortcut or double-click</span></div>
+          <p>Double-click the <em>Angelica</em> shortcut in the Start&nbsp;Menu. The installer creates the shortcut automatically — no command is needed.</p>
 
           <p>
             The main window opens with an empty canvas, a left-side settings panel, and a toolbar at the top.
@@ -253,12 +254,12 @@
           </table>
 
           <h3 style="margin-top:2rem;">Pump</h3>
-          <p>A centrifugal pump modelled via a head-vs-flow curve. Three operating points on the curve are required; the solver interpolates with a quadratic fit.</p>
+          <p>A centrifugal pump modelled via a head-vs-flow curve entered as a Q-Head table in the link properties dialog.</p>
           <table class="device-table">
             <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
             <tbody>
               <tr><td>diameter_m</td><td>Reference diameter of the pump casing (m).</td></tr>
-              <tr><td>Q₁, H₁ … Q₃, H₃</td><td>Three (flow, head) points on the pump curve. Flow in m³/s, head in m. Q₁ &lt; Q₂ &lt; Q₃.</td></tr>
+              <tr><td>curve_points_q_head</td><td>Q-Head table — one pair per line in the form <code>Q&nbsp;Head</code> (Q in m³/h, head in m). Flow must increase; head must decrease.<br><br><strong>1 point:</strong> EPANET single-point model — power-law curve with shutoff head = 1.33 × design head.<br><strong>2+ points:</strong> piecewise-linear interpolation.</td></tr>
             </tbody>
           </table>
 
@@ -487,36 +488,40 @@
 
       <section class="author-strip">
         <div class="author-inner">
-          <div class="author-copy">
-            <p class="eyebrow">Open source · MIT licensed</p>
-            <p>
-              Angelica is developed by
+          <div class="author-text">
+            <p class="author-bio">Angelica is an open&#8209;source project developed by
               <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>,
               Venezuelan engineer and researcher based in Dublin, Ireland.
-              Questions, bug reports, and contributions are welcome on GitHub.
-            </p>
-            <p style="margin-top:0.6rem;font-size:0.9rem;">
+              Questions, bug reports, and contributions are welcome on GitHub.</p>
+            <p class="author-bio" style="margin-top:0.6rem;">
               For private consulting on pipeline network simulations — engineering studies, model setup,
-              or custom solver development — contact
+              or custom solver development — get in touch via
               <a href="mailto:simonrodriguezgas@gmail.com">simonrodriguezgas@gmail.com</a>
               or LinkedIn.
             </p>
           </div>
-          <div class="author-ctas">
-            <a class="button primary" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+          <div class="author-actions">
+            <a class="button primary" href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn &rarr;</a>
             <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
           </div>
         </div>
       </section>
 
-      <footer class="footer">
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-icon brand-icon--sm">
+            <img src="assets/logomark.svg" alt="" class="brand-mark footer-mark" />
+          </span>
+          <span class="brand-name brand-name--sm">Angelica</span>
+        </div>
         <nav class="footer-links">
           <a href="index.html">Home</a>
           <a href="guide.html">Guide</a>
           <a href="methods.html">Methods</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
-        <p class="footer-copy">© 2025 Simon Rodriguez · MIT License</p>
+        <p class="footer-copy">MIT License &nbsp;&middot;&nbsp; 2026</p>
       </footer>
 
     </div>
