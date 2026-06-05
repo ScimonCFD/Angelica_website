@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angelica — User Guide</title>
+    <meta
+      name="description"
+      content="Step-by-step guide to building and simulating pipe networks in Angelica. Covers the canvas, nodes, links, devices, settings panels, and the tutorial suite."
+    />
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Angelica — User Guide" />
+    <meta property="og:description" content="Build and solve pipe networks in Angelica. Learn nodes, links, devices, and settings panels." />
+    <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/guide.html" />
+    <meta name="twitter:card"       content="summary" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <style>
+      /* Guide-specific styles */
+      .guide-section { max-width: 820px; margin: 0 auto; padding: 3rem 1.5rem; }
+      .guide-section + .guide-section { border-top: 1px solid var(--border, #e5e7eb); }
+      .node-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+      .node-card { border: 1px solid var(--border, #e5e7eb); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      .node-icon { width: 52px; height: 52px; flex-shrink: 0; }
+      .node-card h3 { margin: 0; font-size: 1.05rem; }
+      .node-card p  { margin: 0; font-size: 0.9rem; line-height: 1.55; color: #555; }
+      .device-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+      .device-table th { text-align: left; padding: 0.5rem 0.75rem; background: #f3f4f6; font-weight: 600; }
+      .device-table td { padding: 0.5rem 0.75rem; border-top: 1px solid #e5e7eb; vertical-align: top; }
+      .device-table td:first-child { font-family: monospace; font-size: 0.84rem; color: #1d4ed8; white-space: nowrap; }
+      .panel-list { list-style: none; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
+      .panel-list li { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
+      .panel-list .panel-name { font-weight: 700; font-size: 0.9rem; background: #f3f4f6; padding: 0.3rem 0.6rem; border-radius: 6px; text-align: center; }
+      .panel-list .panel-desc { font-size: 0.9rem; color: #444; line-height: 1.55; }
+      .tutorial-list { display: flex; flex-direction: column; gap: 1.25rem; margin: 2rem 0; }
+      .tutorial-item { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; align-items: start; }
+      .tutorial-num { font-size: 1.2rem; font-weight: 700; color: #6b7280; line-height: 1; padding-top: 0.15rem; }
+      .tutorial-item h4 { margin: 0 0 0.25rem; font-size: 0.95rem; }
+      .tutorial-item p  { margin: 0; font-size: 0.88rem; color: #555; line-height: 1.5; }
+      .step-list { counter-reset: steps; list-style: none; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.9rem; }
+      .step-list li { counter-increment: steps; display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; align-items: start; font-size: 0.92rem; line-height: 1.55; }
+      .step-list li::before { content: counter(steps); font-weight: 700; color: #fff; background: #111827; border-radius: 50%; width: 1.6rem; height: 1.6rem; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; flex-shrink: 0; margin-top: 0.1rem; }
+      .code-block { background: #111827; color: #e5e7eb; font-family: monospace; font-size: 0.88rem; padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0; overflow-x: auto; }
+      .code-block span.comment { color: #6b7280; }
+      .tip-box { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 0.85rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: #166534; margin: 1.25rem 0; line-height: 1.55; }
+      .warn-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 0.85rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: #92400e; margin: 1.25rem 0; line-height: 1.55; }
+      @media (max-width: 600px) {
+        .panel-list li { grid-template-columns: 1fr; }
+        .tutorial-item { grid-template-columns: 1.8rem 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <header class="hero compact-hero methods-dark">
+        <nav class="topbar">
+          <a class="brand" href="index.html">
+            <span class="brand-icon">
+              <img src="assets/logomark.svg" alt="" class="brand-mark" />
+            </span>
+            <span class="brand-lockup">
+              <span class="brand-name">Angelica</span>
+              <span class="brand-tagline">Fluid networks solved</span>
+            </span>
+          </a>
+          <div class="toplinks">
+            <a href="index.html">Home</a>
+            <a href="#launch">Launch</a>
+            <a href="#nodes">Nodes &amp; Links</a>
+            <a href="#panels">Settings</a>
+            <a href="#tutorials">Tutorials</a>
+          </div>
+          <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+        </nav>
+
+        <div class="methods-page-title">
+          <p class="eyebrow">User Guide</p>
+          <h1>From a blank canvas to a solved network.</h1>
+          <p class="methods-subtitle">
+            Everything you need to build, configure, and run a pipe-network simulation in Angelica —
+            nodes, links, devices, settings panels, and the built-in tutorial suite.
+          </p>
+        </div>
+      </header>
+
+      <main>
+
+        <!-- LAUNCH -->
+        <section id="launch" class="guide-section">
+          <p class="eyebrow">Getting started</p>
+          <h2>Launching the GUI</h2>
+          <p>
+            After installation, start the graphical interface from a terminal or command prompt.
+            On Windows you can also use the Start-menu shortcut created by the installer.
+          </p>
+
+          <p><strong>Linux / macOS (pip install)</strong></p>
+          <div class="code-block">angelica-gui</div>
+          <p>or equivalently:</p>
+          <div class="code-block">python -m angelica.gui</div>
+
+          <p><strong>Windows (installer)</strong></p>
+          <p>Double-click the <em>Angelica</em> shortcut in the Start menu, or run:</p>
+          <div class="code-block">AngelicaSetup-0.1.1.exe</div>
+
+          <p>
+            The main window opens with an empty canvas, a left-side settings panel, and a toolbar at the top.
+            The window title shows the name of the currently open file (or <em>Untitled</em> for a new scene).
+          </p>
+        </section>
+
+        <!-- THE CANVAS -->
+        <section id="canvas" class="guide-section">
+          <p class="eyebrow">The drawing area</p>
+          <h2>The canvas</h2>
+          <p>
+            The large central area is the <strong>canvas</strong> — a free-form drawing surface where you build your
+            pipe network by placing nodes and drawing links between them.
+          </p>
+          <ul style="font-size:0.92rem;line-height:1.7;margin:1rem 0 0 1.25rem;">
+            <li><strong>Zoom</strong> — scroll the mouse wheel (or use Ctrl+scroll on some systems) to zoom in and out. Node icons and labels scale with the zoom level.</li>
+            <li><strong>Pan</strong> — click and drag on the canvas background to pan the view.</li>
+            <li><strong>Select a node</strong> — click any node to select it (highlighted in yellow). Pressing <kbd>Delete</kbd> or <kbd>Backspace</kbd> removes the selected node and all its connected links.</li>
+            <li><strong>Save / Open</strong> — use <em>File → Save</em> and <em>File → Open</em>. Scene files have the extension <code>.gui.json</code>.</li>
+          </ul>
+        </section>
+
+        <!-- NODES -->
+        <section id="nodes" class="guide-section">
+          <p class="eyebrow">Network topology</p>
+          <h2>Nodes</h2>
+          <p>
+            Every network is a graph of <strong>nodes</strong> connected by <strong>links</strong>.
+            Angelica has three node types. Click the corresponding button in the top toolbar to place one,
+            then click the desired position on the canvas.
+          </p>
+
+          <div class="node-grid">
+
+            <div class="node-card">
+              <!-- Source: upward triangle -->
+              <svg class="node-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="24" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+                <polygon points="26,12 40,38 12,38" fill="#059669" opacity="0.85"/>
+              </svg>
+              <h3>Source</h3>
+              <p>
+                A <strong>boundary inlet node</strong>. You specify either the static pressure at this node
+                (Pa) or the total mass flow rate entering the network here (kg/s). At least one pressure-specified
+                source or sink is required.
+              </p>
+            </div>
+
+            <div class="node-card">
+              <!-- Sink: downward triangle -->
+              <svg class="node-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="24" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                <polygon points="26,40 40,14 12,14" fill="#dc2626" opacity="0.85"/>
+              </svg>
+              <h3>Sink</h3>
+              <p>
+                A <strong>boundary outlet node</strong>. Like a source, you specify either pressure or mass flow
+                rate. The distinction between source and sink is only visual — both can carry flow in either
+                direction if the pressure field requires it.
+              </p>
+            </div>
+
+            <div class="node-card">
+              <!-- Junction: circle -->
+              <svg class="node-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="26" cy="26" r="24" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <circle cx="26" cy="26" r="10" fill="#2563eb" opacity="0.8"/>
+              </svg>
+              <h3>Junction</h3>
+              <p>
+                An <strong>internal node</strong> where two or more pipes meet. No boundary condition is
+                applied here — the solver enforces mass continuity (the sum of all mass flows entering equals
+                the sum leaving). Pressure at junctions is a result, not an input.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="tip-box">
+            <strong>Minimum requirement:</strong> at least one source or sink must have a <em>specified pressure</em>.
+            This anchors the absolute pressure level of the solution. A network with only flow-specified
+            boundaries is under-determined (infinite pressure solutions exist).
+          </div>
+
+          <h2 style="margin-top:2.5rem;">Links</h2>
+          <p>
+            A <strong>link</strong> is a directed connection between two nodes. To draw one:
+          </p>
+          <ol class="step-list">
+            <li>Click the <strong>Link</strong> button in the toolbar.</li>
+            <li>Click the <strong>start node</strong> (the node the flow comes from).</li>
+            <li>Click the <strong>end node</strong> (the node the flow goes to).</li>
+          </ol>
+          <p>
+            The direction you draw the link sets the positive-flow convention displayed in results.
+            The solver can return negative flow values if the actual flow direction is opposite to
+            the one you drew.
+          </p>
+          <p>
+            Each link contains one or more <strong>devices</strong> arranged in series.
+            Double-click an existing link to open its properties dialog, where you can add, remove,
+            and configure devices, and view the pressure profile along the link after solving.
+          </p>
+
+          <div class="warn-box">
+            Every node must be connected to at least one link, and the network must be fully connected
+            (no isolated sub-graphs). Angelica checks both conditions before running and shows an error
+            listing any problems.
+          </div>
+        </section>
+
+        <!-- DEVICES -->
+        <section id="devices" class="guide-section">
+          <p class="eyebrow">Network devices</p>
+          <h2>Devices inside a link</h2>
+          <p>
+            Each link holds an ordered list of devices. Multiple devices in the same link are treated as
+            being in series — the outlet of one feeds the inlet of the next. Any combination of pipes,
+            fittings, and pumps is valid within a single link.
+          </p>
+
+          <h3 style="margin-top:2rem;">Pipe</h3>
+          <p>A circular-cross-section conduit. Pressure drop follows the Darcy-Weisbach equation (default) or Hazen-Williams (selectable in the Pressure Drop Model panel).</p>
+          <table class="device-table">
+            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>length_m</td><td>Pipe length (m). Must be &gt; 0.</td></tr>
+              <tr><td>diameter_m</td><td>Internal diameter (m). Must be &gt; 0.</td></tr>
+              <tr><td>height_change_m</td><td>Elevation of outlet minus elevation of inlet (m). Positive = uphill. Enter 0 for horizontal.</td></tr>
+              <tr><td>roughness_m</td><td>Absolute wall roughness (m). Typical steel: 4.5 × 10⁻⁵ m. Used only with Colebrook-White friction.</td></tr>
+              <tr><td>num_segments</td><td>Number of internal nodes along this pipe for the pressure profile plot. Does not affect the solve; use 1 for simple cases.</td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top:2rem;">Fitting</h3>
+          <p>A localised loss element (valve, elbow, tee, contraction, etc.) characterised by a dimensionless loss coefficient K.</p>
+          <table class="device-table">
+            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>k_loss</td><td>Minor loss coefficient K — dimensionless. Pressure drop is ΔP = K · ½ρV².</td></tr>
+              <tr><td>diameter_m</td><td>Reference diameter for velocity calculation (m).</td></tr>
+              <tr><td>height_change_m</td><td>Elevation change across the fitting (m). Usually 0.</td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top:2rem;">Pump</h3>
+          <p>A centrifugal pump modelled via a head-vs-flow curve. Three operating points on the curve are required; the solver interpolates with a quadratic fit.</p>
+          <table class="device-table">
+            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>diameter_m</td><td>Reference diameter of the pump casing (m).</td></tr>
+              <tr><td>Q₁, H₁ … Q₃, H₃</td><td>Three (flow, head) points on the pump curve. Flow in m³/s, head in m. Q₁ &lt; Q₂ &lt; Q₃.</td></tr>
+            </tbody>
+          </table>
+
+          <div class="tip-box">
+            After a successful solve, double-click any link and click <strong>Pressure Profile</strong> to see
+            how pressure evolves along that link, with each device labelled. Pipes appear as sloped lines;
+            fittings and pumps appear as vertical pressure steps.
+          </div>
+        </section>
+
+        <!-- SETTINGS PANELS -->
+        <section id="panels" class="guide-section">
+          <p class="eyebrow">Configuration</p>
+          <h2>Settings panels</h2>
+          <p>
+            The left sidebar and the <em>Define</em> menu give access to four global settings that apply
+            to the entire network.
+          </p>
+
+          <ul class="panel-list">
+
+            <li>
+              <span class="panel-name">Fluid</span>
+              <span class="panel-desc">
+                Choose a working fluid. Pick from the built-in library (Water, Air, …) or enter custom
+                density (kg/m³) and dynamic viscosity (Pa·s) values. The fluid properties affect the
+                Reynolds number calculation and therefore the friction-factor regime in every pipe.
+              </span>
+            </li>
+
+            <li>
+              <span class="panel-name">Pressure Drop Model</span>
+              <span class="panel-desc">
+                Selects the turbulent friction correlation for pipes.
+                <strong>Colebrook-White</strong> (default) uses the implicit Colebrook equation with
+                wall roughness and is valid across all turbulent Reynolds numbers.
+                <strong>Hazen-Williams</strong> is an empirical formula for water in commercial pipes;
+                it ignores viscosity and roughness but is widely used in water-distribution practice.
+              </span>
+            </li>
+
+            <li>
+              <span class="panel-name">Numerics</span>
+              <span class="panel-desc">
+                Controls solver behaviour. Key settings:
+                <br><br>
+                <strong>Laminar / Turbulent iterations</strong> — number of outer pressure-correction iterations
+                in each phase. The laminar phase seeds the velocity field; the turbulent phase continues until
+                convergence or the iteration limit.<br><br>
+                <strong>Pressure relaxation (α)</strong> — under-relaxation factor applied to each pressure
+                correction. Values close to 1 converge faster; values closer to 0 are more stable for stiff
+                networks. Default: 1.0.<br><br>
+                <strong>Velocity loop</strong> and <strong>Friction factor</strong> — inner loop solvers
+                (method + max iterations + tolerance) for computing V* and f at each outer iteration.
+                Fixed-point and Newton methods are available.<br><br>
+                <strong>Convergence criteria</strong> — the outer loop is considered converged when <em>both</em>
+                the absolute pressure correction (Pa) and the relative nodal mass imbalance
+                |ṁ<sub>in</sub> − ṁ<sub>out</sub>| / (ṁ<sub>in</sub> + ṁ<sub>out</sub>) fall below
+                their respective tolerances.
+              </span>
+            </li>
+
+            <li>
+              <span class="panel-name">Unit System</span>
+              <span class="panel-desc">
+                Switch between SI (m · Pa · kg/s) and other unit systems for displaying results.
+                Input fields always accept SI values regardless of the display unit.
+              </span>
+            </li>
+
+          </ul>
+        </section>
+
+        <!-- RUNNING -->
+        <section id="running" class="guide-section">
+          <p class="eyebrow">Simulation</p>
+          <h2>Running a simulation</h2>
+          <ol class="step-list">
+            <li>Build the network on the canvas (nodes + links + devices).</li>
+            <li>Set the fluid, pressure-drop model, and any numerics settings you want to change from their defaults.</li>
+            <li>Click <strong>Run</strong> in the menu bar (or press the Run button).</li>
+            <li>
+              Angelica validates the scene first: it checks that all nodes are connected, that the graph
+              has no isolated sub-networks, and that at least one pressure boundary exists. Any errors are
+              shown in a dialog before the solve begins.
+            </li>
+            <li>
+              The solver runs the laminar-phase iterations followed by the turbulent-phase iterations.
+              A progress bar and live convergence metrics are shown during the solve.
+            </li>
+            <li>
+              Results appear on the canvas: junction nodes show their computed pressure with a tag,
+              and boundary nodes show the computed flow rate. The convergence history plot is available
+              in the <em>View</em> menu.
+            </li>
+            <li>
+              Click any node to see a summary popup with pressure, elevation, and connected flows.
+              Double-click any link to open its dialog and view the <strong>Pressure Profile</strong>.
+            </li>
+          </ol>
+
+          <div class="tip-box">
+            If the solver does not converge, try reducing the pressure relaxation factor α (e.g. to 0.5)
+            in the Numerics panel and increasing the turbulent iteration count. Stiff networks with
+            highly varying pipe diameters often need lower relaxation.
+          </div>
+        </section>
+
+        <!-- TUTORIALS -->
+        <section id="tutorials" class="guide-section">
+          <p class="eyebrow">Tutorials</p>
+          <h2>Built-in tutorial cases</h2>
+          <p>
+            Angelica ships with eight tutorial cases in the <code>tutorials/steady_isothermal_incompressible/</code>
+            folder. Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
+            and a <code>run.py</code> script that solves the same network from Python.
+            Open them via <em>File → Open</em>.
+          </p>
+          <p>
+            The cases are ordered by increasing complexity and cover every device and boundary-condition
+            type supported by the current solver.
+          </p>
+
+          <div class="tutorial-list">
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">01</span>
+              <div>
+                <h4>Pipe-only network</h4>
+                <p>
+                  A branched network of six pipes with two pressure-specified sources and one pressure-specified sink.
+                  No fittings or pumps. Good starting point — demonstrates how to build a network, set boundary
+                  conditions, and interpret the pressure field at each junction.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">02</span>
+              <div>
+                <h4>Fittings — no elevation</h4>
+                <p>
+                  Introduces fitting (minor loss) devices in a flat network. Shows how to add a fitting in
+                  series with a pipe inside the same link, and how to set the K-loss coefficient.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">03</span>
+              <div>
+                <h4>Fittings — with elevation</h4>
+                <p>
+                  Same topology as Tutorial 02 but with non-zero height changes on pipes and fittings.
+                  Demonstrates that the hydrostatic term ρgΔz is handled automatically once
+                  <code>height_change_m</code> is set on each device.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">04</span>
+              <div>
+                <h4>Flow-specified inlet</h4>
+                <p>
+                  A source boundary with a specified mass flow rate (instead of pressure). Requires at least
+                  one pressure-specified boundary elsewhere in the network to anchor the pressure level.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">05</span>
+              <div>
+                <h4>Flow-specified outlet</h4>
+                <p>
+                  A sink boundary with a specified mass flow rate. Mirrors Tutorial 04 from the outlet side.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">06</span>
+              <div>
+                <h4>Mixed boundary conditions</h4>
+                <p>
+                  A network with both flow-specified and pressure-specified sources and sinks active simultaneously.
+                  Demonstrates that multiple boundary-condition types can coexist in the same network.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">07</span>
+              <div>
+                <h4>Hanoi / EPANET Darcy-Weisbach benchmark</h4>
+                <p>
+                  The classic Hanoi network (34 pipes, 32 nodes) solved with Darcy-Weisbach friction.
+                  Results are compared against the published EPANET reference solution.
+                  This is the primary validation case for the pipe solver.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">08</span>
+              <div>
+                <h4>EPANET pump benchmark</h4>
+                <p>
+                  A pump-bearing network adapted from the official EPANET tutorial. Validates the pump
+                  curve model (quadratic head-vs-flow fit) against the EPANET reference solution.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="tip-box">
+            The <code>run.py</code> script in each tutorial folder shows the Python API — useful if you
+            want to drive Angelica programmatically, run parameter sweeps, or integrate it into a larger
+            workflow without opening the GUI.
+          </div>
+        </section>
+
+      </main>
+
+      <section class="author-strip">
+        <div class="author-inner">
+          <div class="author-copy">
+            <p class="eyebrow">Open source · MIT licensed</p>
+            <p>
+              Angelica is developed by
+              <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>.
+              Questions, bug reports, and contributions are welcome on GitHub.
+            </p>
+          </div>
+          <div class="author-ctas">
+            <a class="button primary" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+            <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <nav class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="guide.html">Guide</a>
+          <a href="methods.html">Methods</a>
+          <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+        <p class="footer-copy">© 2025 Simon Rodriguez · MIT License</p>
+      </footer>
+
+    </div>
+  </body>
+</html>
