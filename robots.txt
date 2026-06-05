@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://scimonCFD.github.io/Angelica_website/sitemap.xml
