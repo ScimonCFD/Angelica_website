@@ -41,8 +41,8 @@
       .tutorial-item h4 { margin: 0 0 0.25rem; font-size: 0.95rem; }
       .tutorial-item p  { margin: 0; font-size: 0.88rem; color: #555; line-height: 1.5; }
       .step-list { counter-reset: steps; list-style: none; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.9rem; }
-      .step-list li { counter-increment: steps; display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; align-items: start; font-size: 0.92rem; line-height: 1.55; }
-      .step-list li::before { content: counter(steps); font-weight: 700; color: #fff; background: #111827; border-radius: 50%; width: 1.6rem; height: 1.6rem; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; flex-shrink: 0; margin-top: 0.1rem; }
+      .step-list li { counter-increment: steps; position: relative; padding-left: 2.4rem; font-size: 0.92rem; line-height: 1.6; }
+      .step-list li::before { content: counter(steps); position: absolute; left: 0; top: 0.1rem; font-weight: 700; color: #fff; background: #111827; border-radius: 50%; width: 1.6rem; height: 1.6rem; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; }
       .code-block { background: #111827; color: #e5e7eb; font-family: monospace; font-size: 0.88rem; padding: 1rem 1.25rem; border-radius: 8px; margin: 1rem 0; overflow-x: auto; }
       .code-block span.comment { color: #6b7280; }
       .tip-box { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 0.85rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: #166534; margin: 1.25rem 0; line-height: 1.55; }
