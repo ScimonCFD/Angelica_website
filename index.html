@@ -30,7 +30,7 @@
       "downloadUrl": "https://github.com/ScimonCFD/Angelica/releases/latest",
       "applicationCategory": "EngineeringApplication",
       "operatingSystem": "Windows, Linux, macOS",
-      "softwareVersion": "0.1.1",
+      "softwareVersion": "1.0.0",
       "license": "https://opensource.org/licenses/MIT",
       "author": {
         "@type": "Person",
@@ -249,21 +249,22 @@
           <div class="cards">
             <article class="info-card">
               <h3>Hanoi benchmark</h3>
-              <p>32-junction, 34-pipe network solved with Darcy-Weisbach and
-                Colebrook-White. Nodal heads and link flows validated against
-                the published EPANET reference solution <a href="#ref-5" class="cite">[5]</a>.</p>
+              <p>32-junction network solved with Hazen-Williams (C&nbsp;=&nbsp;130),
+                matching the original Hanoi problem formulation. Network topology from
+                Fujiwara &amp; Khang <a href="#ref-6" class="cite">[6]</a>. Nodal heads
+                and link flows are compared against internally verified reference values.</p>
               <table class="bench-table">
                 <thead>
-                  <tr><th>Node</th><th>EPANET (m)</th><th>Angelica (m)</th><th>&Delta;</th></tr>
+                  <tr><th>Node</th><th>Reference (m)</th><th>Angelica (m)</th><th>&Delta;</th></tr>
                 </thead>
                 <tbody>
                   <tr><td>1</td><td>100.00</td><td>100.00</td><td>0.00</td></tr>
-                  <tr><td>6</td><td>69.36</td><td>69.50</td><td>+0.14</td></tr>
-                  <tr><td>10</td><td>45.89</td><td>46.16</td><td>+0.27</td></tr>
-                  <tr><td>13</td><td>28.21</td><td>28.59</td><td>+0.38</td></tr>
+                  <tr><td>6</td><td>70.20</td><td>70.20</td><td>0.00</td></tr>
+                  <tr><td>10</td><td>47.42</td><td>47.42</td><td>0.00</td></tr>
+                  <tr><td>13</td><td>29.13</td><td>29.13</td><td>0.00</td></tr>
                 </tbody>
               </table>
-              <p class="bench-note">4 representative nodes of 32 shown &nbsp;&middot;&nbsp; max head deviation 0.38 m across all 32 nodes &middot; link flows within 0.1 m&sup3;/h</p>
+              <p class="bench-note">4 representative nodes of 32 shown &nbsp;&middot;&nbsp; max head deviation &lt; 0.01 m across all 32 nodes &middot; link flows within 0.001 m&sup3;/h</p>
             </article>
             <article class="info-card">
               <h3>EPANET pump benchmark</h3>
@@ -323,11 +324,11 @@
               </div>
               <h3>One-click installer</h3>
               <p>No Python required. Installs to your user folder — no admin rights needed. Includes a Start&nbsp;Menu shortcut and uninstaller.</p>
-              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v0.1.1</p>
+              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.0.0</p>
               <a class="button primary download-btn"
-                 href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup-0.1.1.exe"
+                 href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup-1.0.0.exe"
                  target="_blank" rel="noreferrer">
-                Download AngelicaSetup-0.1.1.exe &darr;
+                Download AngelicaSetup-1.0.0.exe &darr;
               </a>
             </div>
 

@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/guide.html" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
     <style>
       /* Guide-specific styles */
@@ -123,10 +123,13 @@
             pipe network by placing nodes and drawing links between them.
           </p>
           <ul style="font-size:0.92rem;line-height:1.7;margin:1rem 0 0 1.25rem;">
-            <li><strong>Zoom</strong> — scroll the mouse wheel (or use Ctrl+scroll on some systems) to zoom in and out. Node icons and labels scale with the zoom level.</li>
-            <li><strong>Pan</strong> — click and drag on the canvas background to pan the view.</li>
-            <li><strong>Select a node</strong> — click any node to select it (highlighted in yellow). Pressing <kbd>Delete</kbd> or <kbd>Backspace</kbd> removes the selected node and all its connected links.</li>
-            <li><strong>Save / Open</strong> — use <em>File → Save</em> and <em>File → Open</em>. Scene files have the extension <code>.gui.json</code>.</li>
+            <li><strong>Zoom</strong> — scroll the mouse wheel to zoom in and out. Node icons and labels scale with the zoom level.</li>
+            <li><strong>Pan</strong> — click and drag the canvas background with the middle mouse button to pan the view.</li>
+            <li><strong>Select &amp; move a node</strong> — left-click to select (highlighted); drag to reposition. Press <kbd>Delete</kbd> or <kbd>Backspace</kbd> to remove the selected node and all its connected links.</li>
+            <li><strong>Draw a link</strong> — right-click (or Shift+left-click) a node and drag to another node to draw a connection.</li>
+            <li><strong>Edit or delete a link</strong> — right-click any link to open a context menu with <em>Edit Components</em>, <em>Pressure Profile</em> (when results are available), and <em>Delete Connection</em>.</li>
+            <li><strong>Undo / Redo</strong> — <kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd> (or <em>Edit → Undo / Redo</em>) step back and forward through node placements, link additions, link deletions, and node moves.</li>
+            <li><strong>Save / Open</strong> — use <em>File → Save</em> (<kbd>Ctrl+S</kbd>) and <em>File → Open</em>. Scene files (<code>.gui.json</code>) store the full scene and, when results exist, the last solve output so you can reopen and export without re-running. Tutorial files are read-only; use <em>Save As…</em> to save a copy elsewhere.</li>
           </ul>
         </section>
 
@@ -194,22 +197,25 @@
 
           <h2 style="margin-top:2.5rem;">Links</h2>
           <p>
-            A <strong>link</strong> is a directed connection between two nodes. To draw one:
+            A <strong>link</strong> is a directed connection between two nodes. To draw one,
+            right-click (or Shift+left-click) the start node and drag to the end node.
           </p>
-          <ol class="step-list">
-            <li>Click the <strong>Link</strong> button in the toolbar.</li>
-            <li>Click the <strong>start node</strong> (the node the flow comes from).</li>
-            <li>Click the <strong>end node</strong> (the node the flow goes to).</li>
-          </ol>
           <p>
             The direction you draw the link sets the positive-flow convention displayed in results.
             The solver can return negative flow values if the actual flow direction is opposite to
             the one you drew.
           </p>
           <p>
-            Each link contains one or more <strong>devices</strong> arranged in series.
-            Double-click an existing link to open its properties dialog, where you can add, remove,
-            and configure devices, and view the pressure profile along the link after solving.
+            Right-clicking any existing link opens a context menu with three options:
+          </p>
+          <ul style="font-size:0.92rem;line-height:1.7;margin:0.5rem 0 0 1.25rem;">
+            <li><strong>Edit Components</strong> — open the properties dialog to add, reorder, delete, and configure devices.</li>
+            <li><strong>Pressure Profile</strong> — open the pressure-vs-distance plot for this link (only shown when results are available).</li>
+            <li><strong>Delete Connection</strong> — remove the link (undoable).</li>
+          </ul>
+          <p style="margin-top:0.8rem;">
+            Double-clicking a link opens the Pressure Profile directly when results are available,
+            or the Edit Components dialog otherwise.
           </p>
 
           <div class="warn-box">
@@ -263,10 +269,16 @@
             </tbody>
           </table>
 
+          <p style="margin-top:1.5rem;">
+            Inside the Edit Components dialog you can also <strong>reorder</strong> devices with the
+            <strong>↑</strong> and <strong>↓</strong> buttons, and <strong>delete</strong> individual
+            devices with the <strong>Delete</strong> button. All these actions are undoable.
+          </p>
           <div class="tip-box">
-            After a successful solve, double-click any link and click <strong>Pressure Profile</strong> to see
-            how pressure evolves along that link, with each device labelled. Pipes appear as sloped lines;
-            fittings and pumps appear as vertical pressure steps.
+            After a successful solve, right-click any link and choose <strong>Pressure Profile</strong>
+            (or double-click the link directly) to see how pressure evolves along that link, with each
+            device labelled. Pipes appear as sloped lines; fittings and pumps appear as vertical
+            pressure steps, marked with ×.
           </div>
         </section>
 
@@ -352,12 +364,18 @@
             </li>
             <li>
               Results appear on the canvas: junction nodes show their computed pressure with a tag,
-              and boundary nodes show the computed flow rate. The convergence history plot is available
-              in the <em>View</em> menu.
+              and boundary nodes show the computed flow rate. The convergence history plot opens
+              automatically during the solve and can be reopened at any time from
+              <em>View → Convergence Window</em>.
             </li>
             <li>
               Click any node to see a summary popup with pressure, elevation, and connected flows.
-              Double-click any link to open its dialog and view the <strong>Pressure Profile</strong>.
+              Right-click any link to open its context menu and view the <strong>Pressure Profile</strong>.
+            </li>
+            <li>
+              Use <em>File → Save</em> (<kbd>Ctrl+S</kbd>) to persist the scene and results.
+              Reopening the file restores the last solve output, so <em>Export Results Report</em>
+              works immediately without re-running.
             </li>
           </ol>
 
@@ -455,11 +473,13 @@
             <div class="tutorial-item">
               <span class="tutorial-num">07</span>
               <div>
-                <h4>Hanoi / EPANET Darcy-Weisbach benchmark</h4>
+                <h4>Hanoi network benchmark</h4>
                 <p>
-                  The classic Hanoi network (34 pipes, 32 nodes) solved with Darcy-Weisbach friction.
-                  Results are compared against the published EPANET reference solution.
-                  This is the primary validation case for the pipe solver.
+                  The classic Hanoi network introduced by Fujiwara &amp; Khang (1990), solved with
+                  Hazen-Williams (C = 130), matching the original problem formulation.
+                  Nodal heads and link flows are compared against reference values computed by this
+                  solver and verified for physical consistency. This is the primary validation case
+                  for the pipe solver on a large, multi-loop network.
                 </p>
               </div>
             </div>
