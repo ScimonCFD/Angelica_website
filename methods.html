@@ -244,6 +244,46 @@
               identical.
             </p>
           </div>
+
+          <div class="method-block">
+            <h3>Convergence criteria</h3>
+            <p>
+              Each stage declares convergence when two conditions hold simultaneously.
+            </p>
+            <p>
+              <strong>1. Pressure-correction magnitude.</strong>
+              After the pressure field is updated, the largest correction applied to any node must
+              fall below a threshold:
+            </p>
+            <div class="eq-display">
+              $$\Delta P_{\max} = \max_i \lvert \alpha\,P'_i \rvert \;\leq\; \varepsilon_{\Delta P}$$
+            </div>
+            <p>
+              $P'_i$ is the raw correction at node $i$ and $\alpha$ is the relaxation factor,
+              so $\Delta P_{\max}$ is the largest pressure change actually applied in that iteration.
+              The default threshold is $\varepsilon_{\Delta P} = 10^{-3}\ \text{Pa}$.
+              A relative criterion is checked in parallel — convergence is declared if either the
+              absolute or the relative threshold is met.
+            </p>
+            <p>
+              <strong>2. Nodal mass imbalance.</strong>
+              At every internal junction the net mass flux must be close to zero — mass that enters
+              must equal mass that leaves. The largest imbalance across all junctions must satisfy:
+            </p>
+            <div class="eq-display">
+              $$\dot{m}_{\text{imb}} = \max_j \left\lvert \sum_{\text{in}} \dot{m} - \sum_{\text{out}} \dot{m} \right\rvert_j \;\leq\; \varepsilon_{\dot{m}}$$
+            </div>
+            <p>
+              Boundary nodes (known pressure or known flow) are excluded from this check:
+              their imbalance is the net flux supplied or extracted by the boundary condition,
+              not a numerical error. The default threshold is $\varepsilon_{\dot{m}} = 10^{-4}\ \text{kg/s}$.
+            </p>
+            <p>
+              The iteration stops as soon as both criteria are satisfied. If neither is met within
+              the iteration limit, the stage terminates and the solver reports the run as
+              unconverged.
+            </p>
+          </div>
         </section>
 
         <!-- PRESSURE CORRECTION -->
