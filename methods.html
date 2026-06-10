@@ -267,16 +267,25 @@
             </p>
             <p>
               <strong>2. Nodal mass imbalance.</strong>
-              At every internal junction the net mass flux must be close to zero — mass that enters
-              must equal mass that leaves. The largest imbalance across all junctions must satisfy:
+              At every internal junction mass that enters must equal mass that leaves.
+              Let $\dot{m}^+_j$ and $\dot{m}^-_j$ be the total mass flow into and out of
+              junction $j$ (kg/s). The relative imbalance is:
             </p>
             <div class="eq-display">
-              $$\dot{m}_{\text{imb}} = \max_j \left\lvert \sum_{\text{in}} \dot{m} - \sum_{\text{out}} \dot{m} \right\rvert_j \;\leq\; \varepsilon_{\dot{m}}$$
+              $$e_j = \frac{\left\lvert \dot{m}^+_j - \dot{m}^-_j \right\rvert}{\dot{m}^+_j + \dot{m}^-_j}$$
             </div>
             <p>
-              Boundary nodes (known pressure or known flow) are excluded from this check:
-              their imbalance is the net flux supplied or extracted by the boundary condition,
-              not a numerical error. The default threshold is $\varepsilon_{\dot{m}} = 10^{-4}\ \text{kg/s}$.
+              Because numerator and denominator carry the same units (kg/s), $e_j$ is
+              dimensionless and lies in $[0,\,1]$. Convergence requires the largest imbalance
+              across all internal junctions to fall below the threshold:
+            </p>
+            <div class="eq-display">
+              $$\max_j\, e_j \;\leq\; \varepsilon_{\text{cont}}$$
+            </div>
+            <p>
+              Boundary nodes (known pressure or known flow) are excluded — their net flux is
+              supplied or extracted by the boundary condition, not a numerical error.
+              The default threshold is $\varepsilon_{\text{cont}} = 10^{-3}$ (−).
             </p>
             <p>
               The iteration stops as soon as both criteria are satisfied. If neither is met within
