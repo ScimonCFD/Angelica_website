@@ -76,13 +76,13 @@
 
             <div class="stat-row">
               <div class="stat">
-                <span class="stat-value">8</span>
+                <span class="stat-value">10</span>
                 <span class="stat-label">Tutorial cases</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat">
-                <span class="stat-value">2</span>
-                <span class="stat-label">EPANET benchmarks</span>
+                <span class="stat-value">4</span>
+                <span class="stat-label">Validation benchmarks</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat">
@@ -285,8 +285,44 @@
               <p class="bench-note">4 representative nodes of 6 shown &nbsp;&middot;&nbsp; pressures in EPANET reference units (psi) &nbsp;&middot;&nbsp; max deviation 0.15 psi &nbsp;&middot;&nbsp; link flows within 1.2 gpm</p>
             </article>
             <article class="info-card">
+              <h3>Three-reservoir junction</h3>
+              <p>Classical Y-junction problem: three fixed-head reservoirs connected at
+                a common node. Junction head and pipe flows are compared against an
+                independent analytical solution computed by bisection over the Colebrook-White
+                equation — no external solver used as reference.</p>
+              <table class="bench-table">
+                <thead>
+                  <tr><th>Quantity</th><th>Analytical</th><th>Angelica</th><th>&Delta;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>H<sub>J</sub> (m)</td><td>25.264</td><td>25.264</td><td>&lt; 0.001</td></tr>
+                  <tr><td>Q<sub>A→J</sub> (m³/h)</td><td>112.347</td><td>112.348</td><td>&lt; 0.001</td></tr>
+                  <tr><td>Q<sub>J→B</sub> (m³/h)</td><td>62.357</td><td>62.357</td><td>&lt; 0.001</td></tr>
+                  <tr><td>Q<sub>J→C</sub> (m³/h)</td><td>49.990</td><td>49.990</td><td>&lt; 0.001</td></tr>
+                </tbody>
+              </table>
+              <p class="bench-note">Independent reference: bisection + Colebrook-White &nbsp;&middot;&nbsp; agreement to within 0.001 m³/h on all flows</p>
+            </article>
+            <article class="info-card">
+              <h3>Laminar Poiseuille benchmark</h3>
+              <p>Three smooth parallel pipes carrying viscous oil (Re&nbsp;&lt;&nbsp;180).
+                Volumetric flows are compared against the exact closed-form Poiseuille
+                solution Q&nbsp;=&nbsp;&pi;D&#8308;&Delta;P&nbsp;/&nbsp;(128&mu;L).</p>
+              <table class="bench-table">
+                <thead>
+                  <tr><th>Pipe</th><th>Exact (m³/h)</th><th>Angelica (m³/h)</th><th>&Delta;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>D&nbsp;=&nbsp;20&nbsp;mm, L&nbsp;=&nbsp;10&nbsp;m</td><td>0.70686</td><td>0.70686</td><td>0.00000</td></tr>
+                  <tr><td>D&nbsp;=&nbsp;15&nbsp;mm, L&nbsp;=&nbsp;8&nbsp;m</td><td>0.27957</td><td>0.27957</td><td>0.00000</td></tr>
+                  <tr><td>D&nbsp;=&nbsp;25&nbsp;mm, L&nbsp;=&nbsp;12&nbsp;m</td><td>1.43811</td><td>1.43811</td><td>0.00000</td></tr>
+                </tbody>
+              </table>
+              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; max relative error 0.0000&nbsp;% &nbsp;&middot;&nbsp; tests the Poiseuille initialization phase in isolation</p>
+            </article>
+            <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Eight cases covering the full range of element types and boundary
+              <p>Ten cases covering the full range of element types and boundary
                 combinations — for smoke testing, onboarding, and regression checks.</p>
               <ul class="tutorial-case-list">
                 <li>Pipe network</li>
@@ -297,6 +333,8 @@
                 <li>Combined inlet + outlet</li>
                 <li>Hanoi 32-node network</li>
                 <li>EPANET pump network</li>
+                <li>Three-reservoir junction</li>
+                <li>Laminar Poiseuille benchmark</li>
               </ul>
             </article>
           </div>
