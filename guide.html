@@ -403,7 +403,7 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with eight tutorial cases in the <code>tutorials/steady_isothermal_incompressible/</code>
+            Angelica ships with eleven tutorial cases in the <code>tutorials/steady_isothermal_incompressible/</code>
             folder. Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
             and a <code>run.py</code> script that solves the same network from Python.
             Open them via <em>File → Open</em>.
@@ -503,6 +503,46 @@
                 <p>
                   A pump-bearing network adapted from the official EPANET tutorial. Validates the pump
                   curve model (quadratic head-vs-flow fit) against the EPANET reference solution.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">09</span>
+              <div>
+                <h4>Three-reservoir junction</h4>
+                <p>
+                  Classic Y-junction problem: three fixed-head reservoirs connected at a common node.
+                  Junction head and pipe flows are compared against an independent analytical solution
+                  computed by bisection over the Colebrook-White equation. Agreement is within 0.001 m³/h
+                  on all flows.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">10</span>
+              <div>
+                <h4>Laminar Poiseuille benchmark</h4>
+                <p>
+                  Three smooth parallel pipes carrying viscous oil (Re &lt; 180). Volumetric flows are
+                  compared against the exact closed-form Hagen-Poiseuille solution
+                  Q = πD⁴ΔP / (128μL). Maximum relative error is below 0.001 % — confirming
+                  that the solver handles the laminar regime correctly.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">11</span>
+              <div>
+                <h4>Crude oil gathering pipeline</h4>
+                <p>
+                  A branched steel pipeline carrying 32°API dead crude at 65°C. Fluid density and
+                  viscosity are computed automatically from API gravity and temperature via the
+                  Beggs &amp; Robinson (1975) correlation — no manual property look-up required.
+                  All three pipes operate in the fully turbulent regime (Re = 19 000–31 000),
+                  solved with Colebrook-White friction.
                 </p>
               </div>
             </div>
