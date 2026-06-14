@@ -7,6 +7,7 @@
     'Rossman, L. A. (2000). <em>EPANET 2 Users Manual</em>. U.S. Environmental Protection Agency, National Risk Management Research Laboratory.',
     'Fujiwara, O., &amp; Khang, D. B. (1990). A two-phase decomposition method for optimal design of looped water distribution networks. <em>Water Resources Research</em>, 26(4), 539–549.',
     'Vuta, L. I., &amp; Piraianu, V. (2008). InfoWorks WS and EPANET v2 — Modeling the water distribution networks. <em>Scientific Bulletin of Politehnica University of Bucharest, Series D: Mechanical Engineering</em>, 70(4), 91–102.',
+    'Beggs, H. D., &amp; Robinson, J. R. (1975). Estimating the viscosity of crude oil systems. <em>Journal of Petroleum Technology</em>, 27(09), 1140–1141.',
   ];
 
   var root = document.getElementById('references-root');

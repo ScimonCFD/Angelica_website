@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/methods.html" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -43,6 +43,7 @@
             <a href="#governing">Equations</a>
             <a href="#algorithm">Algorithm</a>
             <a href="#pressure-correction">Pressure-correction</a>
+            <a href="#fluid-properties">Fluid properties</a>
           </div>
           <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
         </nav>
@@ -478,6 +479,93 @@
           </div>
         </section>
 
+        <!-- FLUID PROPERTIES -->
+        <section id="fluid-properties" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Fluid properties</p>
+            <h2>From field data to solver inputs.</h2>
+          </div>
+          <p class="section-intro">
+            The solver requires two fluid properties at every iteration: density $\rho$ and
+            dynamic viscosity $\mu$. Angelica provides two ways to supply them.
+          </p>
+
+          <div class="method-block">
+            <h3>General liquid — direct input</h3>
+            <p>
+              For water, refined products, or any single-phase liquid with known properties,
+              density and viscosity are entered directly. The solver uses these values as
+              constants throughout the simulation.
+            </p>
+            <p>
+              A water preset is provided at standard conditions
+              ($\rho = 998.25\ \text{kg m}^{-3}$, $\mu = 1.002 \times 10^{-3}\ \text{Pa s}$).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Crude oil — Beggs &amp; Robinson (1975) <a href="#ref-8" class="cite">[8]</a></h3>
+            <p>
+              For dead crude oil the user provides two field parameters: <strong>API gravity</strong>
+              and <strong>operating temperature</strong>. Density and viscosity are then
+              computed automatically before the solver runs.
+            </p>
+
+            <h3>Density from API gravity</h3>
+            <p>
+              The API gravity scale converts to specific gravity and then to density at
+              standard conditions:
+            </p>
+            <div class="eq-display">
+              $$SG = \frac{141.5}{API + 131.5}, \qquad \rho = SG \times 999.064\ \ \text{kg m}^{-3}$$
+            </div>
+
+            <h3>Viscosity — Beggs &amp; Robinson correlation</h3>
+            <p>
+              Dead-oil viscosity is estimated from a double-logarithmic expression that
+              correlates viscosity with API gravity and temperature in degrees Fahrenheit:
+            </p>
+            <div class="eq-display">
+              $$\log_{10}\!\bigl(\log_{10}(\mu_{\text{dead}} + 1)\bigr)
+                = \underbrace{(3.0324 - 0.02023\cdot API)}_{A} - 1.163\,\log_{10}(T_{\!\circ F})$$
+            </div>
+            <p class="var-list">
+              $\mu_{\text{dead}}$ — dead-oil viscosity (cP) &nbsp;&middot;&nbsp;
+              $T_{\!\circ F}$ — temperature in °F &nbsp;&middot;&nbsp;
+              $API$ — API gravity (°API)
+            </p>
+            <p>
+              The resulting viscosity in centipoise is converted to SI units
+              ($\text{Pa s} = \text{cP} / 1000$) before being passed to the solver.
+            </p>
+
+            <h3>Isothermal treatment of temperature</h3>
+            <p>
+              Temperature enters the model only at this property-evaluation step.
+              Once $\rho$ and $\mu$ are computed, temperature plays no further role —
+              the solver remains fully isothermal. This is physically consistent with
+              the assumption that the pipeline operates at a uniform, known temperature
+              (e.g. reservoir temperature or an insulated flowline average).
+            </p>
+
+            <div class="bc-grid" style="margin-top:1.4rem;">
+              <article class="info-card">
+                <h3>Example — 32°API at 65°C</h3>
+                <p>$\rho = 864.6\ \text{kg m}^{-3}$</p>
+                <p>$\mu = 4.25\ \text{cP}\ \ (0.00425\ \text{Pa s})$</p>
+                <p style="margin-top:0.6rem;font-size:0.85rem;opacity:0.75;">
+                  See Tutorial 11 for a full branched pipeline case using these values.
+                </p>
+              </article>
+              <article class="info-card">
+                <h3>Validity range</h3>
+                <p>The Beggs &amp; Robinson correlation is applicable to dead crude oils
+                  in the range 16–58°API and temperatures above 0°F (−18°C).</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       <div id="references-root"></div>
@@ -516,6 +604,7 @@
           <a href="#governing">Governing equations</a>
           <a href="#algorithm">Algorithm</a>
           <a href="#pressure-correction">Pressure-correction</a>
+          <a href="#fluid-properties">Fluid properties</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
