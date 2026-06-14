@@ -296,9 +296,21 @@
             <li>
               <span class="panel-name">Fluid</span>
               <span class="panel-desc">
-                Choose a working fluid. Pick from the built-in library (Water, Air, …) or enter custom
-                density (kg/m³) and dynamic viscosity (Pa·s) values. The fluid properties affect the
-                Reynolds number calculation and therefore the friction-factor regime in every pipe.
+                Choose a working fluid. Three modes are available:
+                <br><br>
+                <strong>Library</strong> — pick a preset (Water at standard conditions).
+                <br><br>
+                <strong>Custom</strong> — enter density (kg/m³) and dynamic viscosity (Pa·s) directly.
+                Use this for refined products, brines, or any liquid with known properties.
+                <br><br>
+                <strong>Crude oil</strong> — enter two field parameters: <em>API gravity</em> (°API)
+                and <em>operating temperature</em> (°C). Angelica computes density and viscosity
+                automatically using the Beggs &amp; Robinson (1975) dead-oil correlation before
+                running the solver. Temperature is used only for this property calculation —
+                the simulation itself is isothermal.
+                <br><br>
+                All three modes feed the same solver. Fluid properties affect the Reynolds number
+                in every pipe and therefore the friction-factor regime throughout the network.
               </span>
             </li>
 
