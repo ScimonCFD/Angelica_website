@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
     <script type="application/ld+json">
     {
@@ -76,7 +76,7 @@
 
             <div class="stat-row">
               <div class="stat">
-                <span class="stat-value">10</span>
+                <span class="stat-value">11</span>
                 <span class="stat-label">Tutorial cases</span>
               </div>
               <div class="stat-divider"></div>
@@ -229,6 +229,18 @@
             <article class="cap-card">
               <div class="cap-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M3 12h3M18 12h3M12 3v3M12 18v3"/>
+                  <path d="M6.34 6.34l2.12 2.12M15.54 15.54l2.12 2.12M6.34 17.66l2.12-2.12M15.54 8.46l2.12-2.12"/>
+                </svg>
+              </div>
+              <h3>Fluid properties</h3>
+              <p>Water (library preset) or any liquid with custom density and viscosity. Crude oil: enter API gravity and operating temperature — density and viscosity are computed automatically via Beggs &amp; Robinson (1975).</p>
+            </article>
+
+            <article class="cap-card">
+              <div class="cap-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="16 18 22 12 16 6"/>
                   <polyline points="8 6 2 12 8 18"/>
                 </svg>
@@ -318,12 +330,12 @@
                   <tr><td>D&nbsp;=&nbsp;25&nbsp;mm, L&nbsp;=&nbsp;12&nbsp;m</td><td>1.43811</td><td>1.43811</td><td>0.00000</td></tr>
                 </tbody>
               </table>
-              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; max relative error 0.0000&nbsp;% &nbsp;&middot;&nbsp; tests the Poiseuille initialization phase in isolation</p>
+              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; max relative error 0.0000&nbsp;% &nbsp;&middot;&nbsp; Re &lt; 2300 in all pipes &nbsp;&middot;&nbsp; solver uses f&nbsp;=&nbsp;64/Re automatically</p>
             </article>
             <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Ten cases covering the full range of element types and boundary
-                combinations — for smoke testing, onboarding, and regression checks.</p>
+              <p>Eleven cases covering the full range of element types, boundary
+                combinations, and fluid types — for smoke testing, onboarding, and regression checks.</p>
               <ul class="tutorial-case-list">
                 <li>Pipe network</li>
                 <li>Fittings — without elevation</li>
@@ -335,6 +347,7 @@
                 <li>EPANET pump network</li>
                 <li>Three-reservoir junction</li>
                 <li>Laminar Poiseuille benchmark</li>
+                <li>Crude oil gathering pipeline — 32°API, 65°C</li>
               </ul>
             </article>
           </div>
