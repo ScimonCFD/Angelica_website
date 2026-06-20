@@ -14,18 +14,44 @@
   var root = document.getElementById('references-root');
   if (!root) return;
 
+  // Inject collapsible styles once per page
+  if (!document.getElementById('ref-details-styles')) {
+    var style = document.createElement('style');
+    style.id = 'ref-details-styles';
+    style.textContent =
+      '.ref-summary { list-style: none; cursor: pointer; user-select: none; }\n' +
+      '.ref-summary::-webkit-details-marker { display: none; }\n' +
+      '.ref-summary .eyebrow::after { content: " \\25B8"; font-style: normal; }\n' +
+      '.ref-details[open] .ref-summary .eyebrow::after { content: " \\25BE"; }\n';
+    document.head.appendChild(style);
+  }
+
   var items = refs.map(function (r, i) {
     return '<li id="ref-' + (i + 1) + '">' + r + '</li>';
   }).join('\n        ');
 
   root.innerHTML =
     '<section class="section ref-section" id="references">' +
-      '<div class="section-head">' +
-        '<p class="eyebrow">References</p>' +
-        '<h2>Sources and further reading.</h2>' +
-      '</div>' +
-      '<ol class="ref-list">' +
-        '\n        ' + items + '\n      ' +
-      '</ol>' +
+      '<details class="ref-details">' +
+        '<summary class="ref-summary">' +
+          '<div class="section-head">' +
+            '<p class="eyebrow">References</p>' +
+            '<h2>Sources and further reading.</h2>' +
+          '</div>' +
+        '</summary>' +
+        '<ol class="ref-list">' +
+          '\n        ' + items + '\n      ' +
+        '</ol>' +
+      '</details>' +
     '</section>';
+
+  // Auto-expand if the page was loaded or navigated to a #ref-N anchor
+  function openIfRefHash() {
+    if (/^#ref-\d+$/.test(location.hash)) {
+      var det = root.querySelector('.ref-details');
+      if (det) det.open = true;
+    }
+  }
+  openIfRefHash();
+  window.addEventListener('hashchange', openIfRefHash);
 })();
