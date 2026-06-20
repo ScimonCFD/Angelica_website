@@ -6,7 +6,7 @@
     <title>Angelica — Numerical Method</title>
     <meta
       name="description"
-      content="Modified SIMPLE algorithm for steady, incompressible, isothermal pipe network simulation. Governing equations, pressure-correction coefficients, and algorithm for pipes, fittings, and pumps."
+      content="Numerical methods for steady incompressible pipe network simulation: modified SIMPLE pressure-correction algorithm, NTU heat-loss model, Moukalled source linearisation for inline heaters, and the outer non-isothermal iteration loop."
     />
     <meta property="og:type"        content="website" />
     <meta property="og:title"       content="Angelica — Numerical Method" />
@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/methods.html" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=15" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -44,6 +44,7 @@
             <a href="#algorithm">Algorithm</a>
             <a href="#pressure-correction">Pressure-correction</a>
             <a href="#fluid-properties">Fluid properties</a>
+            <a href="#non-isothermal">Non-isothermal</a>
           </div>
           <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
         </nav>
@@ -539,13 +540,19 @@
               ($\text{Pa s} = \text{cP} / 1000$) before being passed to the solver.
             </p>
 
-            <h3>Isothermal treatment of temperature</h3>
+            <h3>Isothermal use of temperature (crude oil mode)</h3>
             <p>
-              Temperature enters the model only at this property-evaluation step.
-              Once $\rho$ and $\mu$ are computed, temperature plays no further role —
-              the solver remains fully isothermal. This is physically consistent with
-              the assumption that the pipeline operates at a uniform, known temperature
+              In the crude oil property model, temperature enters only at this
+              property-evaluation step. Once $\rho$ and $\mu$ are computed, the
+              isothermal solver treats them as constants. This is physically consistent
+              with the assumption that the pipeline operates at a uniform, known temperature
               (e.g. reservoir temperature or an insulated flowline average).
+            </p>
+            <p>
+              For applications where temperature varies along the network — district
+              heating, heat exchangers, chilled water systems — the full non-isothermal
+              solver described in the next section solves the energy equation on the
+              converged flow field and handles temperature-dependent properties iteratively.
             </p>
 
             <div class="bc-grid" style="margin-top:1.4rem;">
@@ -564,6 +571,117 @@
               </article>
             </div>
           </div>
+        </section>
+
+        <!-- NON-ISOTHERMAL SOLVER -->
+        <section id="non-isothermal" class="section dark">
+          <div class="section-head">
+            <p class="eyebrow">Non-isothermal solver</p>
+            <h2>Heat transport from first principles.</h2>
+          </div>
+          <p class="section-intro">
+            When fluid temperature varies along the network, Angelica solves the
+            1-D steady-state energy equation on the converged hydraulic field.
+            Three physical models are combined: convective transport along each pipe,
+            ambient heat loss through the pipe wall, and fixed-power inline heaters
+            or coolers.
+          </p>
+
+          <div class="method-block">
+            <h3>Governing energy equation</h3>
+            <p>
+              For a fluid element moving along a pipe at mass flow rate $\dot{m}$, the
+              steady-state energy balance per unit length is:
+            </p>
+            <div class="eq-display">
+              $$\dot{m}\,c_p\,\frac{dT}{dx} = -U\pi D\,(T - T_{\!\text{amb}}) + q'$$
+            </div>
+            <p class="var-list">
+              $\dot{m}$ — mass flow rate (kg s<sup>−1</sup>) &nbsp;&middot;&nbsp;
+              $c_p$ — specific heat (J kg<sup>−1</sup> K<sup>−1</sup>) &nbsp;&middot;&nbsp;
+              $T$ — fluid temperature (K) &nbsp;&middot;&nbsp;
+              $T_{\!\text{amb}}$ — ambient temperature (K) &nbsp;&middot;&nbsp;
+              $U$ — overall heat transfer coefficient (W m<sup>−2</sup> K<sup>−1</sup>) &nbsp;&middot;&nbsp;
+              $D$ — pipe inner diameter (m) &nbsp;&middot;&nbsp;
+              $q'$ — heat source per unit length (W m<sup>−1</sup>)
+            </p>
+            <p>
+              The sign convention is: $U > 0$ means heat lost to the environment;
+              $q' > 0$ means heat added to the fluid (heater).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Pipe heat loss — NTU analytical solution</h3>
+            <p>
+              For a pipe with no internal source ($q' = 0$), the ODE has the exact solution:
+            </p>
+            <div class="eq-display">
+              $$T_{\text{out}} = T_{\!\text{amb}} + (T_{\text{in}} - T_{\!\text{amb}})\,e^{-\text{NTU}}$$
+            </div>
+            <p class="var-list">
+              $\text{NTU} = \dfrac{U\pi D L}{\dot{m}\,c_p}$ — Number of Transfer Units
+            </p>
+            <p>
+              Each pipe segment is discretised into $N$ sub-elements. The analytical
+              solution is applied element-by-element in a sweep from inlet to outlet,
+              accumulating the temperature profile. This avoids numerical diffusion
+              that would arise from a finite-difference discretisation of the
+              convective derivative.
+            </p>
+            <p>
+              The solver is validated against this exact formula and against the textbook
+              benchmark from Cengel &amp; Ghajar <a href="#ref-9" class="cite">[9]</a>
+              Example 8-3 (dead crude oil flowing through an icy lake,
+              $T_{\text{exit}} = 19.74\ ^{\circ}\text{C}$, reproduced within 0.05 K).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Inline heaters and coolers — Moukalled source term</h3>
+            <p>
+              A heater or cooler delivers a fixed total thermal power $Q$ (W) distributed
+              uniformly over $n$ internal nodes. Following Moukalled, Mangani &amp; Darwish
+              <a href="#ref-2" class="cite">[2]</a>, the source term is linearised as:
+            </p>
+            <div class="eq-display">
+              $$S_u = S_c + S_p\,T_P, \qquad S_c = \frac{Q}{n},\quad S_p = 0$$
+            </div>
+            <p class="var-list">
+              $S_c$ — constant part of the source (W node<sup>−1</sup>) &nbsp;&middot;&nbsp;
+              $S_p \le 0$ — linearised coefficient (satisfies diagonal-dominance requirement) &nbsp;&middot;&nbsp;
+              $T_P$ — node temperature (K)
+            </p>
+            <p>
+              Since $S_p = 0$, the linearisation is trivial but correct: the fixed-power
+              constraint does not depend on the local temperature, so no coefficient is needed.
+              The total energy added is exactly $Q$ regardless of how many nodes are used
+              ($S_c \times n = Q$). A cooler is represented by $Q < 0$.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Outer iteration loop</h3>
+            <p>
+              Because fluid density and viscosity depend on temperature, the hydraulic
+              and thermal problems are coupled. Angelica resolves this coupling through
+              a segregated outer loop:
+            </p>
+            <ol style="margin:0.8rem 0 0.8rem 1.4rem;line-height:1.9;">
+              <li>Initialise temperatures from the source boundary condition.</li>
+              <li>Evaluate $\rho(T)$ and $\mu(T)$ at each link's current temperature.</li>
+              <li>Solve the hydraulic problem (SIMPLE) to convergence.</li>
+              <li>Solve the energy equation on the converged flow field.</li>
+              <li>Update temperatures. Compute the maximum nodal temperature change $\Delta T_{\max}$.</li>
+              <li>If $\Delta T_{\max} > \varepsilon_T$, return to step 2. Otherwise stop.</li>
+            </ol>
+            <p>
+              Under-relaxation on the temperature update
+              ($T^{n+1} = \alpha\,T^*+(1-\alpha)\,T^n$, default $\alpha = 1$)
+              is available for looped networks where the coupling is stronger.
+            </p>
+          </div>
+
         </section>
 
       </main>
@@ -605,6 +723,7 @@
           <a href="#algorithm">Algorithm</a>
           <a href="#pressure-correction">Pressure-correction</a>
           <a href="#fluid-properties">Fluid properties</a>
+          <a href="#non-isothermal">Non-isothermal</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>

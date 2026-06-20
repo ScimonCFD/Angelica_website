@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/guide.html" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=15" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
     <style>
       /* Guide-specific styles */
@@ -403,14 +403,16 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with eleven tutorial cases in the <code>tutorials/steady_isothermal_incompressible/</code>
-            folder. Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
+            Angelica ships with fifteen tutorial cases across two folders:
+            <code>tutorials/steady_isothermal_incompressible/</code> (cases 01–11) and
+            <code>tutorials/steady_non_isothermal_incompressible/</code> (cases 12–15).
+            Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
             and a <code>run.py</code> script that solves the same network from Python.
             Open them via <em>File → Open</em>.
           </p>
           <p>
             The cases are ordered by increasing complexity and cover every device and boundary-condition
-            type supported by the current solver.
+            type supported by both solvers — isothermal and non-isothermal.
           </p>
 
           <div class="tutorial-list">
@@ -543,6 +545,69 @@
                   Beggs &amp; Robinson (1975) correlation — no manual property look-up required.
                   All three pipes operate in the fully turbulent regime (Re = 19 000–31 000),
                   solved with Colebrook-White friction.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <p style="margin-top:2rem;font-weight:600;">Non-isothermal tutorials</p>
+          <p style="margin-bottom:1.2rem;">
+            The following cases require the physics mode to be set to <em>Non-isothermal</em>
+            in the simulation settings. Source nodes need an inlet temperature; pipes need a heat
+            transfer coefficient U and an ambient temperature.
+          </p>
+
+          <div class="tutorial-list">
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">12</span>
+              <div>
+                <h4>Hot water pipe with ambient heat loss</h4>
+                <p>
+                  A single 500 m pipe carrying 80 °C water with a wall heat transfer coefficient
+                  of U = 50 W/m²K. The outlet temperature is compared against the exact
+                  NTU analytical solution T<sub>out</sub> = T<sub>amb</sub> + (T<sub>in</sub> − T<sub>amb</sub>) e<sup>−NTU</sup>.
+                  Agreement is within 0.01 K.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">13</span>
+              <div>
+                <h4>District heating branch</h4>
+                <p>
+                  An 85 °C supply header splits at a junction into a short branch and a long branch,
+                  each delivering heat to a building. The long branch arrives cooler than the short
+                  branch — a direct consequence of the NTU heat-loss model accumulating along each
+                  pipe's length.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">14</span>
+              <div>
+                <h4>Looped network with heat loss</h4>
+                <p>
+                  A 95 °C source feeds a looped network where one branch is much longer than the
+                  bypass. Demonstrates that the outer temperature–hydraulics iteration converges
+                  correctly for looped topologies, where the flow distribution affects heat loss
+                  and heat loss affects density — and therefore the flow distribution.
+                </p>
+              </div>
+            </div>
+
+            <div class="tutorial-item">
+              <span class="tutorial-num">15</span>
+              <div>
+                <h4>Inline electric heater — energy balance</h4>
+                <p>
+                  Cold water at 20 °C flows through an inline heater that adds 50 kW of thermal
+                  power. The heater is hydraulically transparent (ΔP = 0). The tutorial verifies
+                  the energy balance ΔT = Q / (ṁ·c<sub>p</sub>) to within 0.5 K and illustrates
+                  how to read inlet and outlet temperatures from <code>component_flows</code>.
                 </p>
               </div>
             </div>

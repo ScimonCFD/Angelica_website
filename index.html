@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
     <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=15" />
     <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
     <script type="application/ld+json">
     {
@@ -30,7 +30,7 @@
       "downloadUrl": "https://github.com/ScimonCFD/Angelica/releases/latest",
       "applicationCategory": "EngineeringApplication",
       "operatingSystem": "Windows, Linux, macOS",
-      "softwareVersion": "1.0.11",
+      "softwareVersion": "1.1.0",
       "license": "https://opensource.org/licenses/MIT",
       "author": {
         "@type": "Person",
@@ -69,19 +69,19 @@
           <div class="hero-copy">
             <h1>The open&#8209;source platform for pipeline network simulation.</h1>
             <p class="hero-text">
-              Validated solver, engineer&#8209;friendly interface, and a clear roadmap
-              toward non&#8209;isothermal, compressible, and multiphase flow.
-              Free forever.
+              Validated solver, engineer&#8209;friendly interface, isothermal and
+              non&#8209;isothermal flow — with a clear roadmap toward compressible
+              and multiphase simulation. Free forever.
             </p>
 
             <div class="stat-row">
               <div class="stat">
-                <span class="stat-value">11</span>
+                <span class="stat-value">15</span>
                 <span class="stat-label">Tutorial cases</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat">
-                <span class="stat-value">4</span>
+                <span class="stat-value">6</span>
                 <span class="stat-label">Validation benchmarks</span>
               </div>
               <div class="stat-divider"></div>
@@ -149,9 +149,9 @@
 
             <div class="value-card">
               <h3>An architecture with a plan.</h3>
-              <p>The current incompressible solver is the first stage of a platform
-                designed to grow. Non&#8209;isothermal, compressible, and multiphase
-                pipeline simulation are all on the roadmap — not afterthoughts.</p>
+              <p>Isothermal and non&#8209;isothermal solvers are both live.
+                Compressible and multiphase pipeline simulation are next on the
+                roadmap — each stage built on the same validated foundation.</p>
             </div>
 
             <div class="value-card">
@@ -202,6 +202,16 @@
               </div>
               <h3>Pumps</h3>
               <p>Single-point EPANET model and piecewise-linear multi-point curves. Operating point computed directly from the required head.</p>
+            </article>
+
+            <article class="cap-card">
+              <div class="cap-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </div>
+              <h3>Non-isothermal flow</h3>
+              <p>Heat loss along pipes via the NTU method. Inline heaters and coolers with fixed thermal power. Temperature-dependent fluid properties (ρ, μ, c<sub>p</sub>). Pressure and temperature profiles per link.</p>
             </article>
 
             <article class="cap-card">
@@ -333,9 +343,44 @@
               <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; max relative error 0.0000&nbsp;% &nbsp;&middot;&nbsp; Re &lt; 2300 in all pipes &nbsp;&middot;&nbsp; solver uses f&nbsp;=&nbsp;64/Re automatically</p>
             </article>
             <article class="info-card">
+              <h3>NTU pipe heat loss &mdash; analytical benchmark</h3>
+              <p>Single pipe with ambient heat loss. The steady 1-D energy equation
+                has the exact closed-form solution
+                T<sub>out</sub>&nbsp;=&nbsp;T<sub>amb</sub>&nbsp;+&nbsp;(T<sub>in</sub>&nbsp;&minus;&nbsp;T<sub>amb</sub>)&nbsp;e<sup>&minus;NTU</sup>,
+                where NTU&nbsp;=&nbsp;U&pi;DL&nbsp;/&nbsp;(&#7745;&nbsp;c<sub>p</sub>).
+                Angelica is driven with a fixed mass flow and the outlet temperature is compared against this formula.</p>
+              <table class="bench-table">
+                <thead>
+                  <tr><th>Quantity</th><th>Analytical</th><th>Angelica</th><th>&Delta;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>NTU (&minus;)</td><td>0.470</td><td>n/a</td><td>n/a</td></tr>
+                  <tr><td>T<sub>out</sub> (&deg;C)</td><td>57.5</td><td>57.5</td><td>&lt;&nbsp;0.3&nbsp;K</td></tr>
+                </tbody>
+              </table>
+              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; L&nbsp;=&nbsp;500&nbsp;m, D&nbsp;=&nbsp;25&nbsp;mm, U&nbsp;=&nbsp;50&nbsp;W/m&sup2;K &nbsp;&middot;&nbsp; &#7745;&nbsp;=&nbsp;1&nbsp;kg/s &nbsp;&middot;&nbsp; T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C</p>
+            </article>
+            <article class="info-card">
+              <h3>Cengel &amp; Ghajar Example 8-3 &mdash; oil through icy lake <a href="#ref-9" class="cite">[9]</a></h3>
+              <p>Dead crude oil at 20&nbsp;&deg;C flows at 2&nbsp;m/s through a 30&nbsp;cm diameter,
+                200&nbsp;m long pipe submerged in an icy lake (0&nbsp;&deg;C). The textbook derives
+                h&nbsp;=&nbsp;16.3&nbsp;W/m&sup2;K from the Gnielinski correlation and computes
+                the exit temperature via the NTU formula. Angelica is given the same h as a fixed
+                overall U and reproduces the textbook result.</p>
+              <table class="bench-table">
+                <thead>
+                  <tr><th>Quantity</th><th>Textbook <a href="#ref-9" class="cite">[9]</a></th><th>Angelica</th><th>&Delta;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>T<sub>exit</sub> (&deg;C)</td><td>19.74</td><td>19.74</td><td>&lt;&nbsp;0.05&nbsp;K</td></tr>
+                </tbody>
+              </table>
+              <p class="bench-note">External textbook reference &nbsp;&middot;&nbsp; dead crude oil, &rho;&nbsp;=&nbsp;888&nbsp;kg/m&sup3;, c<sub>p</sub>&nbsp;=&nbsp;1880&nbsp;J/kg&middot;K &nbsp;&middot;&nbsp; &#7745;&nbsp;=&nbsp;125.6&nbsp;kg/s</p>
+            </article>
+            <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Eleven cases covering the full range of element types, boundary
-                combinations, and fluid types — for smoke testing, onboarding, and regression checks.</p>
+              <p>Fifteen cases covering the full range of element types, boundary
+                combinations, fluid types, and thermal effects — for smoke testing, onboarding, and regression checks.</p>
               <ul class="tutorial-case-list">
                 <li>Pipe network</li>
                 <li>Fittings — without elevation</li>
@@ -348,6 +393,10 @@
                 <li>Three-reservoir junction</li>
                 <li>Laminar Poiseuille benchmark</li>
                 <li>Crude oil gathering pipeline — 32°API, 65°C</li>
+                <li>Hot water pipe with ambient heat loss</li>
+                <li>District heating branch — two-outlet network</li>
+                <li>Looped network with heat loss</li>
+                <li>Inline electric heater — energy balance verification</li>
               </ul>
             </article>
           </div>
@@ -375,7 +424,7 @@
               </div>
               <h3>One-click installer</h3>
               <p>No Python required. Installs to your user folder — no admin rights needed. Includes a Start&nbsp;Menu shortcut and uninstaller.</p>
-              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.0.11</p>
+              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.1.0</p>
               <a class="button primary download-btn"
                  href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup.exe"
                  target="_blank" rel="noreferrer">
@@ -407,7 +456,7 @@ angelica-gui</pre>
         <section id="roadmap" class="section dark">
           <div class="section-head">
             <p class="eyebrow">Long-term objective</p>
-            <h2>From incompressible, isothermal flow toward multiphase multicomponent pipeline simulation.</h2>
+            <h2>From incompressible flow toward multiphase multicomponent pipeline simulation.</h2>
           </div>
           <div class="roadmap-grid">
 
@@ -417,7 +466,10 @@ angelica-gui</pre>
               Steady, incompressible, isothermal flow
             </div>
             <div class="roadmap-arrow" style="grid-column:2;grid-row:1">&#8594;</div>
-            <div class="roadmap-item future" style="grid-column:3;grid-row:1">Steady, non-isothermal flow</div>
+            <div class="roadmap-item current" style="grid-column:3;grid-row:1">
+              <span class="roadmap-tag">Current</span>
+              Steady, non-isothermal flow
+            </div>
             <div class="roadmap-arrow" style="grid-column:4;grid-row:1">&#8594;</div>
             <div class="roadmap-col5" style="grid-column:5;grid-row:1">
               <div class="roadmap-item future">Compressible flow</div>
