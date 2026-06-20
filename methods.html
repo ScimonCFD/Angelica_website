@@ -680,6 +680,19 @@
               ($T^{n+1} = \alpha\,T^*+(1-\alpha)\,T^n$, default $\alpha = 1$)
               is available for looped networks where the coupling is stronger.
             </p>
+
+            <figure class="algo-figure">
+              <img src="assets/flowchart_non_isothermal.svg"
+                   alt="Non-isothermal outer loop flowchart showing the SIMPLE hydraulic solver nested inside the temperature iteration"
+                   class="algo-flowchart"/>
+              <figcaption>
+                Figure 2 &mdash; Non-isothermal outer loop. The SIMPLE hydraulic solver
+                (Stage&nbsp;1 + Stage&nbsp;2) runs to full convergence on each outer
+                iteration before the energy equation is solved.
+                The loop repeats until the maximum nodal temperature change
+                $\Delta T_{\max}$ falls below the tolerance $\varepsilon_T$.
+              </figcaption>
+            </figure>
           </div>
 
         </section>
