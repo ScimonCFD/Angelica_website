@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angelica — Thermal Solver</title>
+    <meta
+      name="description"
+      content="Non-isothermal pipe network solver: governing energy equation, NTU pipe heat-loss model, Moukalled source linearisation for inline heaters, and the outer temperature–hydraulics iteration loop."
+    />
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Angelica — Thermal Solver" />
+    <meta property="og:description" content="Non-isothermal solver for pipe networks. Energy equation, NTU heat loss, inline heaters, and the outer loop that wraps the SIMPLE hydraulic solver." />
+    <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/thermal.html" />
+    <meta name="twitter:card"       content="summary_large_image" />
+    <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/thermal.html" />
+    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <header class="hero compact-hero methods-dark">
+        <nav class="topbar">
+          <a class="brand" href="index.html">
+            <span class="brand-icon">
+              <img src="assets/logomark.svg" alt="" class="brand-mark" />
+            </span>
+            <span class="brand-lockup">
+              <span class="brand-name">Angelica</span>
+              <span class="brand-tagline">Fluid networks solved</span>
+            </span>
+          </a>
+          <div class="toplinks">
+            <a href="index.html">Home</a>
+            <a href="guide.html">Guide</a>
+            <a href="methods.html">Hydraulic</a>
+            <a href="thermal.html">Thermal</a>
+            <a href="#scope">Scope</a>
+            <a href="#outer-loop">Outer loop</a>
+            <a href="#governing">Energy equation</a>
+            <a href="#ntu">NTU heat loss</a>
+            <a href="#heaters">Heaters</a>
+          </div>
+          <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+        </nav>
+
+        <div class="methods-page-title">
+          <p class="eyebrow">Non-isothermal Solver</p>
+          <h1>Heat transport on a converged flow field.</h1>
+          <p class="methods-subtitle">
+            The <a href="methods.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver</a>
+            provides the converged pressure field and mass flow rates.
+            The thermal solver uses that result to solve the steady energy equation,
+            updates temperature-dependent fluid properties, and iterates until
+            both the flow field and temperature field are mutually consistent.
+          </p>
+        </div>
+      </header>
+
+      <main>
+
+        <!-- SCOPE -->
+        <section id="scope" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Applicability</p>
+            <h2>Built for incompressible liquids.</h2>
+          </div>
+          <p class="section-intro">
+            The thermal solver extends the isothermal hydraulic solver for cases where
+            temperature varies along the network and fluid properties depend on temperature.
+            Its assumptions match those of real district heating, heat-exchanger, and
+            pipeline systems where the fluid is a liquid under moderate pressure.
+          </p>
+          <div class="bc-grid">
+            <article class="info-card">
+              <h3>Valid for</h3>
+              <p>Steady-state flow in <strong>incompressible liquids</strong> — water,
+                thermal oils, crude oil — where density $\rho$, viscosity $\mu$,
+                specific heat $c_p$, and thermal conductivity $k$ depend on temperature
+                but not on pressure. Property updates are evaluated at the local
+                temperature on each outer iteration.</p>
+            </article>
+            <article class="info-card">
+              <h3>Not valid for</h3>
+              <p><strong>Compressible gases</strong>, where $\rho = \rho(P, T)$ —
+                the pressure effect on density is not modelled.
+                <strong>Transient</strong> effects (thermal capacitance, hydraulic inertia)
+                are also not covered. For those cases a transient compressible solver
+                is required.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- OUTER LOOP + FLOWCHART -->
+        <section id="outer-loop" class="section dark">
+          <div class="section-head">
+            <p class="eyebrow">Outer iteration loop</p>
+            <h2>SIMPLE as a black box inside a temperature loop.</h2>
+          </div>
+          <p class="section-intro section-intro--dark">
+            The thermal and hydraulic problems are coupled: density and viscosity
+            depend on temperature, and the flow field depends on density and viscosity.
+            Angelica resolves this coupling through a segregated outer loop in which
+            the full SIMPLE hydraulic solver is called as a subroutine.
+            The hydraulic solver is treated as a black box — it takes a temperature
+            field and returns a converged pressure field and mass flow rates.
+          </p>
+
+          <figure class="algo-figure">
+            <img src="assets/flowchart_non_isothermal.svg"
+                 alt="Non-isothermal outer loop flowchart: temperature initialisation, fluid-property evaluation, SIMPLE hydraulic solver (inner box), energy equation, temperature update, convergence check"
+                 class="algo-flowchart"/>
+            <figcaption>
+              Figure 1 &mdash; Non-isothermal outer loop.
+              The SIMPLE hydraulic solver (Stage&nbsp;1 laminar seed + Stage&nbsp;2 nonlinear solve)
+              runs to full convergence on every outer iteration before the energy equation is solved.
+              The loop repeats until the maximum nodal temperature change $\Delta T_{\max}$
+              falls below the tolerance $\varepsilon_T$.
+              Details of Stage&nbsp;1 and Stage&nbsp;2 are documented on the
+              <a href="methods.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver page</a>.
+            </figcaption>
+          </figure>
+
+          <div class="method-block">
+            <h3>Loop steps</h3>
+            <ol style="margin:0.8rem 0 0.8rem 1.4rem;line-height:1.9;">
+              <li>Initialise temperatures from the source thermal boundary condition.</li>
+              <li>Evaluate $\rho(T)$ and $\mu(T)$ at each pipe's current temperature.</li>
+              <li><strong>Call the SIMPLE hydraulic solver</strong> (black box) — it runs
+                Stage&nbsp;1 and Stage&nbsp;2 to convergence and returns the consistent
+                pressure field $P$ and mass flow rates $\dot{m}$.</li>
+              <li>Solve the energy equation on the converged flow field (see below).</li>
+              <li>Apply relaxation: $T \leftarrow T + \alpha\,(T^* - T)$.
+                Compute $\Delta T_{\max} = \max_i |\alpha\,(T^*_i - T_i)|$.</li>
+              <li>If $\Delta T_{\max} > \varepsilon_T$, return to step&nbsp;2. Otherwise stop.</li>
+            </ol>
+            <p>
+              Under-relaxation ($\alpha \in (0, 1]$, default $\alpha = 1$) damps the
+              temperature update on each outer iteration. Reducing $\alpha$ below 1 helps
+              looped networks where the thermal and hydraulic coupling is stronger.
+            </p>
+          </div>
+        </section>
+
+        <!-- GOVERNING ENERGY EQUATION -->
+        <section id="governing" class="section accent">
+          <div class="section-head">
+            <p class="eyebrow">Governing equation</p>
+            <h2>Steady 1-D energy balance along each pipe.</h2>
+          </div>
+
+          <div class="method-block">
+            <p>
+              For a fluid element moving along a pipe at mass flow rate $\dot{m}$,
+              the steady-state energy balance per unit length is:
+            </p>
+            <div class="eq-display">
+              $$\dot{m}\,c_p\,\frac{dT}{dx} = -U\pi D\,(T - T_{\!\text{amb}}) + q'$$
+            </div>
+            <p class="var-list">
+              $\dot{m}$ — mass flow rate (kg&thinsp;s<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
+              $c_p$ — specific heat (J&thinsp;kg<sup>&minus;1</sup>&thinsp;K<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
+              $T$ — fluid temperature &nbsp;&middot;&nbsp;
+              $T_{\!\text{amb}}$ — ambient temperature &nbsp;&middot;&nbsp;
+              $U$ — overall heat transfer coefficient (W&thinsp;m<sup>&minus;2</sup>&thinsp;K<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
+              $D$ — pipe inner diameter &nbsp;&middot;&nbsp;
+              $q'$ — heat source per unit length (W&thinsp;m<sup>&minus;1</sup>)
+            </p>
+            <p>
+              Sign convention: $U > 0$ means heat is lost to the environment;
+              $q' > 0$ means heat is added to the fluid by an inline heater.
+              Both terms can coexist on the same element — a heated pipe with
+              wall losses is one example.
+            </p>
+            <p>
+              The mass flow rate $\dot{m}$ on the right side comes directly from the
+              SIMPLE hydraulic solve. Once the hydraulic solver converges, $\dot{m}$
+              is fixed for this energy solve — the equation is then linear in $T$
+              and can be solved exactly.
+            </p>
+          </div>
+        </section>
+
+        <!-- NTU HEAT LOSS -->
+        <section id="ntu" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Pipe heat loss</p>
+            <h2>Exact analytical solution — no numerical diffusion.</h2>
+          </div>
+
+          <div class="method-block">
+            <h3>NTU analytical solution</h3>
+            <p>
+              For a pipe with no internal source ($q' = 0$), the governing ODE has
+              the exact closed-form solution:
+            </p>
+            <div class="eq-display">
+              $$T_{\text{out}} = T_{\!\text{amb}} + (T_{\text{in}} - T_{\!\text{amb}})\,e^{-\text{NTU}}$$
+            </div>
+            <p class="var-list">
+              $\text{NTU} = \dfrac{U\pi D L}{\dot{m}\,c_p}$ &nbsp;&nbsp;— Number of Transfer Units
+            </p>
+            <p>
+              Angelica applies this formula element-by-element in a sweep from the
+              pipe inlet to the outlet. Each pipe is divided into $N$ internal segments
+              of equal length; the NTU formula is applied to each segment using the
+              segment outlet as the next segment's inlet.
+            </p>
+            <p>
+              This approach is exact in the limit $N \to \infty$ and avoids the
+              numerical diffusion that a finite-difference discretisation of the
+              convective derivative would introduce.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Validation — analytical and textbook benchmarks</h3>
+            <div class="bc-grid">
+              <article class="info-card">
+                <h3>NTU exact formula</h3>
+                <p>
+                  A symmetric looped network (L&nbsp;=&nbsp;500&nbsp;m, D&nbsp;=&nbsp;25&nbsp;mm,
+                  U&nbsp;=&nbsp;50&nbsp;W/m&sup2;K, ṁ&nbsp;=&nbsp;1&nbsp;kg/s,
+                  T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C)
+                  gives NTU&nbsp;=&nbsp;0.470 and an exact outlet temperature of 57.5&nbsp;&deg;C.
+                  Angelica reproduces this within 0.3&nbsp;K.
+                </p>
+              </article>
+              <article class="info-card">
+                <h3>Cengel &amp; Ghajar Example 8-3 <a href="#ref-9" class="cite">[9]</a></h3>
+                <p>
+                  Dead crude oil at 20&nbsp;&deg;C flowing through a 200&nbsp;m pipe
+                  submerged in an icy lake (0&nbsp;&deg;C). Textbook result:
+                  T<sub>exit</sub>&nbsp;=&nbsp;19.74&nbsp;&deg;C.
+                  Angelica reproduces this within 0.05&nbsp;K using the same
+                  convective coefficient h&nbsp;=&nbsp;16.3&nbsp;W/m&sup2;K.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- INLINE HEATERS -->
+        <section id="heaters" class="section dark">
+          <div class="section-head">
+            <p class="eyebrow">Inline heaters and coolers</p>
+            <h2>Fixed thermal power — Moukalled source linearisation.</h2>
+          </div>
+
+          <div class="method-block">
+            <p>
+              An inline heater or cooler delivers a fixed total thermal power $Q$&nbsp;(W)
+              uniformly distributed over $n$ internal nodes. Following Moukalled,
+              Mangani &amp; Darwish <a href="#ref-2" class="cite">[2]</a>, the source
+              term is linearised as:
+            </p>
+            <div class="eq-display">
+              $$S_u = S_c + S_p\,T_P, \qquad S_c = \frac{Q}{n},\quad S_p = 0$$
+            </div>
+            <p class="var-list">
+              $S_c$ — constant part of the source (W&thinsp;node<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
+              $S_p \le 0$ — linearised coefficient (ensures diagonal dominance) &nbsp;&middot;&nbsp;
+              $T_P$ — node temperature
+            </p>
+            <p>
+              Since $S_p = 0$, the linearisation is exact for a fixed-power device:
+              the power delivered does not depend on the local temperature, so no
+              coefficient is needed. The total energy added is always exactly $Q$,
+              regardless of the number of internal nodes ($S_c \times n = Q$).
+              A cooler is represented by $Q < 0$.
+            </p>
+
+            <h3 style="margin-top:1.6rem;">Hydraulic effect of heaters</h3>
+            <p>
+              In the hydraulic solver, a heater is treated as a passive element with
+              a user-specified pressure drop. It does not add energy to the momentum
+              equation — only to the energy equation. This separation means the
+              hydraulic and thermal effects can be validated independently.
+            </p>
+
+            <h3 style="margin-top:1.6rem;">Validation — energy balance</h3>
+            <p>
+              For a heater adding $Q = 50\,000\ \text{W}$ to a flow of
+              $\dot{m} = 1\ \text{kg/s}$ with $c_p = 4182\ \text{J/kg\,K}$, the
+              exact energy balance gives:
+            </p>
+            <div class="eq-display">
+              $$\Delta T = \frac{Q}{\dot{m}\,c_p} = \frac{50\,000}{1 \times 4182} = 11.96\ \text{K}$$
+            </div>
+            <p>
+              Angelica reproduces this within 0.2&nbsp;K.
+            </p>
+          </div>
+        </section>
+
+      </main>
+
+      <div id="references-root"></div>
+
+      <section class="author-strip">
+        <div class="author-inner">
+          <div class="author-text">
+            <p class="author-bio">Angelica is an open&#8209;source project developed by
+              <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>,
+              Venezuelan engineer and researcher based in Dublin, Ireland.
+              For questions, suggestions, or bug reports — reach out directly.</p>
+            <p class="author-bio" style="margin-top:0.6rem;">
+              For private consulting on pipeline network simulations — engineering studies, model setup,
+              or custom solver development — get in touch via
+              <a href="mailto:simonrodriguezgas@gmail.com">simonrodriguezgas@gmail.com</a>
+              or LinkedIn.
+            </p>
+          </div>
+          <div class="author-actions">
+            <a class="button primary" href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn &rarr;</a>
+            <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-icon brand-icon--sm">
+            <img src="assets/logomark.svg" alt="" class="brand-mark footer-mark" />
+          </span>
+          <span class="brand-name brand-name--sm">Angelica</span>
+        </div>
+        <nav class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="guide.html">Guide</a>
+          <a href="methods.html">Hydraulic</a>
+          <a href="thermal.html">Thermal</a>
+          <a href="#scope">Scope</a>
+          <a href="#outer-loop">Outer loop</a>
+          <a href="#governing">Energy equation</a>
+          <a href="#ntu">NTU heat loss</a>
+          <a href="#heaters">Heaters</a>
+          <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
+        </nav>
+        <p class="footer-copy">MIT License &nbsp;&middot;&nbsp; 2026</p>
+      </footer>
+
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$',  right: '$',  display: false}
+        ],
+        throwOnError: false
+      });"></script>
+
+    <script>
+      if ('IntersectionObserver' in window &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const revealTargets = document.querySelectorAll(
+          '.info-card, .workflow-box, .section-head, .method-block'
+        );
+        const obs = new IntersectionObserver(
+          entries => entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+          }),
+          { threshold: 0.1 }
+        );
+        revealTargets.forEach((el, i) => {
+          el.classList.add('reveal');
+          el.style.transitionDelay = (i % 4) * 60 + 'ms';
+          obs.observe(el);
+        });
+      }
+    </script>
+    <script src="assets/references.js"></script>
+    <script data-goatcounter="https://angelica-sim.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>
