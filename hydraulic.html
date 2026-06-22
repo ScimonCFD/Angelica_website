@@ -64,6 +64,22 @@
 
       <main>
 
+        <!-- FRAMEWORK CONTEXT -->
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">Solver framework</p>
+            <h2>Where the hydraulic solver fits.</h2>
+          </div>
+          <p class="section-intro">
+            In the isothermal solver, steps&nbsp;1, 3, 5, and&nbsp;6 are trivial or skipped entirely.
+            Temperature is uniform and never updated, fluid properties are constants from user input,
+            and no energy equation is solved. Only the hydraulic loop at step&nbsp;4 executes in full.
+          </p>
+          <figure style="max-width:440px;margin:2rem auto 0;">
+            <img src="assets/flowchart_isothermal.svg" alt="Six-step framework with isothermal solver — steps 1, 3, 5, 6 greyed out" style="width:100%;height:auto;" />
+          </figure>
+        </section>
+
         <!-- GOVERNING EQUATIONS -->
         <section id="governing" class="section">
           <div class="section-head">

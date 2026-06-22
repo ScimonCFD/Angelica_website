@@ -66,6 +66,24 @@
 
       <main>
 
+        <!-- FRAMEWORK CONTEXT -->
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">Solver framework</p>
+            <h2>Where the thermal solver fits.</h2>
+          </div>
+          <p class="section-intro">
+            The non-isothermal solver activates all six steps.
+            Temperature-dependent fluid properties are evaluated at step&nbsp;3,
+            the energy equation is solved at step&nbsp;5, and the outer loop at step&nbsp;6
+            iterates until the temperature field converges.
+            Steps&nbsp;4 and&nbsp;5 are documented on their own pages — click either block to navigate.
+          </p>
+          <figure style="max-width:440px;margin:2rem auto 0;">
+            <img src="assets/flowchart_framework.svg" alt="Six-step framework with all steps active — non-isothermal solver" style="width:100%;height:auto;" />
+          </figure>
+        </section>
+
         <!-- SCOPE -->
         <section id="scope" class="section">
           <div class="section-head">
