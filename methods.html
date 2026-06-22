@@ -143,71 +143,9 @@
             same slots without changing the structure.
           </p>
 
-          <div style="max-width:720px;margin:0 auto;">
-            <div class="framework-step">
-              <div class="step-num">1</div>
-              <div class="step-body">
-                <h3>Initialise temperature field</h3>
-                <p>Set an initial temperature at every node and pipe from the thermal
-                  boundary conditions. For isothermal simulations this step is trivial —
-                  a single uniform temperature is assumed and never updated.</p>
-              </div>
-            </div>
-            <div class="framework-step">
-              <div class="step-num">2</div>
-              <div class="step-body">
-                <h3>Initialise pressure field</h3>
-                <p>Set an initial pressure at every node from the hydraulic boundary
-                  conditions. This seed is refined by the hydraulic solver in step&nbsp;4.</p>
-              </div>
-            </div>
-            <div class="framework-step">
-              <div class="step-num">3</div>
-              <div class="step-body">
-                <h3>Evaluate fluid properties</h3>
-                <p>Compute density&nbsp;ρ, viscosity&nbsp;μ, specific heat&nbsp;c<sub>p</sub>,
-                  and thermal conductivity&nbsp;k at the current temperature (and pressure,
-                  for compressible fluids). This is the slot where the fluid physics model
-                  connects to the solver — constant values, temperature correlations,
-                  or equations of state all plug in here.</p>
-              </div>
-            </div>
-            <div class="framework-step">
-              <div class="step-num">4</div>
-              <div class="step-body">
-                <h3>Solve the hydraulic problem</h3>
-                <p>With fixed fluid properties, iterate until the pressure field and
-                  mass flow rates converge. In the current solvers this is the
-                  <a href="hydraulic.html">SIMPLE pressure-correction algorithm</a>.
-                  The output of this step is a consistent set of nodal pressures and
-                  link mass flow rates.</p>
-              </div>
-            </div>
-            <div class="framework-step">
-              <div class="step-num">5</div>
-              <div class="step-body">
-                <h3>Solve the energy equation</h3>
-                <p>Using the converged flow field from step&nbsp;4, compute the
-                  temperature at every node and along every pipe. In the non-isothermal
-                  solver this is the
-                  <a href="thermal.html">1-D steady energy equation</a>
-                  with the NTU analytical solution for pipe heat loss and Moukalled
-                  source linearisation for inline heaters.
-                  Skipped in the isothermal solver.</p>
-              </div>
-            </div>
-            <div class="framework-step">
-              <div class="step-num">6</div>
-              <div class="step-body">
-                <h3>Check temperature convergence</h3>
-                <p>If the maximum nodal temperature change exceeds the tolerance
-                  &varepsilon;<sub>T</sub>, return to step&nbsp;3 with the updated
-                  temperature field and repeat. Otherwise stop — the pressure,
-                  flow, and temperature fields are all mutually consistent.
-                  Skipped in the isothermal solver.</p>
-              </div>
-            </div>
-          </div>
+          <figure style="max-width:460px;margin:2rem auto 0;">
+            <img src="assets/flowchart_framework.svg" alt="Six-step solver framework flowchart" style="width:100%;height:auto;" />
+          </figure>
         </section>
 
         <!-- SOLVER COMPARISON TABLE -->

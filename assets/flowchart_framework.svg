@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 516">
+  <defs>
+    <style>text { font-family: 'Avenir Next','Segoe UI','Helvetica Neue',Arial,sans-serif; }</style>
+    <marker id="ah" markerWidth="9" markerHeight="6" refX="9" refY="3" orient="auto">
+      <polygon points="0 0,9 3,0 6" fill="#1d2a34"/>
+    </marker>
+    <marker id="ahm" markerWidth="9" markerHeight="6" refX="9" refY="3" orient="auto">
+      <polygon points="0 0,9 3,0 6" fill="#5b6974"/>
+    </marker>
+  </defs>
+
+  <!-- START -->
+  <ellipse cx="260" cy="34" rx="110" ry="24" fill="#0c6c6b"/>
+  <text x="260" y="40" text-anchor="middle" fill="white" font-size="14" font-weight="700">Start</text>
+  <line x1="260" y1="58" x2="260" y2="76" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 1 -->
+  <rect x="60" y="76" width="400" height="40" rx="10" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="101" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700"><tspan fill="#0c6c6b">1 &#x2014; </tspan>Assume T field</text>
+  <line x1="260" y1="116" x2="260" y2="134" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 2 -->
+  <rect x="60" y="134" width="400" height="40" rx="10" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="159" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700"><tspan fill="#0c6c6b">2 &#x2014; </tspan>Assume P field</text>
+  <line x1="260" y1="174" x2="260" y2="192" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 3 — outer loop re-entry -->
+  <rect x="60" y="192" width="400" height="40" rx="10" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="217" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700"><tspan fill="#0c6c6b">3 &#x2014; </tspan>Evaluate &#x3c1;, &#x3bc;, c&#x209a;, k</text>
+  <line x1="260" y1="232" x2="260" y2="250" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 4 — hydraulic loop (blue box, prominent) -->
+  <rect x="60" y="250" width="400" height="52" rx="10" fill="#c8d8e8" stroke="#094a5c" stroke-width="2"/>
+  <text x="260" y="273" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700"><tspan fill="#0c6c6b">4 &#x2014; </tspan>Hydraulic loop (SIMPLE)</text>
+  <text x="260" y="291" text-anchor="middle" fill="#5b6974" font-size="11">iterate until converged &#x2192; &#7745;, P at all nodes</text>
+  <line x1="260" y1="302" x2="260" y2="320" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 5 -->
+  <rect x="60" y="320" width="400" height="40" rx="10" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="345" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700"><tspan fill="#0c6c6b">5 &#x2014; </tspan>Solve energy equation</text>
+  <line x1="260" y1="360" x2="260" y2="378" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- STEP 6 — convergence diamond -->
+  <polygon points="260,384 350,408 260,432 170,408" fill="white" stroke="#094a5c" stroke-width="1.5"/>
+  <text x="260" y="412" text-anchor="middle" fill="#1d2a34" font-size="12" font-weight="700">&#x394;T&#x2098;&#x2090;&#x2093; &lt; &#x3b5;&#x209c; ?</text>
+
+  <!-- YES arrow -->
+  <line x1="260" y1="432" x2="260" y2="452" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="268" y="448" fill="#5b6974" font-size="11" font-weight="600">Yes</text>
+
+  <!-- OUTPUT -->
+  <ellipse cx="260" cy="480" rx="145" ry="26" fill="#0c6c6b"/>
+  <text x="260" y="486" text-anchor="middle" fill="white" font-size="13" font-weight="700">Output &#x2014; converged P, &#7745;, T</text>
+
+  <!-- NO loop-back (dashed) to step 3 -->
+  <path d="M 350,408 L 490,408 L 490,212 L 460,212" fill="none" stroke="#5b6974" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ahm)"/>
+  <text x="460" y="400" fill="#5b6974" font-size="11" font-weight="600">No</text>
+</svg>
