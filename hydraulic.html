@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angelica — Hydraulic Solver</title>
+    <meta
+      name="description"
+      content="Step 4 of the Angelica solver framework: the SIMPLE pressure-correction algorithm for steady incompressible pipe networks. Element laws for laminar pipes, turbulent pipes, fittings, and pumps."
+    />
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Angelica — Hydraulic Solver" />
+    <meta property="og:description" content="Modified SIMPLE pressure-correction algorithm for pipe networks. Element laws for laminar pipes, turbulent pipes, accessories, and pumps." />
+    <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/hydraulic.html" />
+    <meta name="twitter:card"       content="summary_large_image" />
+    <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/hydraulic.html" />
+    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <header class="hero compact-hero methods-dark">
+        <nav class="topbar">
+          <a class="brand" href="index.html">
+            <span class="brand-icon">
+              <img src="assets/logomark.svg" alt="" class="brand-mark" />
+            </span>
+            <span class="brand-lockup">
+              <span class="brand-name">Angelica</span>
+              <span class="brand-tagline">Fluid networks solved</span>
+            </span>
+          </a>
+          <div class="toplinks">
+            <a href="index.html">Home</a>
+            <a href="guide.html">Guide</a>
+            <a href="methods.html">Methods</a>
+            <a href="hydraulic.html">Hydraulic</a>
+            <a href="thermal.html">Thermal</a>
+            <a href="#governing">Equations</a>
+            <a href="#algorithm">Algorithm</a>
+            <a href="#pressure-correction">Pressure-correction</a>
+            <a href="#fluid-properties">Fluid properties</a>
+          </div>
+          <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+        </nav>
+
+        <div class="methods-page-title">
+          <p class="eyebrow">Hydraulic Solver &nbsp;&mdash;&nbsp; Step 4 of the <a href="methods.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">solver framework</a></p>
+          <h1>The hydraulic loop at the core of Angelica.</h1>
+          <p class="methods-subtitle">
+            Given the current temperature field, this solver computes the converged
+            pressure field and mass flow rates using a modified SIMPLE
+            pressure-correction algorithm (Patankar, 1980 <a href="#ref-4" class="cite">[4]</a>),
+            applied to networks of pipes, fittings, and pumps.
+          </p>
+        </div>
+      </header>
+
+      <main>
+
+        <!-- GOVERNING EQUATIONS -->
+        <section id="governing" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Governing equations</p>
+            <h2>Two equations govern the hydraulic problem.</h2>
+          </div>
+
+          <div class="method-block">
+            <h3>Momentum — energy equation per pipe</h3>
+            <p>Relates the pressure drop between two nodes to elevation change and friction losses along each link.</p>
+            <div class="eq-display">
+              $$(P_{in} - P_{out}) = \rho g\,(z_{out} - z_{in}) + f\,\frac{l}{D}\,\frac{\rho V^2}{2}$$
+            </div>
+            <p class="var-list">
+              $D$ — internal diameter &nbsp;&middot;&nbsp;
+              $l$ — pipe length &nbsp;&middot;&nbsp;
+              $f$ — friction factor &nbsp;&middot;&nbsp;
+              $\rho$ — fluid density &nbsp;&middot;&nbsp;
+              $z$ — elevation &nbsp;&middot;&nbsp;
+              $V$ — mean velocity
+            </p>
+            <p>In laminar flow $f = 64/Re$ where $Re = \rho V D / \mu$, reducing this to the linear Poiseuille relation. In turbulent flow, $f$ is a function of $Re$ and the relative wall roughness $\varepsilon/D$ — evaluated at each iteration via a closure relation (Colebrook-White).</p>
+          </div>
+
+          <div class="method-block">
+            <h3>Continuity — mass conservation at each node</h3>
+            <p>Mass is conserved at every junction. The pressure field is driven by this equation — the pressure-correction algorithm is derived directly from it, and its residual $b_C$ measures how far the current iterate is from the solution.</p>
+            <div class="eq-display">
+              $$\sum_{in}\dot{m}_{in} \;=\; \sum_{out}\dot{m}_{out}$$
+            </div>
+            <p>These two equations are solved together. Even though Angelica uses a segregated pressure-correction algorithm, the converged solution satisfies both simultaneously at every node and every link.</p>
+          </div>
+        </section>
+
+        <!-- ALGORITHM -->
+        <section id="algorithm" class="section dark">
+          <div class="section-head">
+            <p class="eyebrow">The algorithm</p>
+            <h2>Modified SIMPLE — laminar seed, nonlinear solve.</h2>
+          </div>
+          <p class="section-intro section-intro--dark">
+            The SIMPLE loop runs in two stages. Stage&nbsp;1 assumes laminar flow everywhere
+            and converges in a single iteration for pure-pipe networks — producing an exact
+            initial field. Stage&nbsp;2 uses that field to seed the nonlinear solve with
+            Darcy-Weisbach friction, Colebrook-White closure, fittings, and pumps.
+          </p>
+
+          <figure class="algo-figure">
+            <img src="assets/flowchart_simple.svg?v=4"
+                 alt="Two-stage SIMPLE pressure-correction algorithm flowchart"
+                 class="algo-flowchart"/>
+            <figcaption>
+              Figure 1 &mdash; Modified SIMPLE pressure-correction loop.
+              Stage&nbsp;1 builds an exact laminar solution that seeds Stage&nbsp;2.
+              Each stage iterates until the nodal mass-flux residual b<sub>C</sub>
+              drops below the convergence threshold.
+            </figcaption>
+          </figure>
+
+          <div class="method-block">
+            <h3>Calculating V*</h3>
+            <p>
+              In this implementation, the provisional velocity field $V^*$ is computed
+              from the current pressure field according to the active element law. The
+              form of $V^*$ therefore depends on the regime and on the constitutive
+              equation selected for each element type.
+            </p>
+
+            <div class="vstar-grid">
+              <article class="vstar-row">
+                <div class="vstar-copy">
+                  <h3>Laminar pipes</h3>
+                  <p>
+                    In Stage 1, pipe velocity is obtained from the linear laminar relation,
+                    including the elevation term. This is the Poiseuille-style form used to
+                    build the exact laminar seed.
+                  </p>
+                </div>
+                <div class="eq-display vstar-eq">
+                  $$V^* = \frac{D^2}{32\mu L}\left(\Delta P - \rho g \Delta z\right)$$
+                </div>
+              </article>
+
+              <article class="vstar-row">
+                <div class="vstar-copy">
+                  <h3>Turbulent pipes</h3>
+                  <p>
+                    In Stage 2, the Darcy-Weisbach equation is inverted with the friction
+                    factor $f^*$ frozen at its current iterate. Because $f^*$ depends on
+                    $Re^* = \rho|V^*|D/\mu$, $V^*$ and $f^*$ are resolved together by the
+                    two nested loops described in the Colebrook-White closure section below.
+                  </p>
+                </div>
+                <div class="eq-display vstar-eq">
+                  $$V^* = \operatorname{sign}(\Delta P - \rho g\,\Delta z)
+                    \sqrt{\frac{2D\,|\Delta P - \rho g\,\Delta z|}{\rho\,f^*\!L}}$$
+                </div>
+              </article>
+
+              <article class="vstar-row">
+                <div class="vstar-copy">
+                  <h3>Fittings and local-loss devices</h3>
+                  <p>
+                    For fittings, $V^*$ is computed from the local-loss relation using the
+                    fitting loss coefficient $K_L$. The preset fitting coefficients
+                    currently included in Angelica follow the values proposed in Munson.
+                  </p>
+                </div>
+                <div class="eq-display vstar-eq">
+                  $$V^* = \operatorname{sign}(\Delta P)\sqrt{\frac{2|\Delta P|}{K_L \rho}}$$
+                </div>
+              </article>
+
+              <article class="vstar-row">
+                <div class="vstar-copy">
+                  <h3>Pumps</h3>
+                  <p>
+                    For pumps, the current pressure difference is converted into the head
+                    the pump must supply. The pump curve then returns the corresponding
+                    flow rate, which is converted to $V^*$ through the element area.
+                  </p>
+                </div>
+                <div class="eq-display vstar-eq">
+                  $$H_{\mathrm{req}} = -\frac{\Delta P}{\rho g}, \qquad Q = G(H_{\mathrm{req}}), \qquad V^* = \frac{Q}{A}$$
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="method-block">
+            <h3>Under-relaxation</h3>
+            <p>
+              After each pressure-correction step, the new pressure field is applied as:
+            </p>
+            <div class="eq-display">
+              $$P^{\,\text{new}} = P^* + \alpha\,P'$$
+            </div>
+            <p>
+              where $\alpha \in (0,\,1]$ is the pressure relaxation factor. With $\alpha = 1$
+              the full correction is applied — this is the default and works well for most
+              networks. Reducing $\alpha$ below 1 damps the update, which improves stability
+              for stiff cases such as networks with pumps operating near their shut-off head or
+              networks with steep pump curves. Typical values when relaxation is needed are
+              $\alpha \approx 0.3$–$0.7$.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Turbulent closure — Colebrook-White <a href="#ref-1" class="cite">[1]</a></h3>
+            <p>
+              The Darcy-Weisbach equation requires the friction factor $f$, which for
+              turbulent flow depends on both the Reynolds number $Re$ and the relative
+              roughness $\varepsilon/D$. The Colebrook-White relation gives $f$ implicitly:
+            </p>
+            <div class="eq-display">
+              $$\frac{1}{\sqrt{f}} = -2\log_{10}\!\left(\frac{\varepsilon}{3.7\,D} + \frac{2.51}{Re\sqrt{f}}\right)$$
+            </div>
+            <p>
+              Because $f$ appears on both sides — and $Re$ itself depends on $V^*$ — the
+              closure requires two nested loops at each SIMPLE step:
+            </p>
+            <ul class="method-list">
+              <li>
+                <strong>Inner loop</strong> — finds $f$ for a fixed $V^*$.
+                Angelica solves on the log-transformed variable $\ln f$,
+                which is more numerically stable than solving for $f$ directly.
+                Default solver: Newton-Raphson.
+              </li>
+              <li>
+                <strong>Outer loop</strong> — finds $V^*$ consistent with $f(V^*)$,
+                since updating $V^*$ changes $Re$ and therefore $f$.
+                Default solver: fixed-point iteration.
+              </li>
+            </ul>
+            <p>
+              Both loops accept Newton-Raphson, secant, or fixed-point as the nonlinear
+              solver — selectable per run. At convergence of the outer SIMPLE loop,
+              $V^*$, $Re$, and $f$ are all mutually consistent.
+            </p>
+            <p>
+              Hazen-Williams replaces Colebrook-White with an explicit power-law relation,
+              so no inner iteration is needed — the outer algorithm structure is otherwise
+              identical.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Convergence criteria</h3>
+            <p>
+              Each stage declares convergence when two conditions hold simultaneously.
+            </p>
+            <p>
+              <strong>1. Pressure-correction magnitude.</strong>
+              After the pressure field is updated, the largest correction applied to any node must
+              fall below a threshold:
+            </p>
+            <div class="eq-display">
+              $$\Delta P_{\max} = \max_i \lvert \alpha\,P'_i \rvert \;\leq\; \varepsilon_{\Delta P}$$
+            </div>
+            <p>
+              $P'_i$ is the raw correction at node $i$ and $\alpha$ is the relaxation factor,
+              so $\Delta P_{\max}$ is the largest pressure change actually applied in that iteration.
+              The default threshold is $\varepsilon_{\Delta P} = 10^{-3}\ \text{Pa}$.
+              A relative criterion is checked in parallel — convergence is declared if either the
+              absolute or the relative threshold is met.
+            </p>
+            <p>
+              <strong>2. Nodal mass imbalance.</strong>
+              At every internal junction mass that enters must equal mass that leaves.
+              Let $\dot{m}^+_j$ and $\dot{m}^-_j$ be the total mass flow into and out of
+              junction $j$ (kg/s). The relative imbalance is:
+            </p>
+            <div class="eq-display">
+              $$e_j = \frac{\left\lvert \dot{m}^+_j - \dot{m}^-_j \right\rvert}{\dot{m}^+_j + \dot{m}^-_j}$$
+            </div>
+            <p>
+              Because numerator and denominator carry the same units (kg/s), $e_j$ is
+              dimensionless and lies in $[0,\,1]$. Convergence requires the largest imbalance
+              across all internal junctions to fall below the threshold:
+            </p>
+            <div class="eq-display">
+              $$\max_j\, e_j \;\leq\; \varepsilon_{\text{cont}}$$
+            </div>
+            <p>
+              Boundary nodes (known pressure or known flow) are excluded — their net flux is
+              supplied or extracted by the boundary condition, not a numerical error.
+              The default threshold is $\varepsilon_{\text{cont}} = 10^{-3}$ (−).
+            </p>
+            <p>
+              The iteration stops as soon as both criteria are satisfied. If neither is met within
+              the iteration limit, the stage terminates and the solver reports the run as
+              unconverged.
+            </p>
+          </div>
+        </section>
+
+        <!-- PRESSURE CORRECTION -->
+        <section id="pressure-correction" class="section accent">
+          <div class="section-head">
+            <p class="eyebrow">Pressure-correction derivation</p>
+            <h2>How continuity becomes a correction equation.</h2>
+          </div>
+
+          <div class="method-block" id="simple-decomposition">
+            <h3>The SIMPLE decomposition</h3>
+            <p>
+              The solver begins with an initial pressure field $P^*$. With $P^*$ fixed,
+              each element's constitutive law — Poiseuille for laminar pipes, Darcy-Weisbach
+              for turbulent, $K_L$ for fittings, or the pump curve — determines $V^*$
+              directly. $V^*$ is not guessed independently; it is the velocity that the
+              element law prescribes for the current $P^*$.
+              The true solution is then related to these estimates by additive corrections:
+            </p>
+            <div class="eq-display">
+              $$P = P^* + P', \qquad V = V^* + V'$$
+            </div>
+            <p>
+              Substituting into the continuity equation and rearranging produces a linear system
+              in $P'$. The key step — and what distinguishes element types — is expressing
+              $V'$ as a function of $P'$. For laminar flow this relation is <em>exact</em>.
+              For nonlinear elements it requires an approximation that holds exactly at convergence.
+            </p>
+          </div>
+
+          <div class="method-block" id="derivation-steps">
+            <h3>Substituting into continuity</h3>
+            <p>
+              Consider node $C$ connected by two pipes, each with a control volume
+              bounded by faces $w$ (west) and $e$ (east).
+            </p>
+            <figure class="node-cv-figure">
+              <img src="assets/node_cv.svg?v=1"
+                   alt="Pipe network: nodes W, C, E connected by Pipe 1 and Pipe 2. The control volume around node C is hatched, bounded by dashed face lines w and e."
+                   class="node-cv-img"/>
+              <figcaption>
+                Figure&nbsp;2 &mdash; Node $C$ and its two connecting pipe elements.
+                Faces $w$ and $e$ define the control-volume boundary used to apply
+                mass conservation.
+              </figcaption>
+            </figure>
+            <p>
+              Replacing every $\dot{m}_f$ with $\dot{m}^*_f + \dot{m}'_f$ in the
+              continuity equation at node $C$ and grouping known and unknown terms:
+            </p>
+            <div class="eq-display">
+              $$\underbrace{\sum_{\mathrm{in}} \dot{m}^*_f - \sum_{\mathrm{out}} \dot{m}^*_f}_{b_C}
+                \;+\; \sum_{\mathrm{in}} \dot{m}'_f - \sum_{\mathrm{out}} \dot{m}'_f \;=\; 0$$
+            </div>
+            <p>
+              The first group is $b_C$ — the mass-flux residual computed from the
+              current velocity estimate. The second group must cancel it, so the
+              mass-flow corrections must satisfy:
+            </p>
+            <div class="eq-display">
+              $$\sum_{\mathrm{in}} \dot{m}'_f - \sum_{\mathrm{out}} \dot{m}'_f \;=\; -b_C$$
+            </div>
+            <p>
+              It remains to express each $\dot{m}'_f$ in terms of the unknown
+              pressure corrections $P'$. Every element law relates $\dot{m}$ to the
+              nodal pressure difference, so linearising around $V^*$ gives
+              $\dot{m}'_f$ directly. For a laminar pipe the Poiseuille relation is
+              linear in $\Delta P$ — the step is <em>exact</em>:
+            </p>
+            <div class="eq-display">
+              $$\dot{m}'_f \;=\; c_f\,(P'_F - P'_C), \qquad c_f = \frac{\rho A D^2}{32\,\mu\,l}$$
+            </div>
+            <p>
+              Substituting and collecting over all faces of node $C$, then defining
+              $a_f = -c_f$ and $a_C = -\sum_f a_f$:
+            </p>
+            <div class="eq-display eq-central">
+              $$\sum_f c_f(P'_F - P'_C) = b_C
+                \;\;\Longrightarrow\;\;
+                a_C\,P'_C + \sum_f a_f\,P'_F = b_C$$
+            </div>
+            <p>
+              where $a_f = -c_f$, $\;a_C = -\displaystyle\sum_f a_f$, and
+              $\;b_C = \displaystyle\sum_{\mathrm{in}}\dot{m}^*_f - \sum_{\mathrm{out}}\dot{m}^*_f$.
+              For nonlinear elements the same structure holds but $c_f$ — and therefore $a_f$ —
+              depends on $V^*$ and is updated every iteration.
+              At convergence, $V^* \to V$ and the approximation becomes exact.
+            </p>
+          </div>
+
+          <div class="method-block" id="laminar-pipe">
+            <h3>Laminar pipe — exact coefficient</h3>
+            <p>
+              The Poiseuille equation is linear in pressure, so $V'$ can be expressed
+              exactly in terms of $P'$. The coefficient $c_f$ is constant for each pipe:
+            </p>
+            <div class="eq-display">
+              $$c_f = \frac{\rho A D^2}{32\,\mu\,l} \qquad \Longrightarrow \qquad a_f = -c_f$$
+            </div>
+            <p>
+              Because $a_f$ is constant, the pressure-correction system is linear and a network
+              of purely laminar pipes converges in a single iteration <a href="#ref-2" class="cite">[2]</a>.
+            </p>
+          </div>
+
+          <div class="method-block" id="turbulent-pipe">
+            <h3>Turbulent pipe — linearised coefficient</h3>
+            <p>
+              The turbulent momentum equation is nonlinear in $V$, so an exact $V'(P')$
+              relation does not exist. Using $V \approx V^*$ — which holds exactly at convergence:
+            </p>
+            <div class="eq-display">
+              $$a_f = -\!\left(\frac{2AD}{l\,f_{V^*}|V^*|}\right)_{\!f}$$
+            </div>
+            <p>
+              $f_{V^*}$ is the Colebrook-White friction factor evaluated at $V^*$, updated every
+              iteration. As $V^* \to V$, the approximation becomes exact.
+            </p>
+          </div>
+
+          <div class="method-block" id="accessory">
+            <h3>Fitting — loss coefficient</h3>
+            <p>
+              The pressure drop across a fitting is quadratic in velocity, governed by $K_L$.
+              Applying the same linearisation:
+            </p>
+            <div class="eq-display">
+              $$\Delta P = K_L\,\frac{\rho V^2}{2} \qquad \Longrightarrow \qquad a_f = -\!\left(\frac{2A}{K_L|V^*|}\right)_{\!f}$$
+            </div>
+            <p>
+              The preset $K_L$ values built into Angelica are taken from
+              Munson et al. <a href="#ref-3" class="cite">[3]</a>.
+            </p>
+          </div>
+
+          <div class="method-block" id="pump">
+            <h3>Pump — curve-driven pressure changer</h3>
+            <p>
+              Pumps are treated as active pressure-changing devices. The current nodal
+              pressure field defines the head the pump must supply:
+            </p>
+            <div class="eq-display">
+              $$H_{\mathrm{req}} = -\frac{\Delta P}{\rho g}$$
+            </div>
+            <p>
+              The pump curve then returns the corresponding flow rate, written locally as
+              $Q = G(H_{\mathrm{req}})$. Angelica supports both single-point EPANET-style
+              pump definitions and piecewise-linear multi-point $Q$-Head tables.
+            </p>
+            <div class="eq-display">
+              $$Q = G(H_{\mathrm{req}}), \qquad V = \frac{Q}{A}$$
+            </div>
+            <p>
+              For pressure correction, the pump contributes the local slope of the curve.
+              This plays the same role as the hydraulic conductance of a pipe or fitting:
+            </p>
+            <div class="eq-display">
+              $$a_f \propto \frac{dQ}{d(\Delta P)} = \frac{dQ}{dH}\,\frac{1}{\rho g}$$
+            </div>
+            <p>
+              In other words, a pump enters the same nodal continuity system as every
+              other element. What changes is only the local constitutive law used to
+              relate pressure difference and flow.
+            </p>
+          </div>
+
+          <div class="method-block" id="boundary-conditions">
+            <h3>Boundary conditions</h3>
+            <div class="bc-grid">
+              <article class="info-card">
+                <h3>Known pressure</h3>
+                <p>Set $P' = 0$ at the boundary node. The prescribed pressure is already exact — no correction needed.</p>
+              </article>
+              <article class="info-card">
+                <h3>Known mass flow</h3>
+                <p>The boundary flow is imposed directly. The $P'$ term for that node does not appear in the system — it is absorbed into $b_C$ of the connected interior nodes.</p>
+              </article>
+            </div>
+            <p class="bc-note">
+              At least one pressure boundary is required for a unique solution.
+              Mixed types — pressure sources, pressure sinks, flow inlets, flow outlets — can coexist in the same network.
+            </p>
+          </div>
+        </section>
+
+        <!-- FLUID PROPERTIES -->
+        <section id="fluid-properties" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Fluid properties</p>
+            <h2>From field data to solver inputs.</h2>
+          </div>
+          <p class="section-intro">
+            The solver requires two fluid properties at every iteration: density $\rho$ and
+            dynamic viscosity $\mu$. Angelica provides two ways to supply them.
+          </p>
+
+          <div class="method-block">
+            <h3>General liquid — direct input</h3>
+            <p>
+              For water, refined products, or any single-phase liquid with known properties,
+              density and viscosity are entered directly. The solver uses these values as
+              constants throughout the simulation.
+            </p>
+            <p>
+              A water preset is provided at standard conditions
+              ($\rho = 998.25\ \text{kg m}^{-3}$, $\mu = 1.002 \times 10^{-3}\ \text{Pa s}$).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Crude oil — Beggs &amp; Robinson (1975) <a href="#ref-8" class="cite">[8]</a></h3>
+            <p>
+              For dead crude oil the user provides two field parameters: <strong>API gravity</strong>
+              and <strong>operating temperature</strong>. Density and viscosity are then
+              computed automatically before the solver runs.
+            </p>
+
+            <h3>Density from API gravity</h3>
+            <p>
+              The API gravity scale converts to specific gravity and then to density at
+              standard conditions:
+            </p>
+            <div class="eq-display">
+              $$SG = \frac{141.5}{API + 131.5}, \qquad \rho = SG \times 999.064\ \ \text{kg m}^{-3}$$
+            </div>
+
+            <h3>Viscosity — Beggs &amp; Robinson correlation</h3>
+            <p>
+              Dead-oil viscosity is estimated from a double-logarithmic expression that
+              correlates viscosity with API gravity and temperature in degrees Fahrenheit:
+            </p>
+            <div class="eq-display">
+              $$\log_{10}\!\bigl(\log_{10}(\mu_{\text{dead}} + 1)\bigr)
+                = \underbrace{(3.0324 - 0.02023\cdot API)}_{A} - 1.163\,\log_{10}(T_{\!\circ F})$$
+            </div>
+            <p class="var-list">
+              $\mu_{\text{dead}}$ — dead-oil viscosity (cP) &nbsp;&middot;&nbsp;
+              $T_{\!\circ F}$ — temperature in °F &nbsp;&middot;&nbsp;
+              $API$ — API gravity (°API)
+            </p>
+            <p>
+              The resulting viscosity in centipoise is converted to SI units
+              ($\text{Pa s} = \text{cP} / 1000$) before being passed to the solver.
+            </p>
+
+            <h3>Isothermal use of temperature (crude oil mode)</h3>
+            <p>
+              In the crude oil property model, temperature enters only at this
+              property-evaluation step. Once $\rho$ and $\mu$ are computed, the
+              isothermal solver treats them as constants. This is physically consistent
+              with the assumption that the pipeline operates at a uniform, known temperature
+              (e.g. reservoir temperature or an insulated flowline average).
+            </p>
+            <p>
+              For applications where temperature varies along the network — district
+              heating, heat exchangers, chilled water systems — the full non-isothermal
+              solver described in the next section solves the energy equation on the
+              converged flow field and handles temperature-dependent properties iteratively.
+            </p>
+
+            <div class="bc-grid" style="margin-top:1.4rem;">
+              <article class="info-card">
+                <h3>Example — 32°API at 65°C</h3>
+                <p>$\rho = 864.6\ \text{kg m}^{-3}$</p>
+                <p>$\mu = 4.25\ \text{cP}\ \ (0.00425\ \text{Pa s})$</p>
+                <p style="margin-top:0.6rem;font-size:0.85rem;opacity:0.75;">
+                  See Tutorial 11 for a full branched pipeline case using these values.
+                </p>
+              </article>
+              <article class="info-card">
+                <h3>Validity range</h3>
+                <p>The Beggs &amp; Robinson correlation is applicable to dead crude oils
+                  in the range 16–58°API and temperatures above 0°F (−18°C).</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <div id="references-root"></div>
+
+      <section class="author-strip">
+        <div class="author-inner">
+          <div class="author-text">
+            <p class="author-bio">Angelica is an open&#8209;source project developed by
+              <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>,
+              Venezuelan engineer and researcher based in Dublin, Ireland.
+              For questions, suggestions, or bug reports — reach out directly.</p>
+            <p class="author-bio" style="margin-top:0.6rem;">
+              For private consulting on pipeline network simulations — engineering studies, model setup,
+              or custom solver development — get in touch via
+              <a href="mailto:simonrodriguezgas@gmail.com">simonrodriguezgas@gmail.com</a>
+              or LinkedIn.
+            </p>
+          </div>
+          <div class="author-actions">
+            <a class="button primary" href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn &rarr;</a>
+            <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-icon brand-icon--sm">
+            <img src="assets/logomark.svg" alt="" class="brand-mark footer-mark" />
+          </span>
+          <span class="brand-name brand-name--sm">Angelica</span>
+        </div>
+        <nav class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="guide.html">Guide</a>
+          <a href="methods.html">Methods</a>
+          <a href="hydraulic.html">Hydraulic</a>
+          <a href="thermal.html">Thermal</a>
+          <a href="#governing">Governing equations</a>
+          <a href="#algorithm">Algorithm</a>
+          <a href="#pressure-correction">Pressure-correction</a>
+          <a href="#fluid-properties">Fluid properties</a>
+          <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
+        </nav>
+        <p class="footer-copy">MIT License &nbsp;&middot;&nbsp; 2026</p>
+      </footer>
+
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$',  right: '$',  display: false}
+        ],
+        throwOnError: false
+      });"></script>
+
+    <script>
+      if ('IntersectionObserver' in window &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const revealTargets = document.querySelectorAll(
+          '.info-card, .workflow-box, .section-head, .method-block'
+        );
+        const obs = new IntersectionObserver(
+          entries => entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+          }),
+          { threshold: 0.1 }
+        );
+        revealTargets.forEach((el, i) => {
+          el.classList.add('reveal');
+          el.style.transitionDelay = (i % 4) * 60 + 'ms';
+          obs.observe(el);
+        });
+      }
+    </script>
+    <script src="assets/references.js"></script>
+    <script data-goatcounter="https://angelica-sim.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>
