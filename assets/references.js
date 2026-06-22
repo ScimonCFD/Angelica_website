@@ -34,10 +34,7 @@
     '<section class="section ref-section" id="references">' +
       '<details class="ref-details">' +
         '<summary class="ref-summary">' +
-          '<div class="section-head">' +
-            '<p class="eyebrow">References</p>' +
-            '<h2>Sources and further reading.</h2>' +
-          '</div>' +
+          '<p class="eyebrow">References</p>' +
         '</summary>' +
         '<ol class="ref-list">' +
           '\n        ' + items + '\n      ' +
