@@ -271,133 +271,38 @@
           <div class="cards">
             <article class="info-card">
               <h3>Hanoi benchmark</h3>
-              <p>32-junction network solved with Hazen-Williams (C&nbsp;=&nbsp;130),
-                matching the original Hanoi problem formulation. Network topology from
-                Fujiwara &amp; Khang <a href="#ref-6" class="cite">[6]</a>. Nodal heads
-                and link flows are compared against internally verified reference values.</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Node</th><th>Reference (m)</th><th>Angelica (m)</th><th>&Delta;</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>1</td><td>100.00</td><td>100.00</td><td>0.00</td></tr>
-                  <tr><td>6</td><td>70.20</td><td>70.20</td><td>0.00</td></tr>
-                  <tr><td>10</td><td>47.42</td><td>47.42</td><td>0.00</td></tr>
-                  <tr><td>13</td><td>29.13</td><td>29.13</td><td>0.00</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">4 representative nodes of 32 shown &nbsp;&middot;&nbsp; max head deviation &lt; 0.01 m across all 32 nodes &middot; link flows within 0.001 m&sup3;/h</p>
+              <p>Hazen-Williams (C&nbsp;=&nbsp;130) on the 32-node Fujiwara &amp; Khang <a href="#ref-6" class="cite">[6]</a> network.</p>
+              <p class="bench-result">max head error &lt; 0.01 m across all 32 nodes</p>
             </article>
             <article class="info-card">
               <h3>EPANET pump benchmark</h3>
-              <p>Pump-bearing network adapted from the official EPANET tutorial <a href="#ref-5" class="cite">[5]</a>.
-                Pump operating point, nodal pressures, and link flows validated
-                against the published reference.</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Node</th><th>EPANET (psi)</th><th>Angelica (psi)</th><th>&Delta; (psi)</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>2</td><td>387.02</td><td>387.17</td><td>+0.15</td></tr>
-                  <tr><td>3</td><td>73.52</td><td>73.58</td><td>+0.06</td></tr>
-                  <tr><td>5</td><td>76.96</td><td>77.02</td><td>+0.06</td></tr>
-                  <tr><td>7</td><td>2.17</td><td>2.17</td><td>0.00</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">4 representative nodes of 6 shown &nbsp;&middot;&nbsp; pressures in EPANET reference units (psi) &nbsp;&middot;&nbsp; max deviation 0.15 psi &nbsp;&middot;&nbsp; link flows within 1.2 gpm</p>
+              <p>Pump-bearing network from the official EPANET tutorial <a href="#ref-5" class="cite">[5]</a>.</p>
+              <p class="bench-result">pressures within 0.15 psi of published reference</p>
             </article>
             <article class="info-card">
               <h3>Three-reservoir junction</h3>
-              <p>Classical Y-junction problem: three fixed-head reservoirs connected at
-                a common node. Junction head and pipe flows are compared against an
-                independent analytical solution computed by bisection over the Colebrook-White
-                equation — no external solver used as reference.</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Quantity</th><th>Analytical</th><th>Angelica</th><th>&Delta;</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>H<sub>J</sub> (m)</td><td>25.264</td><td>25.264</td><td>&lt; 0.001</td></tr>
-                  <tr><td>Q<sub>A→J</sub> (m³/h)</td><td>112.347</td><td>112.348</td><td>&lt; 0.001</td></tr>
-                  <tr><td>Q<sub>J→B</sub> (m³/h)</td><td>62.357</td><td>62.357</td><td>&lt; 0.001</td></tr>
-                  <tr><td>Q<sub>J→C</sub> (m³/h)</td><td>49.990</td><td>49.990</td><td>&lt; 0.001</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">Independent reference: bisection + Colebrook-White &nbsp;&middot;&nbsp; agreement to within 0.001 m³/h on all flows</p>
+              <p>Y-junction against an independent bisection + Colebrook-White reference — no external solver.</p>
+              <p class="bench-result">all flows agree to within 0.001 m&sup3;/h</p>
             </article>
             <article class="info-card">
               <h3>Laminar Poiseuille benchmark</h3>
-              <p>Three smooth parallel pipes carrying viscous oil (Re&nbsp;&lt;&nbsp;180).
-                Volumetric flows are compared against the exact closed-form Poiseuille
-                solution Q&nbsp;=&nbsp;&pi;D&#8308;&Delta;P&nbsp;/&nbsp;(128&mu;L).</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Pipe</th><th>Exact (m³/h)</th><th>Angelica (m³/h)</th><th>&Delta;</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>D&nbsp;=&nbsp;20&nbsp;mm, L&nbsp;=&nbsp;10&nbsp;m</td><td>0.70686</td><td>0.70686</td><td>0.00000</td></tr>
-                  <tr><td>D&nbsp;=&nbsp;15&nbsp;mm, L&nbsp;=&nbsp;8&nbsp;m</td><td>0.27957</td><td>0.27957</td><td>0.00000</td></tr>
-                  <tr><td>D&nbsp;=&nbsp;25&nbsp;mm, L&nbsp;=&nbsp;12&nbsp;m</td><td>1.43811</td><td>1.43811</td><td>0.00000</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; max relative error 0.0000&nbsp;% &nbsp;&middot;&nbsp; Re &lt; 2300 in all pipes &nbsp;&middot;&nbsp; solver uses f&nbsp;=&nbsp;64/Re automatically</p>
+              <p>Three pipes (Re &lt; 180) against the exact closed-form Q = &pi;D&#8308;&Delta;P / (128&mu;L).</p>
+              <p class="bench-result">max relative error 0.0000 %</p>
             </article>
             <article class="info-card">
-              <h3>NTU pipe heat loss &mdash; analytical benchmark</h3>
-              <p>Single pipe with ambient heat loss. The steady 1-D energy equation
-                has the exact closed-form solution
-                T<sub>out</sub>&nbsp;=&nbsp;T<sub>amb</sub>&nbsp;+&nbsp;(T<sub>in</sub>&nbsp;&minus;&nbsp;T<sub>amb</sub>)&nbsp;e<sup>&minus;NTU</sup>,
-                where NTU&nbsp;=&nbsp;U&pi;DL&nbsp;/&nbsp;(&#7745;&nbsp;c<sub>p</sub>).
-                Angelica is driven with a fixed mass flow and the outlet temperature is compared against this formula.</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Quantity</th><th>Analytical</th><th>Angelica</th><th>&Delta;</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>NTU (&minus;)</td><td>0.470</td><td>n/a</td><td>n/a</td></tr>
-                  <tr><td>T<sub>out</sub> (&deg;C)</td><td>57.5</td><td>57.5</td><td>&lt;&nbsp;0.3&nbsp;K</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">Exact closed-form reference &nbsp;&middot;&nbsp; L&nbsp;=&nbsp;500&nbsp;m, D&nbsp;=&nbsp;25&nbsp;mm, U&nbsp;=&nbsp;50&nbsp;W/m&sup2;K &nbsp;&middot;&nbsp; &#7745;&nbsp;=&nbsp;1&nbsp;kg/s &nbsp;&middot;&nbsp; T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C</p>
+              <h3>NTU pipe heat loss &mdash; analytical</h3>
+              <p>Single pipe with ambient loss against the exact T<sub>out</sub> = T<sub>amb</sub> + (T<sub>in</sub> &minus; T<sub>amb</sub>) e<sup>&minus;NTU</sup>.</p>
+              <p class="bench-result">T<sub>out</sub> within 0.3 K of analytical</p>
             </article>
             <article class="info-card">
-              <h3>Cengel &amp; Ghajar Example 8-3 &mdash; oil through icy lake <a href="#ref-9" class="cite">[9]</a></h3>
-              <p>Dead crude oil at 20&nbsp;&deg;C flows at 2&nbsp;m/s through a 30&nbsp;cm diameter,
-                200&nbsp;m long pipe submerged in an icy lake (0&nbsp;&deg;C). The textbook derives
-                h&nbsp;=&nbsp;16.3&nbsp;W/m&sup2;K from the Gnielinski correlation and computes
-                the exit temperature via the NTU formula. Angelica is given the same h as a fixed
-                overall U and reproduces the textbook result.</p>
-              <table class="bench-table">
-                <thead>
-                  <tr><th>Quantity</th><th>Textbook <a href="#ref-9" class="cite">[9]</a></th><th>Angelica</th><th>&Delta;</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>T<sub>exit</sub> (&deg;C)</td><td>19.74</td><td>19.74</td><td>&lt;&nbsp;0.05&nbsp;K</td></tr>
-                </tbody>
-              </table>
-              <p class="bench-note">External textbook reference &nbsp;&middot;&nbsp; dead crude oil, &rho;&nbsp;=&nbsp;888&nbsp;kg/m&sup3;, c<sub>p</sub>&nbsp;=&nbsp;1880&nbsp;J/kg&middot;K &nbsp;&middot;&nbsp; &#7745;&nbsp;=&nbsp;125.6&nbsp;kg/s</p>
+              <h3>Cengel &amp; Ghajar Example 8-3 <a href="#ref-9" class="cite">[9]</a></h3>
+              <p>Dead crude oil in an icy lake — textbook h from Gnielinski, given to Angelica as fixed overall U.</p>
+              <p class="bench-result">T<sub>exit</sub> = 19.74 &deg;C, within 0.05 K of textbook</p>
             </article>
             <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Fifteen cases covering the full range of element types, boundary
-                combinations, fluid types, and thermal effects — for smoke testing, onboarding, and regression checks.</p>
-              <ul class="tutorial-case-list">
-                <li>Pipe network</li>
-                <li>Fittings — without elevation</li>
-                <li>Fittings — with elevation</li>
-                <li>Inlet-flow boundary</li>
-                <li>Outlet-flow boundary</li>
-                <li>Combined inlet + outlet</li>
-                <li>Hanoi 32-node network</li>
-                <li>EPANET pump network</li>
-                <li>Three-reservoir junction</li>
-                <li>Laminar Poiseuille benchmark</li>
-                <li>Crude oil gathering pipeline — 32°API, 65°C</li>
-                <li>Hot water pipe with ambient heat loss</li>
-                <li>District heating branch — two-outlet network</li>
-                <li>Looped network with heat loss</li>
-                <li>Inline electric heater — energy balance verification</li>
-              </ul>
+              <p>Fifteen guided cases from single pipes to looped networks, covering hydraulic and thermal scenarios.</p>
+              <p class="bench-result">11 isothermal &nbsp;&middot;&nbsp; 4 non-isothermal</p>
             </article>
           </div>
           <div class="methods-callout">

@@ -357,6 +357,20 @@ a {
   padding-top: 8px;
 }
 
+.bench-result {
+  margin-top: 14px;
+  padding: 8px 10px;
+  background: rgba(22, 163, 74, 0.07);
+  border-radius: 6px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bench-result::before {
+  content: '\2713\00a0\00a0';
+  color: #16a34a;
+}
+
 .tutorial-case-list {
   margin: 10px 0 0;
   padding-left: 18px;
