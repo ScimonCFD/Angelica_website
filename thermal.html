@@ -43,7 +43,6 @@
             <a href="hydraulic.html">Hydraulic</a>
             <a href="thermal.html">Thermal</a>
             <a href="#scope">Scope</a>
-            <a href="#outer-loop">Outer loop</a>
             <a href="#governing">Energy equation</a>
             <a href="#ntu">NTU heat loss</a>
             <a href="#heaters">Heaters</a>
@@ -60,6 +59,13 @@
             The thermal solver uses that result to solve the steady energy equation,
             updates temperature-dependent fluid properties, and iterates until
             both the flow field and temperature field are mutually consistent.
+            Density and viscosity depend on temperature; the flow field depends on both.
+            Angelica resolves this coupling through a segregated outer loop — SIMPLE runs
+            to full convergence on every iteration, then the energy equation updates the
+            temperature field.
+            Under-relaxation ($\alpha \in (0,\,1]$, default $\alpha = 1$) damps the
+            temperature update on each outer iteration; reducing $\alpha$ below&nbsp;1
+            helps looped networks where the thermal–hydraulic coupling is stronger.
           </p>
         </div>
       </header>
@@ -113,57 +119,6 @@
                 are also not covered. For those cases a transient compressible solver
                 is required.</p>
             </article>
-          </div>
-        </section>
-
-        <!-- OUTER LOOP + FLOWCHART -->
-        <section id="outer-loop" class="section dark">
-          <div class="section-head">
-            <p class="eyebrow">Outer iteration loop</p>
-            <h2>SIMPLE as a black box inside a temperature loop.</h2>
-          </div>
-          <p class="section-intro section-intro--dark">
-            The thermal and hydraulic problems are coupled: density and viscosity
-            depend on temperature, and the flow field depends on density and viscosity.
-            Angelica resolves this coupling through a segregated outer loop in which
-            the full SIMPLE hydraulic solver is called as a subroutine.
-            The hydraulic solver is treated as a black box — it takes a temperature
-            field and returns a converged pressure field and mass flow rates.
-          </p>
-
-          <figure class="algo-figure">
-            <img src="assets/flowchart_non_isothermal.svg"
-                 alt="Non-isothermal outer loop flowchart: temperature initialisation, fluid-property evaluation, SIMPLE hydraulic solver (inner box), energy equation, temperature update, convergence check"
-                 class="algo-flowchart"/>
-            <figcaption>
-              Figure 1 &mdash; Non-isothermal outer loop.
-              The SIMPLE hydraulic solver (Stage&nbsp;1 laminar seed + Stage&nbsp;2 nonlinear solve)
-              runs to full convergence on every outer iteration before the energy equation is solved.
-              The loop repeats until the maximum nodal temperature change $\Delta T_{\max}$
-              falls below the tolerance $\varepsilon_T$.
-              Details of Stage&nbsp;1 and Stage&nbsp;2 are documented on the
-              <a href="hydraulic.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver page</a>.
-            </figcaption>
-          </figure>
-
-          <div class="method-block">
-            <h3>Loop steps</h3>
-            <ol style="margin:0.8rem 0 0.8rem 1.4rem;line-height:1.9;">
-              <li>Initialise temperatures from the source thermal boundary condition.</li>
-              <li>Evaluate $\rho(T)$ and $\mu(T)$ at each pipe's current temperature.</li>
-              <li><strong>Call the SIMPLE hydraulic solver</strong> (black box) — it runs
-                Stage&nbsp;1 and Stage&nbsp;2 to convergence and returns the consistent
-                pressure field $P$ and mass flow rates $\dot{m}$.</li>
-              <li>Solve the energy equation on the converged flow field (see below).</li>
-              <li>Apply relaxation: $T \leftarrow T + \alpha\,(T^* - T)$.
-                Compute $\Delta T_{\max} = \max_i |\alpha\,(T^*_i - T_i)|$.</li>
-              <li>If $\Delta T_{\max} > \varepsilon_T$, return to step&nbsp;2. Otherwise stop.</li>
-            </ol>
-            <p>
-              Under-relaxation ($\alpha \in (0, 1]$, default $\alpha = 1$) damps the
-              temperature update on each outer iteration. Reducing $\alpha$ below 1 helps
-              looped networks where the thermal and hydraulic coupling is stronger.
-            </p>
           </div>
         </section>
 
@@ -357,7 +312,6 @@
           <a href="hydraulic.html">Hydraulic</a>
           <a href="thermal.html">Thermal</a>
           <a href="#scope">Scope</a>
-          <a href="#outer-loop">Outer loop</a>
           <a href="#governing">Energy equation</a>
           <a href="#ntu">NTU heat loss</a>
           <a href="#heaters">Heaters</a>
