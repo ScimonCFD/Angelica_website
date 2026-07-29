@@ -42,10 +42,6 @@
             <a href="methods.html">Methods</a>
             <a href="hydraulic.html">Hydraulic</a>
             <a href="thermal.html">Thermal</a>
-            <a href="#scope">Scope</a>
-            <a href="#governing">Energy equation</a>
-            <a href="#ntu">NTU heat loss</a>
-            <a href="#heaters">Heaters</a>
           </div>
           <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
         </nav>
@@ -57,15 +53,8 @@
             The <a href="hydraulic.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver</a>
             provides the converged pressure field and mass flow rates.
             The thermal solver uses that result to solve the steady energy equation,
-            updates temperature-dependent fluid properties, and iterates until
-            both the flow field and temperature field are mutually consistent.
-            Density and viscosity depend on temperature; the flow field depends on both.
-            Angelica resolves this coupling through a segregated outer loop — SIMPLE runs
-            to full convergence on every iteration, then the energy equation updates the
-            temperature field.
-            Under-relaxation ($\alpha \in (0,\,1]$, default $\alpha = 1$) damps the
-            temperature update on each outer iteration; reducing $\alpha$ below&nbsp;1
-            helps looped networks where the thermal–hydraulic coupling is stronger.
+            updating temperature-dependent fluid properties until the flow field
+            and temperature field are mutually consistent.
           </p>
         </div>
       </header>
@@ -311,10 +300,6 @@
           <a href="methods.html">Methods</a>
           <a href="hydraulic.html">Hydraulic</a>
           <a href="thermal.html">Thermal</a>
-          <a href="#scope">Scope</a>
-          <a href="#governing">Energy equation</a>
-          <a href="#ntu">NTU heat loss</a>
-          <a href="#heaters">Heaters</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
