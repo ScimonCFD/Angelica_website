@@ -112,6 +112,7 @@
             <a href="methods.html">Methods</a>
             <a href="hydraulic.html">Hydraulic</a>
             <a href="thermal.html">Thermal</a>
+            <a href="compressible.html">Compressible</a>
           </div>
           <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
         </nav>
@@ -139,8 +140,9 @@
             The algorithm below is the general form. For an isothermal simulation,
             steps&nbsp;1, 5, and&nbsp;6 are trivial or skipped entirely.
             For a non-isothermal simulation, all six steps are active.
-            Future solvers — compressible, multiphase — will add physics to the
+            Future solvers — multiphase, compositional — will add physics to the
             same slots without changing the structure.
+            The compressible solver (ideal gas) is now live.
           </p>
 
           <figure style="max-width:460px;margin:2rem auto 0;">
@@ -174,6 +176,17 @@
                 for inline heaters, and the outer iteration loop that wraps
                 the hydraulic solver.</p>
               <a class="button secondary" href="thermal.html" style="margin-top:0.5rem;">Read the thermal solver &rarr;</a>
+            </div>
+
+            <div class="detail-card">
+              <p class="step-tag">Steps 3–4 &mdash; Density loop</p>
+              <h3>Compressible Solver</h3>
+              <p>Ideal gas equation of state ($\rho = PM/RT$).
+                Outer density iteration loop: after each SIMPLE solve,
+                density is re-evaluated at the updated pressure field
+                until $\max |\Delta\rho/\rho| &lt; 10^{-4}$.
+                Validated for mass conservation and density gradient.</p>
+              <a class="button secondary" href="compressible.html" style="margin-top:0.5rem;">Read the compressible solver &rarr;</a>
             </div>
 
           </div>
@@ -217,6 +230,7 @@
           <a href="methods.html">Methods</a>
           <a href="hydraulic.html">Hydraulic</a>
           <a href="thermal.html">Thermal</a>
+          <a href="compressible.html">Compressible</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>

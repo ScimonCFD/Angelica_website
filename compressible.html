@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angelica — Compressible Solver</title>
+    <meta
+      name="description"
+      content="Steady compressible pipe network solver: ideal gas equation of state, outer density iteration loop, and the segregated SIMPLE hydraulic core."
+    />
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Angelica — Compressible Solver" />
+    <meta property="og:description" content="Compressible solver for gas pipe networks. Ideal gas EOS, density updated from pressure at each outer iteration, mass conservation verified." />
+    <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/compressible.html" />
+    <meta name="twitter:card"       content="summary_large_image" />
+    <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/compressible.html" />
+    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <header class="hero compact-hero methods-dark">
+        <nav class="topbar">
+          <a class="brand" href="index.html">
+            <span class="brand-icon">
+              <img src="assets/logomark.svg" alt="" class="brand-mark" />
+            </span>
+            <span class="brand-lockup">
+              <span class="brand-name">Angelica</span>
+              <span class="brand-tagline">Fluid networks solved</span>
+            </span>
+          </a>
+          <div class="toplinks">
+            <a href="index.html">Home</a>
+            <a href="guide.html">Guide</a>
+            <a href="methods.html">Methods</a>
+            <a href="hydraulic.html">Hydraulic</a>
+            <a href="thermal.html">Thermal</a>
+            <a href="compressible.html">Compressible</a>
+          </div>
+          <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+        </nav>
+
+        <div class="methods-page-title">
+          <p class="eyebrow">Compressible Solver</p>
+          <h1>Gas networks where density follows pressure.</h1>
+          <p class="methods-subtitle">
+            The <a href="hydraulic.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver</a>
+            provides the pressure field and mass flow rates.
+            The compressible solver wraps it in an outer loop that re-evaluates
+            density from an equation of state at each updated pressure field,
+            iterating until the density distribution converges.
+          </p>
+        </div>
+      </header>
+
+      <main>
+
+        <!-- SCOPE -->
+        <section id="scope" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Applicability</p>
+            <h2>Built for single-phase gas networks.</h2>
+          </div>
+          <p class="section-intro">
+            The compressible solver extends the isothermal hydraulic solver for cases
+            where the gas density varies with pressure along the network.
+            It is the right choice for natural gas distribution, compressed air,
+            and any single-component gas pipeline where the pressure ratio is large
+            enough that an incompressible assumption would introduce significant error.
+          </p>
+          <div class="bc-grid">
+            <article class="info-card">
+              <h3>Valid for</h3>
+              <p>Steady-state flow of <strong>single-phase gases</strong> modelled
+                by an equation of state — currently <strong>ideal gas</strong>
+                ($\rho = PM/RT$). Isothermal assumption: temperature is uniform
+                and constant along the network.</p>
+            </article>
+            <article class="info-card">
+              <h3>Not valid for</h3>
+              <p><strong>Two-phase flow</strong> or conditions near the critical
+                point where the EOS may return non-physical roots.
+                <strong>Non-isothermal</strong> gas flow (temperature gradients
+                along the pipe) is not yet supported — planned for a future release.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- EQUATION OF STATE -->
+        <section id="eos" class="section accent">
+          <div class="section-head">
+            <p class="eyebrow">Equation of state</p>
+            <h2>Density from pressure and temperature.</h2>
+          </div>
+
+          <div class="method-block">
+            <h3>Ideal gas law</h3>
+            <p>
+              For a single-component ideal gas, the density at any point in
+              the network is:
+            </p>
+            <div class="eq-display">
+              $$\rho = \frac{P M}{R T}$$
+            </div>
+            <p class="var-list">
+              $P$ — absolute pressure (Pa) &nbsp;&middot;&nbsp;
+              $M$ — molecular weight (kg&thinsp;mol<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
+              $R = 8.314\ \text{J\,mol}^{-1}\text{K}^{-1}$ — universal gas constant &nbsp;&middot;&nbsp;
+              $T$ — absolute temperature (K)
+            </p>
+            <p>
+              The local pressure used for each pipe link is the arithmetic mean
+              of the link's inlet and outlet node pressures:
+              $P_{\text{link}} = \tfrac{1}{2}(P_{\text{in}} + P_{\text{out}})$.
+              This average is a natural choice for a one-dimensional element
+              and avoids bias toward either end.
+            </p>
+            <p>
+              Viscosity, specific heat, and thermal conductivity are supplied as
+              constants (or temperature-only functions). For typical gas pipeline
+              applications the pressure dependence of transport properties is
+              negligible compared with the pressure dependence of density.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>The <code>EquationOfState</code> interface</h3>
+            <p>
+              Density is computed via a pluggable <code>EquationOfState</code>
+              abstract class with a single method:
+            </p>
+            <pre class="code-block">class EquationOfState(ABC):
+    @abstractmethod
+    def density(self, pressure_pa: float, temperature_c: float) -&gt; float:
+        ...</pre>
+            <p>
+              The current implementation ships <code>IdealGasEOS</code>. Future
+              releases will add Peng–Robinson and other cubic EOS — especially for
+              compositional simulation via the
+              <a href="https://github.com/CalebBell/thermo" target="_blank" rel="noreferrer"><code>thermo</code></a> library.
+            </p>
+          </div>
+        </section>
+
+        <!-- ALGORITHM -->
+        <section id="algorithm" class="section">
+          <div class="section-head">
+            <p class="eyebrow">Algorithm</p>
+            <h2>Outer density loop wrapping SIMPLE.</h2>
+          </div>
+
+          <div class="method-block">
+            <p>
+              The solver uses a segregated outer–inner structure.
+              The inner loop is the standard SIMPLE hydraulic solver;
+              the outer loop iterates on density:
+            </p>
+            <ol style="margin-left:1.4rem;line-height:2;">
+              <li>Snapshot current density $\rho^{\,n}$ on each link from the EOS
+                at the current pressure field.</li>
+              <li>Run the SIMPLE hydraulic solver to convergence.
+                Within each SIMPLE iteration, $\rho(P, T)$ is re-evaluated
+                automatically as node pressures are updated.</li>
+              <li>Compute the maximum relative density change across all links:
+                $\varepsilon = \max_i |\Delta\rho_i| / \rho_i^{\,n}$.</li>
+              <li>If $\varepsilon &lt; \varepsilon_{\text{tol}}$ &rarr; converged.
+                Otherwise go to step&nbsp;1.</li>
+            </ol>
+            <p>
+              The default tolerance is $\varepsilon_{\text{tol}} = 10^{-4}$.
+              For moderate pressure ratios (up to ~&nbsp;3:1) the outer loop
+              typically converges in fewer than 10 iterations.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Mass conservation in a compressible network</h3>
+            <p>
+              The SIMPLE solver enforces continuity at each node in terms of
+              <em>mass</em> flow — $\sum \dot{m} = 0$ at each internal node.
+              Because $\dot{m} = \rho \, Q$, the volumetric flow rates at
+              different pressures are not equal even at a simple junction,
+              but mass is conserved exactly (within the convergence tolerance
+              of the hydraulic solver).
+            </p>
+          </div>
+        </section>
+
+        <!-- VALIDATION -->
+        <section id="validation" class="section dark">
+          <div class="section-head">
+            <p class="eyebrow">Validation</p>
+            <h2>Physically consistent results.</h2>
+          </div>
+          <div class="bc-grid">
+            <article class="info-card">
+              <h3>Ideal gas density ratio</h3>
+              <p>
+                For air at standard conditions (101&nbsp;325&nbsp;Pa, 20&nbsp;&deg;C,
+                $M = 0.028\,964\ \text{kg/mol}$), the solver returns
+                $\rho = 1.204\ \text{kg/m}^3$ — matching the analytical
+                ideal gas value within floating-point precision.
+                Doubling the pressure exactly doubles the density, consistent
+                with $\rho \propto P$.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Mass conservation at junctions</h3>
+              <p>
+                In a two-pipe series network at 300&nbsp;kPa and 100&nbsp;kPa,
+                the mass flow through both pipes agrees to within $10^{-4}$
+                relative error — confirming that the SIMPLE continuity
+                constraint is satisfied in mass terms even when volumetric
+                flow rates differ due to density variation.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Density gradient</h3>
+              <p>
+                The inlet node density is always greater than the outlet node
+                density when $P_{\text{in}} > P_{\text{out}}$, consistent with
+                $\rho \propto P$ for an ideal gas at constant temperature.
+                This is verified automatically in the test suite on every commit.
+              </p>
+            </article>
+          </div>
+        </section>
+
+      </main>
+
+      <div id="references-root"></div>
+
+      <footer class="site-footer">
+        <nav class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="guide.html">Guide</a>
+          <a href="methods.html">Methods</a>
+          <a href="hydraulic.html">Hydraulic</a>
+          <a href="thermal.html">Thermal</a>
+          <a href="compressible.html">Compressible</a>
+          <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
+        </nav>
+      </footer>
+
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+  </body>
+</html>
