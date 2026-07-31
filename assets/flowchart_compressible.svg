@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 640">
+  <defs>
+    <style>
+      text { font-family: 'Avenir Next','Segoe UI','Helvetica Neue',Arial,sans-serif; }
+      .step-link { cursor: pointer; }
+      .step-link:hover rect { opacity: 0.82; }
+    </style>
+    <marker id="ah" markerWidth="9" markerHeight="6" refX="9" refY="3" orient="auto">
+      <polygon points="0 0,9 3,0 6" fill="#1d2a34"/>
+    </marker>
+    <marker id="ahm" markerWidth="9" markerHeight="6" refX="9" refY="3" orient="auto">
+      <polygon points="0 0,9 3,0 6" fill="#5b6974"/>
+    </marker>
+  </defs>
+
+  <!-- START -->
+  <ellipse cx="260" cy="32" rx="100" ry="22" fill="#0c6c6b"/>
+  <text x="260" y="38" text-anchor="middle" fill="white" font-size="14" font-weight="700">Start</text>
+  <line x1="260" y1="54" x2="260" y2="72" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- ── STEP 1 ── -->
+  <text x="40" y="95" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">1</text>
+  <rect x="105" y="73" width="310" height="36" rx="9" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="96" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700">Assume T field</text>
+  <line x1="260" y1="109" x2="260" y2="149" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="132" fill="#0c6c6b" font-size="11.5" font-weight="700">T</text>
+
+  <!-- ── STEP 2 ── -->
+  <text x="40" y="172" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">2</text>
+  <rect x="105" y="150" width="310" height="36" rx="9" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="173" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700">Assume P field</text>
+  <line x1="260" y1="186" x2="260" y2="226" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="210" fill="#0c6c6b" font-size="11.5" font-weight="700">P</text>
+
+  <!-- ── STEP 3 — outer loop re-entry ── -->
+  <text x="40" y="249" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">3</text>
+  <rect x="105" y="227" width="310" height="36" rx="9" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+  <text x="260" y="246" text-anchor="middle" fill="#094a5c" font-size="12.5" font-weight="700">Evaluate &#x3c1;(P,T) from EOS, &#x3bc;, c&#x209a;, k</text>
+  <line x1="260" y1="263" x2="260" y2="303" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="287" fill="#0c6c6b" font-size="11.5" font-weight="700">&#x3c1;, &#x3bc;, c&#x209a;, k</text>
+
+  <!-- ── STEP 4 — hydraulic loop ── -->
+  <text x="40" y="326" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">4</text>
+  <a href="hydraulic.html" class="step-link">
+    <rect x="105" y="304" width="310" height="36" rx="9" fill="#c8d8e8" stroke="#094a5c" stroke-width="2"/>
+    <text x="260" y="327" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700">Hydraulic loop (SIMPLE)</text>
+  </a>
+  <line x1="260" y1="340" x2="260" y2="358" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- ── ΔP / Δṁ CONVERGENCE DIAMOND ── -->
+  <polygon points="260,358 345,379 260,400 175,379" fill="white" stroke="#094a5c" stroke-width="1.5"/>
+  <text x="260" y="383" text-anchor="middle" fill="#1d2a34" font-size="12" font-weight="700">&#x394;P, &#x394;&#7745; &lt; &#x3b5; ?</text>
+  <line x1="260" y1="400" x2="260" y2="440" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="411" fill="#5b6974" font-size="11" font-weight="600">Yes</text>
+  <text x="270" y="427" fill="#0c6c6b" font-size="11.5" font-weight="700">P, &#7745;</text>
+  <path d="M 345,379 L 468,379 L 468,322 L 415,322" fill="none" stroke="#5b6974" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ahm)"/>
+  <text x="348" y="375" fill="#5b6974" font-size="11" font-weight="600">No</text>
+
+  <!-- ── STEP 5 ── -->
+  <text x="40" y="463" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">5</text>
+  <a href="thermal.html" class="step-link">
+    <rect x="105" y="441" width="310" height="36" rx="9" fill="#edf7f7" stroke="#0c6c6b" stroke-width="1.5"/>
+    <text x="260" y="464" text-anchor="middle" fill="#094a5c" font-size="13" font-weight="700">Solve energy equation → T*</text>
+  </a>
+  <line x1="260" y1="477" x2="260" y2="517" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="500" fill="#0c6c6b" font-size="11.5" font-weight="700">T*</text>
+
+  <!-- ── CONVERGENCE DIAMOND (step 6) — dual condition ── -->
+  <text x="40" y="546" text-anchor="middle" fill="#0c6c6b" font-size="16" font-weight="800">6</text>
+  <polygon points="260,518 355,546 260,574 165,546" fill="white" stroke="#094a5c" stroke-width="1.5"/>
+  <text x="260" y="540" text-anchor="middle" fill="#1d2a34" font-size="11" font-weight="700">&#x394;T &lt; &#x3b5;_T</text>
+  <text x="260" y="555" text-anchor="middle" fill="#1d2a34" font-size="11" font-weight="700">and &#x394;&#x3c1;/&#x3c1; &lt; &#x3b5;_&#x3c1; ?</text>
+  <line x1="260" y1="574" x2="260" y2="593" stroke="#1d2a34" stroke-width="1.5" marker-end="url(#ah)"/>
+  <text x="270" y="587" fill="#5b6974" font-size="11" font-weight="600">Yes</text>
+  <path d="M 355,546 L 492,546 L 492,245 L 415,245" fill="none" stroke="#5b6974" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ahm)"/>
+  <text x="494" y="420" fill="#5b6974" font-size="11" font-weight="600">No</text>
+
+  <!-- OUTPUT -->
+  <ellipse cx="260" cy="618" rx="145" ry="21" fill="#0c6c6b"/>
+  <text x="260" y="624" text-anchor="middle" fill="white" font-size="13" font-weight="700">Output &#x2014; converged P, &#7745;, T</text>
+</svg>
