@@ -6,11 +6,11 @@
     <title>Angelica — Compressible Solver</title>
     <meta
       name="description"
-      content="Steady compressible pipe network solver: ideal gas equation of state, outer density iteration loop, and the segregated SIMPLE hydraulic core."
+      content="Steady compressible pipe network solver: ideal gas equation of state, coupled hydraulic and energy equations, outer density-temperature iteration loop."
     />
     <meta property="og:type"        content="website" />
     <meta property="og:title"       content="Angelica — Compressible Solver" />
-    <meta property="og:description" content="Compressible solver for gas pipe networks. Ideal gas EOS, density updated from pressure at each outer iteration, mass conservation verified." />
+    <meta property="og:description" content="Compressible solver for gas pipe networks. Ideal gas EOS, density updated from pressure and temperature at each outer iteration, full thermal coupling." />
     <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/compressible.html" />
     <meta name="twitter:card"       content="summary_large_image" />
     <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
@@ -49,13 +49,15 @@
 
         <div class="methods-page-title">
           <p class="eyebrow">Compressible Solver</p>
-          <h1>Gas networks where density follows pressure.</h1>
+          <h1>Gas networks with coupled pressure, density, and temperature.</h1>
           <p class="methods-subtitle">
-            The <a href="hydraulic.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">hydraulic solver</a>
-            provides the pressure field and mass flow rates.
-            The compressible solver wraps it in an outer loop that re-evaluates
-            density from an equation of state at each updated pressure field,
-            iterating until the density distribution converges.
+            The compressible solver couples three physics in a single outer loop:
+            the <a href="hydraulic.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">SIMPLE hydraulic solver</a>
+            provides the pressure field and mass flows;
+            the equation of state evaluates density from the local $(P, T)$;
+            and the <a href="thermal.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">1-D energy equation</a>
+            updates the temperature field after each hydraulic solve.
+            The loop repeats until both density and temperature converge.
           </p>
         </div>
       </header>
@@ -80,15 +82,16 @@
               <h3>Valid for</h3>
               <p>Steady-state flow of <strong>single-phase gases</strong> modelled
                 by an equation of state — currently <strong>ideal gas</strong>
-                ($\rho = PM/RT$). Isothermal assumption: temperature is uniform
-                and constant along the network.</p>
+                ($\rho = PM/RT$). Supports both isothermal networks and
+                <strong>non-isothermal</strong> networks with heat exchange and
+                fixed-temperature boundary conditions.</p>
             </article>
             <article class="info-card">
               <h3>Not valid for</h3>
               <p><strong>Two-phase flow</strong> or conditions near the critical
                 point where the EOS may return non-physical roots.
-                <strong>Non-isothermal</strong> gas flow (temperature gradients
-                along the pipe) is not yet supported — planned for a future release.</p>
+                Transient flow and compositional (multi-component) mixtures
+                are planned for future releases.</p>
             </article>
           </div>
         </section>
@@ -153,30 +156,53 @@
         <section id="algorithm" class="section">
           <div class="section-head">
             <p class="eyebrow">Algorithm</p>
-            <h2>Outer density loop wrapping SIMPLE.</h2>
+            <h2>Outer loop coupling hydraulics, density, and temperature.</h2>
           </div>
 
           <div class="method-block">
             <p>
               The solver uses a segregated outer–inner structure.
-              The inner loop is the standard SIMPLE hydraulic solver;
-              the outer loop iterates on density:
+              The inner loop is the standard SIMPLE hydraulic solver.
+              The outer loop updates density and temperature in sequence,
+              repeating until both converge:
             </p>
-            <ol style="margin-left:1.4rem;line-height:2;">
-              <li>Snapshot current density $\rho^{\,n}$ on each link from the EOS
-                at the current pressure field.</li>
+            <ol style="margin-left:1.4rem;line-height:2.2;">
+              <li>Snapshot current density $\rho^{\,n}$ on each link from
+                the EOS at the current $(P, T)$ field.</li>
               <li>Run the SIMPLE hydraulic solver to convergence.
                 Within each SIMPLE iteration, $\rho(P, T)$ is re-evaluated
-                automatically as node pressures are updated.</li>
-              <li>Compute the maximum relative density change across all links:
-                $\varepsilon = \max_i |\Delta\rho_i| / \rho_i^{\,n}$.</li>
-              <li>If $\varepsilon &lt; \varepsilon_{\text{tol}}$ &rarr; converged.
-                Otherwise go to step&nbsp;1.</li>
+                automatically as node pressures evolve.</li>
+              <li>Solve the <a href="thermal.html">1-D steady energy equation</a>
+                on the converged flow field to obtain updated nodal temperatures.</li>
+              <li>Apply temperature under-relaxation:
+                $T^{n+1} = T^n + \alpha\,(T_{\text{new}} - T^n)$.</li>
+              <li>Compute convergence metrics:
+                $\varepsilon_\rho = \max_i |\Delta\rho_i| / \rho_i^n$
+                and $\varepsilon_T = \max_j |\Delta T_j|$.</li>
+              <li>If $\varepsilon_\rho &lt; 10^{-4}$ <strong>and</strong>
+                $\varepsilon_T &lt; 0.01\ \text{K}$ &rarr; converged.
+                Otherwise return to step&nbsp;1.</li>
             </ol>
             <p>
-              The default tolerance is $\varepsilon_{\text{tol}} = 10^{-4}$.
-              For moderate pressure ratios (up to ~&nbsp;3:1) the outer loop
-              typically converges in fewer than 10 iterations.
+              For networks without heat exchange the energy equation is a no-op
+              and the solver behaves identically to the isothermal compressible
+              case — no special configuration is needed.
+              For non-isothermal networks, fixed-temperature boundary conditions
+              are applied at source and sink nodes (same interface as the
+              <a href="thermal.html">non-isothermal incompressible solver</a>).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Why density depends on both $P$ and $T$</h3>
+            <p>
+              For an ideal gas, $\rho = PM/RT$.
+              As the energy equation updates $T$, density changes even if the
+              pressure field is unchanged — so a temperature update necessarily
+              triggers another hydraulic solve.
+              The outer loop captures this coupling: after each energy solve,
+              the updated $T$ feeds directly into $\rho(P, T)$ for the next
+              SIMPLE iteration, without any approximation.
             </p>
           </div>
 
@@ -185,10 +211,10 @@
             <p>
               The SIMPLE solver enforces continuity at each node in terms of
               <em>mass</em> flow — $\sum \dot{m} = 0$ at each internal node.
-              Because $\dot{m} = \rho \, Q$, the volumetric flow rates at
-              different pressures are not equal even at a simple junction,
-              but mass is conserved exactly (within the convergence tolerance
-              of the hydraulic solver).
+              Because $\dot{m} = \rho \, Q$ and $\rho$ varies with both $P$ and $T$,
+              the volumetric flow rates differ across the network, but
+              mass is conserved within the convergence tolerance
+              of the hydraulic solver.
             </p>
           </div>
         </section>
@@ -225,9 +251,20 @@
               <h3>Density gradient</h3>
               <p>
                 The inlet node density is always greater than the outlet node
-                density when $P_{\text{in}} > P_{\text{out}}$, consistent with
-                $\rho \propto P$ for an ideal gas at constant temperature.
+                density when $P_{\text{in}} > P_{\text{out}}$ at uniform temperature,
+                consistent with $\rho \propto P$ for an ideal gas.
                 This is verified automatically in the test suite on every commit.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Thermal coupling</h3>
+              <p>
+                For networks without heat exchange the energy equation
+                produces $\Delta T \approx 0$ and the solver converges on the
+                first outer iteration — identical cost to the isothermal case.
+                When heat sources or ambient heat loss are present, both
+                $\varepsilon_\rho$ and $\varepsilon_T$ must fall below their
+                tolerances before the solve is declared converged.
               </p>
             </article>
           </div>
@@ -237,7 +274,34 @@
 
       <div id="references-root"></div>
 
+      <section class="author-strip">
+        <div class="author-inner">
+          <div class="author-text">
+            <p class="author-bio">Angelica is an open&#8209;source project developed by
+              <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>,
+              Venezuelan engineer and researcher based in Dublin, Ireland.
+              For questions, suggestions, or bug reports — reach out directly.</p>
+            <p class="author-bio" style="margin-top:0.6rem;">
+              For private consulting on pipeline network simulations — engineering studies, model setup,
+              or custom solver development — get in touch via
+              <a href="mailto:simonrodriguezgas@gmail.com">simonrodriguezgas@gmail.com</a>
+              or LinkedIn.
+            </p>
+          </div>
+          <div class="author-actions">
+            <a class="button primary" href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn &rarr;</a>
+            <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
+          </div>
+        </div>
+      </section>
+
       <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-icon brand-icon--sm">
+            <img src="assets/logomark.svg" alt="" class="brand-mark footer-mark" />
+          </span>
+          <span class="brand-name brand-name--sm">Angelica</span>
+        </div>
         <nav class="footer-links">
           <a href="index.html">Home</a>
           <a href="guide.html">Guide</a>
@@ -248,6 +312,7 @@
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
         </nav>
+        <p class="footer-copy">MIT License &nbsp;&middot;&nbsp; 2026</p>
       </footer>
 
     </div>
