@@ -81,8 +81,9 @@
             <article class="info-card">
               <h3>Valid for</h3>
               <p>Steady-state flow of <strong>single-phase gases</strong> modelled
-                by an equation of state — currently <strong>ideal gas</strong>
-                ($\rho = PM/RT$). Supports both isothermal networks and
+                by an equation of state — <strong>ideal gas</strong>
+                ($\rho = PM/RT$) or <strong>Peng–Robinson</strong>
+                ($\rho = PM/ZRT$). Supports both isothermal networks and
                 <strong>non-isothermal</strong> networks with heat exchange and
                 fixed-temperature boundary conditions.</p>
             </article>
@@ -104,7 +105,7 @@
           </div>
 
           <div class="method-block">
-            <h3>Ideal gas law</h3>
+            <h3>Ideal gas</h3>
             <p>
               For a single-component ideal gas, the density at any point in
               the network is:
@@ -115,43 +116,88 @@
             <p class="var-list">
               $P$ — absolute pressure (Pa) &nbsp;&middot;&nbsp;
               $M$ — molecular weight (kg&thinsp;mol<sup>&minus;1</sup>) &nbsp;&middot;&nbsp;
-              $R = 8.314\ \text{J\,mol}^{-1}\text{K}^{-1}$ — universal gas constant &nbsp;&middot;&nbsp;
+              $R = 8.314\ \text{J\,mol}^{-1}\text{K}^{-1}$ &nbsp;&middot;&nbsp;
               $T$ — absolute temperature (K)
             </p>
             <p>
-              The local pressure used for each pipe link is the arithmetic mean
-              of the link's inlet and outlet node pressures:
-              $P_{\text{link}} = \tfrac{1}{2}(P_{\text{in}} + P_{\text{out}})$.
-              This average is a natural choice for a one-dimensional element
-              and avoids bias toward either end.
+              Accurate when the reduced pressure $P_r = P/P_c \lesssim 0.1$.
+              Suitable for low- to moderate-pressure distribution networks
+              (natural gas at a few bar, compressed air, etc.).
             </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Peng–Robinson (1976)</h3>
+            <p>
+              For high-pressure gas where the ideal-gas assumption introduces
+              significant error, the Peng–Robinson (PR) cubic EOS gives density
+              via the compressibility factor $Z$:
+            </p>
+            <div class="eq-display">
+              $$\rho = \frac{P M}{Z R T}$$
+            </div>
+            <p>
+              $Z$ is the largest real root of the cubic:
+            </p>
+            <div class="eq-display">
+              $$Z^3 - (1-B)\,Z^2 + (A - 3B^2 - 2B)\,Z - (AB - B^2 - B^3) = 0$$
+            </div>
+            <p class="var-list">
+              $A = aP/(RT)^2$ &nbsp;&middot;&nbsp; $B = bP/(RT)$ &nbsp;&middot;&nbsp;
+              $a(T) = 0.45724\,R^2T_c^2/P_c\cdot\alpha(T)$ &nbsp;&middot;&nbsp;
+              $b = 0.07780\,RT_c/P_c$
+            </p>
+            <p>
+              The temperature-dependent attraction term is
+              $\alpha(T) = [1 + \kappa(1 - \sqrt{T/T_c})]^2$
+              with $\kappa = 0.37464 + 1.54226\,\omega - 0.26992\,\omega^2$.
+              The three fluid-specific parameters are the critical temperature
+              $T_c$ (K), critical pressure $P_c$ (Pa), and Pitzer acentric
+              factor $\omega$.
+            </p>
+            <p>
+              The vapour-phase root (largest real root greater than $B$) is
+              selected automatically. Use PR when $P_r \gtrsim 0.1$ or when
+              high accuracy is required across a wide pressure range.
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Transport properties</h3>
             <p>
               Viscosity, specific heat, and thermal conductivity are supplied as
               callables of $(P, T)$, following the standard non-compositional
-              practice of using empirical correlations rather than deriving
-              transport properties from the EOS.
-              For ideal-gas applications the pressure argument can simply be
-              ignored inside the callable — the interface is already ready for
-              real-gas correlations (e.g.&nbsp;Lee–Gonzalez–Eakin for viscosity)
-              where the pressure dependence is significant.
+              practice where transport properties come from empirical
+              correlations rather than the EOS.
+              For ideal-gas conditions the pressure argument can be ignored;
+              for real-gas correlations such as Lee–Gonzalez–Eakin (viscosity)
+              the full $(P, T)$ dependence is used automatically.
             </p>
           </div>
 
           <div class="method-block">
             <h3>The <code>EquationOfState</code> interface</h3>
             <p>
-              Density is computed via a pluggable <code>EquationOfState</code>
-              abstract class with a single method:
+              Both EOS implementations share a single pluggable interface:
             </p>
-            <pre class="code-block">class EquationOfState(ABC):
-    @abstractmethod
-    def density(self, pressure_pa: float, temperature_c: float) -&gt; float:
-        ...</pre>
+            <pre class="code-block">from angelica import IdealGasEOS, PengRobinsonEOS, CompressibleFluid
+
+# Ideal gas — only M required
+eos = IdealGasEOS(molecular_weight_kg_per_mol=0.016043)
+
+# Peng–Robinson — M, Tc, Pc, ω
+eos = PengRobinsonEOS(
+    molecular_weight_kg_per_mol=0.016043,   # CH₄
+    critical_temperature_k=190.56,
+    critical_pressure_pa=4_599_200.0,
+    acentric_factor=0.01141,
+)
+
+fluid = CompressibleFluid.from_constants(eos=eos, viscosity_pa_s=1.1e-5, ...)</pre>
             <p>
-              The current implementation ships <code>IdealGasEOS</code>. Future
-              releases will add Peng–Robinson and other cubic EOS — especially for
-              compositional simulation via the
-              <a href="https://github.com/CalebBell/thermo" target="_blank" rel="noreferrer"><code>thermo</code></a> library.
+              The local link pressure is taken as the arithmetic mean of the
+              inlet and outlet node pressures:
+              $P_{\text{link}} = \tfrac{1}{2}(P_{\text{in}} + P_{\text{out}})$.
             </p>
           </div>
         </section>
@@ -237,7 +283,7 @@
           </div>
           <div class="bc-grid">
             <article class="info-card">
-              <h3>Ideal gas density ratio</h3>
+              <h3>Ideal gas density</h3>
               <p>
                 For air at standard conditions (101&nbsp;325&nbsp;Pa, 20&nbsp;&deg;C,
                 $M = 0.028\,964\ \text{kg/mol}$), the solver returns
@@ -245,6 +291,18 @@
                 ideal gas value within floating-point precision.
                 Doubling the pressure exactly doubles the density, consistent
                 with $\rho \propto P$.
+              </p>
+            </article>
+            <article class="info-card">
+              <h3>Peng–Robinson low-pressure limit</h3>
+              <p>
+                For methane at 101&nbsp;325&nbsp;Pa and 20&nbsp;&deg;C
+                ($T_c = 190.56\ \text{K}$, $P_c = 4.60\ \text{MPa}$,
+                $\omega = 0.0114$), the PR compressibility factor
+                $Z \approx 0.9976$ — within 0.25&thinsp;% of the ideal-gas
+                limit, as expected at $P_r = 0.022$.
+                At 3&nbsp;MPa ($P_r = 0.65$), $Z \approx 0.933$, giving
+                a density 7.2&thinsp;% higher than the ideal-gas prediction.
               </p>
             </article>
             <article class="info-card">
