@@ -127,9 +127,13 @@
             </p>
             <p>
               Viscosity, specific heat, and thermal conductivity are supplied as
-              constants (or temperature-only functions). For typical gas pipeline
-              applications the pressure dependence of transport properties is
-              negligible compared with the pressure dependence of density.
+              callables of $(P, T)$, following the standard non-compositional
+              practice of using empirical correlations rather than deriving
+              transport properties from the EOS.
+              For ideal-gas applications the pressure argument can simply be
+              ignored inside the callable — the interface is already ready for
+              real-gas correlations (e.g.&nbsp;Lee–Gonzalez–Eakin for viscosity)
+              where the pressure dependence is significant.
             </p>
           </div>
 
