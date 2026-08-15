@@ -171,15 +171,11 @@
               $\text{NTU} = \dfrac{U\pi D L}{\dot{m}\,c_p}$ &nbsp;&nbsp;— Number of Transfer Units
             </p>
             <p>
-              Angelica applies this formula element-by-element in a sweep from the
-              pipe inlet to the outlet. Each pipe is divided into $N$ internal segments
-              of equal length; the NTU formula is applied to each segment using the
-              segment outlet as the next segment's inlet.
-            </p>
-            <p>
-              This approach is exact in the limit $N \to \infty$ and avoids the
-              numerical diffusion that a finite-difference discretisation of the
-              convective derivative would introduce.
+              Angelica applies this formula exactly to each pipe.
+              When a pipe is divided into $N$ segments (via the <em>pipe segments</em>
+              parameter), the NTU formula is applied to each segment independently,
+              giving the exact result for any value of $N$ — no numerical diffusion,
+              no mesh-refinement study required.
             </p>
           </div>
 
@@ -189,11 +185,13 @@
               <article class="info-card">
                 <h3>NTU exact formula</h3>
                 <p>
-                  A symmetric looped network (L&nbsp;=&nbsp;500&nbsp;m, D&nbsp;=&nbsp;25&nbsp;mm,
-                  U&nbsp;=&nbsp;50&nbsp;W/m&sup2;K, ṁ&nbsp;=&nbsp;1&nbsp;kg/s,
-                  T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C)
-                  gives NTU&nbsp;=&nbsp;0.470 and an exact outlet temperature of 57.5&nbsp;&deg;C.
-                  Angelica reproduces this within 0.3&nbsp;K.
+                  Single pipe (L&nbsp;=&nbsp;500&nbsp;m, D&nbsp;=&nbsp;25&nbsp;mm,
+                  U&nbsp;=&nbsp;50&nbsp;W/m&sup2;K,
+                  T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C,
+                  ṁ&nbsp;&approx;&nbsp;0.41&nbsp;kg/s) gives NTU&nbsp;=&nbsp;1.158 and an exact
+                  outlet temperature of 38.8&nbsp;&deg;C.
+                  Angelica reproduces this to machine precision — the NTU formula is
+                  applied analytically, not approximated numerically.
                 </p>
               </article>
               <article class="info-card">
