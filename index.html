@@ -6,7 +6,7 @@
     <title>Angelica — Pipeline Network Simulation</title>
     <meta
       name="description"
-      content="Angelica is an open-source platform for pipeline network simulation. Validated solver, graphical interface, MIT licensed. Built to grow toward multiphase and compressible flow."
+      content="Angelica is an open-source platform for pipeline network simulation. Isothermal, non-isothermal, and compressible solvers. Validated against analytical benchmarks. MIT licensed."
     />
     <meta property="og:type"        content="website" />
     <meta property="og:title"       content="Angelica — Pipeline Network Simulation" />
@@ -25,7 +25,7 @@
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "Angelica",
-      "description": "Open-source platform for steady incompressible pipe network simulation. Graphical interface, validated solver, MIT licensed.",
+      "description": "Open-source platform for steady pipe network simulation. Isothermal, non-isothermal, and compressible solvers. Graphical interface, validated against analytical benchmarks, MIT licensed.",
       "url": "https://scimonCFD.github.io/Angelica_website/",
       "downloadUrl": "https://github.com/ScimonCFD/Angelica/releases/latest",
       "applicationCategory": "EngineeringApplication",
@@ -76,12 +76,12 @@
 
             <div class="stat-row">
               <div class="stat">
-                <span class="stat-value">18</span>
+                <span class="stat-value">19</span>
                 <span class="stat-label">Tutorial cases</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat">
-                <span class="stat-value">6</span>
+                <span class="stat-value">9</span>
                 <span class="stat-label">Validation benchmarks</span>
               </div>
               <div class="stat-divider"></div>
@@ -300,9 +300,24 @@
               <p class="bench-result">T<sub>exit</sub> = 19.74 &deg;C, within 0.05 K of textbook</p>
             </article>
             <article class="info-card">
+              <h3>Compressible &mdash; P&sup1;&sup2;&minus;P&sup2;&sup2; mass flow</h3>
+              <p>Isothermal air in a single pipe (D&nbsp;=&nbsp;50&nbsp;mm, L&nbsp;=&nbsp;100&nbsp;m) against the exact P<sub>1</sub><sup>2</sup>&minus;P<sub>2</sub><sup>2</sup> + Colebrook-White analytical reference.</p>
+              <p class="bench-result">ṁ agrees with analytical within 0.01 %</p>
+            </article>
+            <article class="info-card">
+              <h3>Compressible &mdash; series-pipe midpoint pressure</h3>
+              <p>Two identical isothermal air pipes in series. Exact result: P<sub>mid</sub>&nbsp;=&nbsp;&radic;((P<sub>1</sub><sup>2</sup>&nbsp;+&nbsp;P<sub>2</sub><sup>2</sup>)/2) — a consequence of the P<sup>2</sup> momentum equation.</p>
+              <p class="bench-result">P<sub>mid</sub> within 500 Pa of &radic;((300<sup>2</sup>+100<sup>2</sup>)/2) = 223.6&nbsp;kPa</p>
+            </article>
+            <article class="info-card">
+              <h3>Compressible &mdash; gas pipe heat loss NTU</h3>
+              <p>Compressible air with wall heat loss (U&nbsp;=&nbsp;5&nbsp;W/m&sup2;K, T<sub>in</sub>&nbsp;=&nbsp;80&nbsp;&deg;C, T<sub>amb</sub>&nbsp;=&nbsp;20&nbsp;&deg;C) against the exact NTU exit temperature.</p>
+              <p class="bench-result">T<sub>out</sub> exact to machine precision &mdash; NTU formula applied directly</p>
+            </article>
+            <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Eighteen guided cases from single pipes to looped networks, covering isothermal, thermal, and compressible scenarios.</p>
-              <p class="bench-result">11 isothermal &nbsp;&middot;&nbsp; 4 non-isothermal &nbsp;&middot;&nbsp; 3 compressible</p>
+              <p>Nineteen guided cases from single pipes to looped networks, covering isothermal, thermal, and compressible scenarios.</p>
+              <p class="bench-result">11 isothermal &nbsp;&middot;&nbsp; 5 non-isothermal &nbsp;&middot;&nbsp; 3 compressible</p>
             </article>
           </div>
           <div class="methods-callout">
@@ -349,7 +364,7 @@
               <pre class="download-code">pip install git+https://github.com/ScimonCFD/Angelica.git
 angelica-gui</pre>
               <p class="download-meta">
-                Installs numpy, sv&#8209;ttk, and openpyxl automatically.
+                Core dependencies: numpy and scipy. GUI extra (<code>.[gui]</code>) adds sv&#8209;ttk; Excel export (<code>.[excel]</code>) adds openpyxl.
               </p>
             </div>
 
