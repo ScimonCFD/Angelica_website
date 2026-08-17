@@ -315,8 +315,23 @@
               <p class="bench-result">T<sub>out</sub> exact to machine precision &mdash; NTU formula applied directly</p>
             </article>
             <article class="info-card">
+              <h3>Black-oil &mdash; three-phase pipeline</h3>
+              <p>32&nbsp;&deg;API crude, GOR&nbsp;=&nbsp;25&nbsp;m&sup3;/m&sup3;, WOR&nbsp;=&nbsp;0.5. Single 10&nbsp;km pipe, 8&nbsp;MPa&nbsp;&rarr;&nbsp;2&nbsp;MPa.
+                Bubble point&nbsp;=&nbsp;5.63&nbsp;MPa: inlet is undersaturated, outlet is two-phase.
+                PVT correlations: Standing, Hall-Yarborough, Beggs-Robinson, Lee-Gonzalez-Eakin, McCain.</p>
+              <p class="bench-result">Converges in 2 PVT iterations &nbsp;&middot;&nbsp; GOR/WOR recover exactly from surface mass balance</p>
+            </article>
+            <article class="info-card">
+              <h3>Black-oil &mdash; looped gathering network</h3>
+              <p>Two parallel flow paths (upper: 10&nbsp;km; lower: 11&nbsp;km) between a single inlet and a separator.
+                Upper junction sits just above the bubble point (undersaturated);
+                lower junction falls below it (two-phase). Mixture expands along the upper path
+                as free gas liberates from solution.</p>
+              <p class="bench-result">62.7&nbsp;% flow upper path &nbsp;&middot;&nbsp; 37.3&nbsp;% lower &nbsp;&middot;&nbsp; converges in 3 PVT iterations</p>
+            </article>
+            <article class="info-card">
               <h3>Tutorial suite</h3>
-              <p>Nineteen guided cases from single pipes to looped networks, covering isothermal, thermal, and compressible scenarios.</p>
+              <p>Twenty-one guided cases from single pipes to looped networks, covering isothermal, thermal, compressible, and black-oil three-phase scenarios.</p>
               <p class="bench-result">11 isothermal &nbsp;&middot;&nbsp; 5 non-isothermal &nbsp;&middot;&nbsp; 3 compressible &nbsp;&middot;&nbsp; 2 black-oil</p>
             </article>
           </div>
