@@ -317,7 +317,7 @@
                 Turbulent friction for pipes: <strong>Colebrook-White</strong> (default, any fluid),
                 <strong>Hazen-Williams</strong> (water distribution), <strong>Weymouth</strong>,
                 <strong>Panhandle A</strong> and <strong>Panhandle B</strong> (gas transmission), and
-                <strong>Beggs-Brill</strong> (two-phase flow with liquid holdup, flow pattern and the inclination correction; optionally with the Payne holdup correction; black-oil
+                <strong>Beggs-Brill</strong> (two-phase flow with liquid holdup, flow pattern and the inclination correction; optionally with the Payne holdup correction; black-oil and compositional
                 cases).
               </span>
             </li>
@@ -409,7 +409,7 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with forty-three tutorial cases in five folders under
+            Angelica ships with forty-four tutorial cases in five folders under
             <code>tutorials/</code>: isothermal (11), non-isothermal (8), compressible (6),
             compositional (6) and black-oil (12).
             Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
@@ -705,6 +705,13 @@
               <div>
                 <h4>Compositional Ring Main: Who Gets the Condensate?</h4>
                 <p>Two gas fields feed a ring main that supplies two customers.  Each source enters the ring at one corner and each customer draws from another corner, so every customer is fed by both sources along two different paths.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">07</span>
+              <div>
+                <h4>Hilly Gas-Condensate Line: Homogeneous vs Beggs-Brill</h4>
+                <p>A wet gas crosses 20 km of hilly terrain. With Beggs-Brill the gas slips past the liquid: the line holds about 124 m³ of liquid instead of 22 m³, and delivers 15.6 % less gas for the same pressures than the homogeneous model.</p>
               </div>
             </div>
           </div>
