@@ -127,7 +127,7 @@
             <li><strong>Pan</strong> — click and drag the canvas background with the middle mouse button to pan the view.</li>
             <li><strong>Select &amp; move a node</strong> — left-click to select (highlighted); drag to reposition. Press <kbd>Delete</kbd> or <kbd>Backspace</kbd> to remove the selected node and all its connected links.</li>
             <li><strong>Draw a link</strong> — right-click (or Shift+left-click) a node and drag to another node to draw a connection.</li>
-            <li><strong>Edit or delete a link</strong> — right-click any link to open a context menu with <em>Edit Components</em>, <em>Pressure Profile</em> (when results are available), and <em>Delete Connection</em>.</li>
+            <li><strong>Edit or delete a link</strong> — right-click any link to open a context menu with <em>Edit Components</em>, the result plots that apply (<em>Pressure Profile</em>, <em>Temperature Profile</em>, <em>Phase Envelope</em>), and <em>Delete Connection</em>.</li>
             <li><strong>Undo / Redo</strong> — <kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd> (or <em>Edit → Undo / Redo</em>) step back and forward through node placements, link additions, link deletions, and node moves.</li>
             <li><strong>Save / Open</strong> — use <em>File → Save</em> (<kbd>Ctrl+S</kbd>) and <em>File → Open</em>. Scene files (<code>.gui.json</code>) store the full scene and, when results exist, the last solve output so you can reopen and export without re-running. Tutorial files are read-only; use <em>Save As…</em> to save a copy elsewhere.</li>
           </ul>
@@ -139,8 +139,9 @@
           <h2>Nodes</h2>
           <p>
             Every network is a graph of <strong>nodes</strong> connected by <strong>links</strong>.
-            Angelica has three node types. Click the corresponding button in the top toolbar to place one,
-            then click the desired position on the canvas.
+            Angelica has three node types. Click the corresponding button in the <em>Node Palette</em>
+            on the left (▲ source, ▼ sink, ○ junction), then click the desired position on the canvas.
+            Double-click a node to edit its properties.
           </p>
 
           <div class="node-grid">
@@ -154,8 +155,10 @@
               <h3>Source</h3>
               <p>
                 A <strong>boundary inlet node</strong>. You specify either the static pressure at this node
-                (Pa) or the total mass flow rate entering the network here (kg/s). At least one pressure-specified
-                source or sink is required.
+                or the total mass flow rate entering the network here. With heat transfer, it also takes the
+                inlet temperature. In black-oil cases it carries the stream's GOR and WOR (and, optionally,
+                its own API and gas gravity); in compositional cases, its mole fractions. A source or sink
+                connects to exactly one link — use a junction to split or merge flows.
               </p>
             </div>
 
@@ -168,8 +171,9 @@
               <h3>Sink</h3>
               <p>
                 A <strong>boundary outlet node</strong>. Like a source, you specify either pressure or mass flow
-                rate. The distinction between source and sink is only visual — both can carry flow in either
-                direction if the pressure field requires it.
+                rate. Its thermal condition defaults to zero gradient (the fluid leaves at whatever temperature
+                arrives). Sources and sinks can carry flow in either direction if the pressure field requires
+                it.
               </p>
             </div>
 
@@ -206,11 +210,13 @@
             the one you drew.
           </p>
           <p>
-            Right-clicking any existing link opens a context menu with three options:
+            Right-clicking any existing link opens a context menu:
           </p>
           <ul style="font-size:0.92rem;line-height:1.7;margin:0.5rem 0 0 1.25rem;">
             <li><strong>Edit Components</strong> — open the properties dialog to add, reorder, delete, and configure devices.</li>
-            <li><strong>Pressure Profile</strong> — open the pressure-vs-distance plot for this link (only shown when results are available).</li>
+            <li><strong>Pressure Profile</strong> — pressure versus distance along the link (after a solve).</li>
+            <li><strong>Temperature Profile</strong> — temperature versus distance (cases with heat transfer).</li>
+            <li><strong>Phase Envelope</strong> — bubble and dew curves of the fluid in this link, the critical point, constant vapour-fraction lines you can add, and the link's inlet and outlet conditions (compositional cases). Inlet and outlet are always drawn, also when they lie far outside the envelope.</li>
             <li><strong>Delete Connection</strong> — remove the link (undoable).</li>
           </ul>
           <p style="margin-top:0.8rem;">
@@ -230,55 +236,34 @@
           <p class="eyebrow">Network devices</p>
           <h2>Devices inside a link</h2>
           <p>
-            Each link holds an ordered list of devices. Multiple devices in the same link are treated as
-            being in series — the outlet of one feeds the inlet of the next. Any combination of pipes,
-            fittings, and pumps is valid within a single link.
+            Each link holds an ordered list of devices in series — the outlet of one feeds the inlet of the
+            next. Add them from the palette in the <em>Edit Components</em> dialog. Lengths, diameters,
+            roughness and elevation are entered in the active unit system.
           </p>
 
-          <h3 style="margin-top:2rem;">Pipe</h3>
-          <p>A circular-cross-section conduit. Pressure drop follows the Darcy-Weisbach equation (default) or Hazen-Williams (selectable in the Pressure Drop Model panel).</p>
           <table class="device-table">
-            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+            <thead><tr><th>Device</th><th>Available in</th><th>What it does and its main inputs</th></tr></thead>
             <tbody>
-              <tr><td>length_m</td><td>Pipe length (m). Must be &gt; 0.</td></tr>
-              <tr><td>diameter_m</td><td>Internal diameter (m). Must be &gt; 0.</td></tr>
-              <tr><td>height_change_m</td><td>Elevation of outlet minus elevation of inlet (m). Positive = uphill. Enter 0 for horizontal.</td></tr>
-              <tr><td>roughness_m</td><td>Absolute wall roughness (m). Typical steel: 4.5 × 10⁻⁵ m. Used only with Colebrook-White friction.</td></tr>
-              <tr><td>num_segments</td><td>Number of internal nodes along this pipe for the pressure profile plot. Does not affect the solve; use 1 for simple cases.</td></tr>
-            </tbody>
-          </table>
-
-          <h3 style="margin-top:2rem;">Fitting</h3>
-          <p>A localised loss element (valve, elbow, tee, contraction, etc.) characterised by a dimensionless loss coefficient K.</p>
-          <table class="device-table">
-            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>k_loss</td><td>Minor loss coefficient K — dimensionless. Pressure drop is ΔP = K · ½ρV².</td></tr>
-              <tr><td>diameter_m</td><td>Reference diameter for velocity calculation (m).</td></tr>
-              <tr><td>height_change_m</td><td>Elevation change across the fitting (m). Usually 0.</td></tr>
-            </tbody>
-          </table>
-
-          <h3 style="margin-top:2rem;">Pump</h3>
-          <p>A centrifugal pump modelled via a head-vs-flow curve entered as a Q-Head table in the link properties dialog.</p>
-          <table class="device-table">
-            <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>diameter_m</td><td>Reference diameter of the pump casing (m).</td></tr>
-              <tr><td>curve_points_q_head</td><td>Q-Head table — one pair per line in the form <code>Q&nbsp;Head</code> (Q in m³/h, head in m). Flow must increase; head must decrease.<br><br><strong>1 point:</strong> EPANET single-point model — power-law curve with shutoff head = 1.33 × design head.<br><strong>2+ points:</strong> piecewise-linear interpolation.</td></tr>
+              <tr><td>Pipe</td><td>All modes</td><td>Straight pipe: length, internal diameter, elevation change (outlet minus inlet), roughness, number of segments for the profile plots. With heat transfer it also takes an overall U and ambient temperature, or a layered wall (inner film, steel wall, insulation, outer film).</td></tr>
+              <tr><td>Fitting</td><td>All modes</td><td>Local loss ΔP = K·½ρV², with K typed in or picked from a library of 24 presets (elbows, return bends, tees, unions and valves).</td></tr>
+              <tr><td>Pump</td><td>All modes</td><td>Head–flow curve, one <code>Q&nbsp;H</code> pair per line (Q in m³/h, H in m). One point gives the EPANET three-term curve; two or more are interpolated. Shaft work heats the fluid in thermal cases.</td></tr>
+              <tr><td>Choke</td><td>All modes</td><td>Restriction orifice: pipe and orifice diameters, discharge coefficient. Two-phase flow uses the Sachdeva model, including critical (choked) flow.</td></tr>
+              <tr><td>Check valve</td><td>All modes</td><td>K-factor fitting (K = 2 when open) that closes when the downstream pressure is higher, so it never passes reverse flow.</td></tr>
+              <tr><td>Heat Source</td><td>Thermal modes</td><td>Heater (positive power) or cooler (negative power) with a fixed duty in W. Pressure drop rated at a reference flow, or fixed.</td></tr>
+              <tr><td>Well IPR</td><td>Black-oil</td><td>Reservoir inflow between a reservoir node and the wellhead: productivity index J (m³/d/bar) with a linear or composite-Vogel IPR. Reservoir pressure is the upstream source pressure.</td></tr>
+              <tr><td>Well</td><td>Black-oil</td><td>Reservoir inflow plus production tubing (length, vertical rise, diameter, roughness). The tubing is integrated with Beggs-Brill, giving the well's deliverability curve; if the wellhead pressure is above the curve's maximum the well is dead.</td></tr>
             </tbody>
           </table>
 
           <p style="margin-top:1.5rem;">
-            Inside the Edit Components dialog you can also <strong>reorder</strong> devices with the
+            Inside the Edit Components dialog you can <strong>reorder</strong> devices with the
             <strong>↑</strong> and <strong>↓</strong> buttons, and <strong>delete</strong> individual
             devices with the <strong>Delete</strong> button. All these actions are undoable.
           </p>
           <div class="tip-box">
-            After a successful solve, right-click any link and choose <strong>Pressure Profile</strong>
-            (or double-click the link directly) to see how pressure evolves along that link, with each
-            device labelled. Pipes appear as sloped lines; fittings and pumps appear as vertical
-            pressure steps, marked with ×.
+            After a successful solve, double-click any link to see how pressure evolves along it, with each
+            device labelled. Pipes appear as sloped lines; fittings, pumps, chokes and valves appear as
+            vertical pressure steps, marked with ×.
           </div>
         </section>
 
@@ -287,46 +272,58 @@
           <p class="eyebrow">Configuration</p>
           <h2>Settings panels</h2>
           <p>
-            The left sidebar and the <em>Define</em> menu give access to four global settings that apply
-            to the entire network.
+            Global settings live in the menu bar; the left sidebar summarises the current choices.
           </p>
 
           <ul class="panel-list">
 
             <li>
-              <span class="panel-name">Fluid</span>
+              <span class="panel-name">Physics → Case Type</span>
               <span class="panel-desc">
-                Choose a working fluid. Three modes are available:
-                <br><br>
-                <strong>Library</strong> — pick a preset (Water at standard conditions).
-                <br><br>
-                <strong>Custom</strong> — enter density (kg/m³) and dynamic viscosity (Pa·s) directly.
-                Use this for refined products, brines, or any liquid with known properties.
-                <br><br>
-                <strong>Crude oil</strong> — enter two field parameters: <em>API gravity</em> (°API)
-                and <em>operating temperature</em> (°C). Angelica computes density and viscosity
-                automatically using the Beggs &amp; Robinson (1975) dead-oil correlation before
-                running the solver. Temperature is used only for this property calculation —
-                the simulation itself is isothermal.
-                <br><br>
-                All three modes feed the same solver. Fluid properties affect the Reynolds number
-                in every pipe and therefore the friction-factor regime throughout the network.
+                Picks the model for the whole network.
+                <strong>Incompressible</strong> liquids can be solved <strong>isothermal</strong> or
+                <strong>non-isothermal</strong> (temperature solved with the flow).
+                <strong>Compressible</strong> is for gas (density from the ideal-gas law or Peng-Robinson).
+                <strong>Black-oil (3-phase)</strong> handles oil, gas and water with PVT correlations.
+                <strong>Compositional (EOS)</strong> handles a mixture of named components with an equation
+                of state, including free water. The last three always solve temperature.
               </span>
             </li>
 
             <li>
-              <span class="panel-name">Pressure Drop Model</span>
+              <span class="panel-name">Material → Define Material</span>
               <span class="panel-desc">
-                Selects the turbulent friction correlation for pipes.
-                <strong>Colebrook-White</strong> (default) uses the implicit Colebrook equation with
-                wall roughness and is valid across all turbulent Reynolds numbers.
-                <strong>Hazen-Williams</strong> is an empirical formula for water in commercial pipes;
-                it ignores viscosity and roughness but is widely used in water-distribution practice.
+                The dialog depends on the case type.
+                <br><br>
+                <strong>Incompressible and compressible cases</strong> — <em>Library</em> (water),
+                <em>Custom</em> (density and viscosity; add cp and k for heat transfer), <em>Crude oil</em>
+                (API gravity and temperature, Beggs-Robinson dead-oil viscosity), <em>Gas (ideal)</em>
+                (molecular weight) and <em>Gas (PR)</em> (critical temperature, critical pressure, acentric
+                factor). For water and crude oil, the <em>Temperature-dependent properties</em> box makes
+                density, viscosity, cp and k follow the local temperature.
+                <br><br>
+                <strong>Black-oil</strong> — API gravity, gas gravity, PVT correlation set and gas thermal
+                properties. GOR and WOR are given per source node.
+                <br><br>
+                <strong>Compositional</strong> — component names (for example
+                <code>methane, ethane, propane, water</code>), default mole fractions and the equation of
+                state (Peng-Robinson or SRK). Each source node then sets its own composition.
               </span>
             </li>
 
             <li>
-              <span class="panel-name">Numerics</span>
+              <span class="panel-name">Physics → Pressure-Drop Model</span>
+              <span class="panel-desc">
+                Turbulent friction for pipes: <strong>Colebrook-White</strong> (default, any fluid),
+                <strong>Hazen-Williams</strong> (water distribution), <strong>Weymouth</strong>,
+                <strong>Panhandle A</strong> and <strong>Panhandle B</strong> (gas transmission), and
+                <strong>Beggs-Brill</strong> (two-phase flow with liquid holdup and flow pattern; black-oil
+                cases).
+              </span>
+            </li>
+
+            <li>
+              <span class="panel-name">Numerics → Define Numerics</span>
               <span class="panel-desc">
                 Controls solver behaviour. Key settings:
                 <br><br>
@@ -347,10 +344,18 @@
             </li>
 
             <li>
-              <span class="panel-name">Unit System</span>
+              <span class="panel-name">Settings → Unit System</span>
               <span class="panel-desc">
-                Switch between SI (m · Pa · kg/s) and other unit systems for displaying results.
-                Input fields always accept SI values regardless of the display unit.
+                SI (m · Pa · kg/s) or US customary (ft · in · psi · lb/s). The choice applies both to the
+                values shown on the canvas and to the pressure, flow, length, diameter, roughness and
+                elevation fields you type in; Angelica stores everything in SI.
+              </span>
+            </li>
+
+            <li>
+              <span class="panel-name">View</span>
+              <span class="panel-desc">
+                Dark or light theme, and the convergence window.
               </span>
             </li>
 
@@ -363,8 +368,8 @@
           <h2>Running a simulation</h2>
           <ol class="step-list">
             <li>Build the network on the canvas (nodes + links + devices).</li>
-            <li>Set the fluid, pressure-drop model, and any numerics settings you want to change from their defaults.</li>
-            <li>Click <strong>Run</strong> in the menu bar (or press the Run button).</li>
+            <li>Choose the case type, then set the material, pressure-drop model, and any numerics settings you want to change from their defaults.</li>
+            <li>Press the <strong>Run</strong> button at the top of the left panel.</li>
             <li>
               Angelica validates the scene first: it checks that all nodes are connected, that the graph
               has no isolated sub-networks, and that at least one pressure boundary exists. Any errors are
@@ -375,19 +380,20 @@
               A progress bar and live convergence metrics are shown during the solve.
             </li>
             <li>
-              Results appear on the canvas: junction nodes show their computed pressure with a tag,
-              and boundary nodes show the computed flow rate. The convergence history plot opens
-              automatically during the solve and can be reopened at any time from
+              Results appear on the canvas: every node shows its pressure (and temperature, in thermal
+              cases), and boundary nodes show the computed flow rate. In compositional cases each link is
+              labelled with its vapour fraction, and two-phase links are drawn in amber. The convergence
+              history plot opens automatically during the solve and can be reopened at any time from
               <em>View → Convergence Window</em>.
             </li>
             <li>
-              Click any node to see a summary popup with pressure, elevation, and connected flows.
-              Right-click any link to open its context menu and view the <strong>Pressure Profile</strong>.
+              Right-click any link for its pressure and temperature profiles and, in compositional cases,
+              its phase envelope.
             </li>
             <li>
               Use <em>File → Save</em> (<kbd>Ctrl+S</kbd>) to persist the scene and results.
-              Reopening the file restores the last solve output, so <em>Export Results Report</em>
-              works immediately without re-running.
+              Reopening the file restores the last solve output, so <em>File → Export Results Report</em>
+              (Excel or CSV) works immediately without re-running.
             </li>
           </ol>
 
