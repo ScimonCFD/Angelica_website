@@ -216,8 +216,8 @@
             <li><strong>Edit Components</strong> — open the properties dialog to add, reorder, delete, and configure devices.</li>
             <li><strong>Pressure Profile</strong> — pressure versus distance along the link (after a solve).</li>
             <li><strong>Temperature Profile</strong> — temperature versus distance (cases with heat transfer).</li>
-            <li><strong>Multiphase Flow</strong> — per pipe segment: flow pattern, no-slip liquid fraction and in-situ holdup, superficial velocities, liquid volume, the elevation / friction split of the pressure gradient, and the API RP 14E erosional-velocity ratio v<sub>m</sub>/V<sub>e</sub> (black-oil and compositional cases). Links above the erosional velocity are labelled in red on the canvas.</li>
-            <li><strong>Phase Envelope</strong> — bubble and dew curves of the fluid in this link, the critical point, constant vapour-fraction lines you can add, and the link's inlet and outlet conditions (compositional cases). Inlet and outlet are always drawn, also when they lie far outside the envelope.</li>
+            <li><strong>Multiphase Flow</strong> — per pipe segment: flow pattern, no-slip liquid fraction and in-situ holdup, superficial velocities, liquid volume, the elevation / friction split of the pressure gradient, and the API RP 14E erosional-velocity ratio v<sub>m</sub>/V<sub>e</sub> (black-oil and compositional cases). Links above the erosional velocity are labelled in red on the canvas; links carrying free water colder than the hydrate formation temperature are labelled "HYD +x K".</li>
+            <li><strong>Phase Envelope</strong> — bubble and dew curves of the fluid in this link, the critical point, constant vapour-fraction lines you can add, the gas-hydrate formation curve, and the link's inlet and outlet conditions (compositional cases). Inlet and outlet are always drawn, also when they lie far outside the envelope.</li>
             <li><strong>Delete Connection</strong> — remove the link (undoable).</li>
           </ul>
           <p style="margin-top:0.8rem;">
@@ -410,7 +410,7 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with forty-four tutorial cases in five folders under
+            Angelica ships with forty-five tutorial cases in five folders under
             <code>tutorials/</code>: isothermal (11), non-isothermal (8), compressible (6),
             compositional (6) and black-oil (12).
             Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
@@ -713,6 +713,13 @@
               <div>
                 <h4>Hilly Gas-Condensate Line: Homogeneous vs Beggs-Brill</h4>
                 <p>A wet gas crosses 20 km of hilly terrain. With Beggs-Brill the gas slips past the liquid: the line holds about 126 m³ of liquid instead of 24 m³, and delivers 15.6 % less gas for the same pressures than the homogeneous model.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">08</span>
+              <div>
+                <h4>Hydrate Risk in a Subsea Wet-Gas Line</h4>
+                <p>A wet gas flows 30 km along a 4 °C seabed. Bare, it enters the hydrate region after 5 km and arrives 15 K inside it; insulated, it arrives 3 K above the hydrate formation temperature. Shows the hydrate curve (structure II with 3 % propane) and the per-pipe hydrate margin.</p>
               </div>
             </div>
           </div>
