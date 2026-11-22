@@ -6,7 +6,7 @@
     <title>Angelica — Solver Framework</title>
     <meta
       name="description"
-      content="The Angelica solver framework: a six-step algorithm that scales from isothermal to non-isothermal flow, and toward compressible and multiphase simulation. Each future solver plugs into the same structure."
+      content="The Angelica solver framework: a six-step algorithm shared by the isothermal, non-isothermal, compressible, black-oil and compositional solvers."
     />
     <meta property="og:type"        content="website" />
     <meta property="og:title"       content="Angelica — Solver Framework" />
@@ -140,9 +140,9 @@
             The algorithm below is the general form. For an isothermal simulation,
             steps&nbsp;1, 5, and&nbsp;6 are trivial or skipped entirely.
             For a non-isothermal simulation, all six steps are active.
-            Future solvers — multiphase, compositional — will add physics to the
-            same slots without changing the structure.
-            The compressible solver (ideal gas) is now live.
+            The compressible, black-oil (multiphase) and compositional solvers add
+            their physics — equation of state, PVT, flash — to the same slots
+            without changing the structure.
           </p>
 
           <figure style="max-width:460px;margin:2rem auto 0;">

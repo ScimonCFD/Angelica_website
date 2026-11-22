@@ -403,16 +403,15 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with fifteen tutorial cases across two folders:
-            <code>tutorials/steady_isothermal_incompressible/</code> (cases 01–11) and
-            <code>tutorials/steady_non_isothermal_incompressible/</code> (cases 12–15).
+            Angelica ships with forty-three tutorial cases in five folders under
+            <code>tutorials/</code>: isothermal (11), non-isothermal (8), compressible (6),
+            compositional (6) and black-oil (12).
             Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
             and a <code>run.py</code> script that solves the same network from Python.
             Open them via <em>File → Open</em>.
           </p>
           <p>
-            The cases are ordered by increasing complexity and cover every device and boundary-condition
-            type supported by both solvers — isothermal and non-isothermal.
+            Within each folder the cases are ordered by increasing complexity.
           </p>
 
           <div class="tutorial-list">
@@ -552,72 +551,244 @@
           </div>
 
           <p style="margin-top:2rem;font-weight:600;">Non-isothermal tutorials</p>
-          <p style="margin-bottom:1.2rem;">
-            The following cases require the physics mode to be set to <em>Non-isothermal</em>
-            in the simulation settings. Source nodes need an inlet temperature; pipes need a heat
-            transfer coefficient U and an ambient temperature.
-          </p>
-
+          <p style="margin-bottom:1.2rem;">Physics mode <em>Non-isothermal</em>. Source nodes need an inlet temperature; pipes need a heat-transfer coefficient U and an ambient temperature.</p>
           <div class="tutorial-list">
-
+            <div class="tutorial-item">
+              <span class="tutorial-num">01</span>
+              <div>
+                <h4>Single pipe with heat loss</h4>
+                <p>Hot water enters at 80 °C and loses heat through the pipe wall. The analytical solution for plug-flow with a uniform heat sink is:</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">02</span>
+              <div>
+                <h4>District heating branch</h4>
+                <p>The longer branch (300 m) loses more heat than the shorter one (100 m), so load A receives water at a lower temperature than load B even though both start from the same junction.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">03</span>
+              <div>
+                <h4>Looped network with heat loss</h4>
+                <p>Water at 95 °C splits at a junction into a two-pipe upper branch and a direct bypass that rejoin before the sink. Each path loses heat to a 10 °C ambient (U = 30 W/m²K), so the temperature at the merge junction is the flow-weighted mix of two differently cooled streams.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">04</span>
+              <div>
+                <h4>Inline electric heater</h4>
+                <p>Cold water at 20 °C flows through a 50 mm pipe driven by a 2 bar pressure difference. An inline electric heater adds 50 kW to the fluid. The heater is hydraulically transparent (ΔP = 0).</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">05</span>
+              <div>
+                <h4>Non-isothermal crude oil gathering pipeline</h4>
+                <p>A 32°API dead crude oil enters a branched gathering network at 80 °C. The pipeline loses heat to a 15 °C ambient through light insulation (U = 2 W/m²K).  As the oil cools its viscosity rises sharply, increasing friction losses.  This tutorial demonstrates:</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">06</span>
+              <div>
+                <h4>Non-isothermal hilly hot-water network</h4>
+                <p>Demonstrates that the elevation source term ρ·g·Δz is properly handled by the non-isothermal solver when pipes ascend and descend by significant amounts.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">07</span>
+              <div>
+                <h4>Composite U loop: insulated vs bare arm heat loss</h4>
+                <p>Demonstrates the multi-layer thermal resistance model (composite U) on a looped crude-oil pipeline.  The loop splits into two parallel arms:</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">08</span>
+              <div>
+                <h4>Pump shaft-work heating in a crude oil pipeline</h4>
+                <p>A crude oil gathering system collects oil at 70 °C and feeds a pump station that boosts the oil into a high-pressure export line.  This tutorial shows:</p>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:2rem;font-weight:600;">Compressible gas tutorials</p>
+          <p style="margin-bottom:1.2rem;">Physics mode <em>Compressible</em>. The material is an ideal or Peng-Robinson gas; at least one boundary needs a fixed temperature.</p>
+          <div class="tutorial-list">
+            <div class="tutorial-item">
+              <span class="tutorial-num">01</span>
+              <div>
+                <h4>Natural Gas Pipeline</h4>
+                <p>Branched methane network demonstrating the compressible solver.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">02</span>
+              <div>
+                <h4>Flow BC Cross-Validation</h4>
+                <p>Same methane network as tutorial 01, but with mass-flow boundary conditions at the two outlets instead of prescribed pressures.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">03</span>
+              <div>
+                <h4>Looped gas pipeline with heat loss</h4>
+                <p>Methane at 700 kPa and 40 °C enters a looped gas network with a cross-link between the upper and lower paths. The solver distributes the flow around the loop while the gas cools towards a 10 °C ambient (U = 5 W/m²K) and density changes with pressure.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">04</span>
+              <div>
+                <h4>Compressible gas pipeline hill crossing</h4>
+                <p>Demonstrates that the elevation source term ρ·g·Δz is correctly handled in the compressible solver where gas density varies with pressure.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">05</span>
+              <div>
+                <h4>Joule-Thomson cooling across a valve</h4>
+                <p>Methane at 70 bar and 40 °C flows through 500 m of pipe, a throttling valve (K = 50) and another 500 m of pipe to 50 bar.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">06</span>
+              <div>
+                <h4>Gas compressor station: shaft-work heating</h4>
+                <p>A natural-gas compressor station boosts methane from 30 bar to 60 bar. Shaft work raises the gas temperature significantly.  This tutorial shows:</p>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:2rem;font-weight:600;">Compositional tutorials</p>
+          <p style="margin-bottom:1.2rem;">Physics mode <em>Compositional</em>. The material is a list of components with mole fractions; each source can carry its own composition. Right-click a connection for its phase envelope.</p>
+          <div class="tutorial-list">
+            <div class="tutorial-item">
+              <span class="tutorial-num">01</span>
+              <div>
+                <h4>Compositional Single Pipe</h4>
+                <p>A single gas pipe transporting a methane/ethane binary mixture.  The EOS flash is performed at each iteration using the thermo library, showing how density and viscosity change along the pressure gradient.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">02</span>
+              <div>
+                <h4>Compositional Gas Mixing Junction</h4>
+                <p>Two gas sources with different compositions feed a common trunk line. The solver propagates each inlet&#x27;s mole-fraction vector through the network and computes a molar-flow-weighted blend at the junction.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">03</span>
+              <div>
+                <h4>Compositional Looped Gas Network</h4>
+                <p>Two gas sources with different compositions feed a looped gathering network.  The loop creates a hydraulic cycle — the SIMPLE solver distributes flow to satisfy mass balance at every node and Kirchhoff&#x27;s pressure law around the loop.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">04</span>
+              <div>
+                <h4>Free Water in a Wet-Gas Pipeline</h4>
+                <p>Demonstrates Angelica&#x27;s immiscible-water model.  When water is included in the component list the solver detects it automatically, performs the VL flash on the dry (water-free) normalised composition, and determines how much water condenses as free liquid using the Wagner / IAPWS-IF97 saturation pressure.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">05</span>
+              <div>
+                <h4>Three-Phase Rich Condensate Pipeline</h4>
+                <p>Demonstrates a three-phase result: Gas + HC liquid + Free water.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">06</span>
+              <div>
+                <h4>Compositional Ring Main: Who Gets the Condensate?</h4>
+                <p>Two gas fields feed a ring main that supplies two customers.  Each source enters the ring at one corner and each customer draws from another corner, so every customer is fed by both sources along two different paths.</p>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:2rem;font-weight:600;">Black-oil tutorials</p>
+          <p style="margin-bottom:1.2rem;">Physics mode <em>Black-oil</em>. The material gives API and gas gravity; each source node sets its GOR and WOR (and optionally its own API and gas gravity).</p>
+          <div class="tutorial-list">
+            <div class="tutorial-item">
+              <span class="tutorial-num">01</span>
+              <div>
+                <h4>Black-Oil Three-Phase Pipeline</h4>
+                <p>A single-pipe crude-oil system with dissolved gas and produced water.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">02</span>
+              <div>
+                <h4>Black-Oil Looped Gathering Network</h4>
+                <p>A trunk-fed diamond loop.  A single header feeds a T-split junction; two parallel loop branches reconnect at a T-merge junction; a single discharge header leads to the outlet separator.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">03</span>
+              <div>
+                <h4>Black-Oil Looped Network with Flow Outlet</h4>
+                <p>Trunk-fed diamond loop where the outlet specifies a mass-flow demand instead of a pressure.  The solver finds the outlet pressure that satisfies the 100 kg/s demand.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">04</span>
+              <div>
+                <h4>Black-Oil Looped Network with Two Separators</h4>
+                <p>Trunk-fed diamond loop with a lateral branch to a satellite separator. The main loop converges at Node 5 (T-merge), which leads via a discharge trunk to the primary separator (Node 6, 80 kg/s).  A lateral branch from Node 4 (lower loop junction) delivers crude to a satellite separator (Node 7, 20 kg/s).</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">05</span>
+              <div>
+                <h4>Black-Oil Two-Reservoir Blending</h4>
+                <p>Two reservoirs with different fluid properties (API gravity, GOR, WOR) feed a common trunk that delivers to a single separator.  Each inlet carries its own composition; the solver propagates and mixes them at the junction.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">06</span>
+              <div>
+                <h4>Black-oil gathering network with topographic elevation</h4>
+                <p>Demonstrates the elevation source term ρ_mix·g·Δz in a three-phase system where the two wells are at very different elevations.  Well A flows downhill (gravity assists), Well B flows uphill (gravity opposes) to reach the manifold.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">07</span>
+              <div>
+                <h4>Non-Isothermal Black-Oil Hot-Oil Pipeline</h4>
+                <p>A heated crude-oil pipeline where temperature-dependent PVT properties (viscosity, density, solution GOR) materially affect the hydraulic result.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">08</span>
+              <div>
+                <h4>Beggs-Brill two-phase flow correlation</h4>
+                <p>Compares two pressure-drop models on the same horizontal 10 km black-oil pipeline. Single-phase Colebrook-White ignores slip and holdup and over-predicts the flow by about 23 % relative to Beggs-Brill two-phase flow.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">09</span>
+              <div>
+                <h4>Beggs-Brill in a multi-well gathering network</h4>
+                <p>Three production wells with different fluid characteristics (GOR, API, water cut) converge at a single manifold and then flow to a separator.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">10</span>
+              <div>
+                <h4>Critical two-phase flow through a production choke</h4>
+                <p>A choke (bean) is the primary flow-control device on a production well. When the pressure ratio across it falls below a critical value, the gas-liquid mixture reaches sonic velocity in the throat and the flow becomes &quot;choked&quot;: the rate no longer depends on what happens downstream.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">11</span>
+              <div>
+                <h4>Wells with inflow performance (IPR) and check valves</h4>
+                <p>Tutorial 09 fixed each well&#x27;s pressure at the wellhead, so the weakest well took back-flow from the manifold.  Here each well is a reservoir that delivers oil according to its inflow performance relationship (IPR), and a check valve at each wellhead stops back-flow.</p>
+              </div>
+            </div>
             <div class="tutorial-item">
               <span class="tutorial-num">12</span>
               <div>
-                <h4>Hot water pipe with ambient heat loss</h4>
-                <p>
-                  A single 500 m pipe carrying 80 °C water with a wall heat transfer coefficient
-                  of U = 50 W/m²K. The outlet temperature is compared against the exact
-                  NTU analytical solution T<sub>out</sub> = T<sub>amb</sub> + (T<sub>in</sub> − T<sub>amb</sub>) e<sup>−NTU</sup>.
-                  Agreement is within 0.01 K.
-                </p>
+                <h4>Wells with production tubing (nodal analysis in a network)</h4>
+                <p>Tutorial 11 referred each well&#x27;s inflow to the wellhead.  Here every well carries its production tubing: 2 100 m of tubing rising 2 000 m from the bottom hole to the wellhead.  The Well component combines the reservoir inflow (IPR) and the tubing, so the network sees each well through its deliverability curve P_wh(q).</p>
               </div>
             </div>
-
-            <div class="tutorial-item">
-              <span class="tutorial-num">13</span>
-              <div>
-                <h4>District heating branch</h4>
-                <p>
-                  An 85 °C supply header splits at a junction into a short branch and a long branch,
-                  each delivering heat to a building. The long branch arrives cooler than the short
-                  branch — a direct consequence of the NTU heat-loss model accumulating along each
-                  pipe's length.
-                </p>
-              </div>
-            </div>
-
-            <div class="tutorial-item">
-              <span class="tutorial-num">14</span>
-              <div>
-                <h4>Looped network with heat loss</h4>
-                <p>
-                  A 95 °C source feeds a looped network where one branch is much longer than the
-                  bypass. Demonstrates that the outer temperature–hydraulics iteration converges
-                  correctly for looped topologies, where the flow distribution affects heat loss
-                  and heat loss affects density — and therefore the flow distribution.
-                </p>
-              </div>
-            </div>
-
-            <div class="tutorial-item">
-              <span class="tutorial-num">15</span>
-              <div>
-                <h4>Inline electric heater — energy balance</h4>
-                <p>
-                  Cold water at 20 °C flows through an inline heater that adds 50 kW of thermal
-                  power. The heater is hydraulically transparent (ΔP = 0). The tutorial verifies
-                  the energy balance ΔT = Q / (ṁ·c<sub>p</sub>) to within 0.5 K and illustrates
-                  how to read inlet and outlet temperatures from <code>component_flows</code>.
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="tip-box">
-            The <code>run.py</code> script in each tutorial folder shows the Python API — useful if you
-            want to drive Angelica programmatically, run parameter sweeps, or integrate it into a larger
-            workflow without opening the GUI.
           </div>
         </section>
 

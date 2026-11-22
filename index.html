@@ -30,7 +30,7 @@
       "downloadUrl": "https://github.com/ScimonCFD/Angelica/releases/latest",
       "applicationCategory": "EngineeringApplication",
       "operatingSystem": "Windows, Linux, macOS",
-      "softwareVersion": "1.13.0",
+      "softwareVersion": "1.13.1",
       "license": "https://opensource.org/licenses/MIT",
       "author": {
         "@type": "Person",
@@ -70,8 +70,9 @@
             <h1>The open&#8209;source platform for pipeline network simulation.</h1>
             <p class="hero-text">
               Validated solver, engineer&#8209;friendly interface, isothermal,
-              non&#8209;isothermal, and compressible flow — with a clear roadmap
-              toward multiphase simulation. Free forever.
+              non&#8209;isothermal, compressible, black&#8209;oil multiphase and
+              compositional flow — from water networks to oil and gas gathering
+              systems. Free forever.
             </p>
 
             <div class="stat-row">
@@ -179,7 +180,7 @@
                 </svg>
               </div>
               <h3>Pipes</h3>
-              <p>Darcy-Weisbach with Colebrook-White or Hazen-Williams closure. Arbitrary length, diameter, and wall roughness.</p>
+              <p>Darcy-Weisbach with Colebrook-White or Hazen-Williams, Weymouth and Panhandle for gas, Beggs-Brill for two-phase flow. Elevation changes and wall heat loss.</p>
             </article>
 
             <article class="cap-card">
@@ -189,8 +190,8 @@
                   <path d="M3 15h4"/>
                 </svg>
               </div>
-              <h3>Fittings</h3>
-              <p>Local-loss accessories from a built-in library or a custom K. Elbows, valves, tees, and any fitting with a known loss coefficient.</p>
+              <h3>Fittings, valves and chokes</h3>
+              <p>Local-loss accessories from a built-in library or a custom K. Check valves that close against reverse flow. Production chokes with Sachdeva critical two-phase flow.</p>
             </article>
 
             <article class="cap-card">
@@ -221,8 +222,8 @@
                   <path d="M2 12h6M16 12h6M19 9l3 3-3 3"/>
                 </svg>
               </div>
-              <h3>Boundary conditions</h3>
-              <p>Pressure and mass-flow boundaries on any node. Mixed types — sources, sinks, flow inlets, flow outlets — on the same network.</p>
+              <h3>Wells and boundaries</h3>
+              <p>Oil wells with linear or Vogel inflow and production tubing, solved by nodal analysis. Pressure and mass-flow boundaries on any node, mixed freely.</p>
             </article>
 
             <article class="cap-card">
@@ -233,7 +234,7 @@
                 </svg>
               </div>
               <h3>Graphical interface</h3>
-              <p>Build and edit networks without writing code. Inspect convergence, review nodal and link results, and export a spreadsheet report.</p>
+              <p>Build and edit networks without writing code. Inspect convergence, review nodal and link results, plot phase envelopes, and export a spreadsheet report.</p>
             </article>
 
             <article class="cap-card">
@@ -245,7 +246,7 @@
                 </svg>
               </div>
               <h3>Fluid properties</h3>
-              <p>Water (library preset) or any liquid with custom density and viscosity. Crude oil: enter API gravity and operating temperature — density and viscosity are computed automatically via Beggs &amp; Robinson (1975).</p>
+              <p>Water and custom liquids, crude oil from API gravity, ideal and Peng-Robinson gases, black-oil PVT for oil-gas-water mixtures, and full compositional equations of state with free water.</p>
             </article>
 
             <article class="cap-card">
@@ -319,15 +320,15 @@
               <p>32&nbsp;&deg;API crude, GOR&nbsp;=&nbsp;25&nbsp;m&sup3;/m&sup3;, WOR&nbsp;=&nbsp;0.5. Single 10&nbsp;km pipe, 8&nbsp;MPa&nbsp;&rarr;&nbsp;2&nbsp;MPa.
                 Bubble point&nbsp;=&nbsp;5.63&nbsp;MPa: inlet is undersaturated, outlet is two-phase.
                 PVT correlations: Standing, Hall-Yarborough, Beggs-Robinson, Lee-Gonzalez-Eakin, McCain.</p>
-              <p class="bench-result">Converges in 2 PVT iterations &nbsp;&middot;&nbsp; GOR/WOR recover exactly from surface mass balance</p>
+              <p class="bench-result">Converges in 3 PVT iterations &nbsp;&middot;&nbsp; GOR/WOR recover exactly from surface mass balance</p>
             </article>
             <article class="info-card">
               <h3>Black-oil &mdash; looped gathering network</h3>
-              <p>Two parallel flow paths (upper: 10&nbsp;km; lower: 11&nbsp;km) between a single inlet and a separator.
+              <p>A trunk-fed diamond loop: two parallel branches (upper: 10&nbsp;km; lower: 11&nbsp;km) between an inlet header and a separator.
                 Upper junction sits just above the bubble point (undersaturated);
                 lower junction falls below it (two-phase). Mixture expands along the upper path
                 as free gas liberates from solution.</p>
-              <p class="bench-result">62.7&nbsp;% flow upper path &nbsp;&middot;&nbsp; 37.3&nbsp;% lower &nbsp;&middot;&nbsp; converges in 3 PVT iterations</p>
+              <p class="bench-result">62.9&nbsp;% flow upper branch &nbsp;&middot;&nbsp; 37.1&nbsp;% lower &nbsp;&middot;&nbsp; converges in 3 PVT iterations</p>
             </article>
             <article class="info-card">
               <h3>Tutorial suite</h3>
@@ -358,7 +359,7 @@
               </div>
               <h3>One-click installer</h3>
               <p>No Python required. Installs to your user folder — no admin rights needed. Includes a Start&nbsp;Menu shortcut and uninstaller.</p>
-              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.13.0</p>
+              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.13.1</p>
               <a class="button primary download-btn"
                  href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup.exe"
                  target="_blank" rel="noreferrer">
@@ -376,10 +377,10 @@
               </div>
               <h3>Install with pip</h3>
               <p>Requires Python&nbsp;3.8 or later. Run the two commands below in a terminal:</p>
-              <pre class="download-code">pip install git+https://github.com/ScimonCFD/Angelica.git
+              <pre class="download-code">pip install "angelica[gui] @ git+https://github.com/ScimonCFD/Angelica.git"
 angelica-gui</pre>
               <p class="download-meta">
-                Core dependencies: numpy and scipy. GUI extra (<code>.[gui]</code>) adds sv&#8209;ttk; Excel export (<code>.[excel]</code>) adds openpyxl.
+                Core dependencies: numpy, scipy and thermo. The <code>[gui]</code> extra adds sv&#8209;ttk (interface) and openpyxl (Excel export).
               </p>
             </div>
 
@@ -411,9 +412,9 @@ angelica-gui</pre>
             </div>
 
             <!-- Row 2 -->
-            <div class="roadmap-item current" style="grid-column:5;grid-row:2"><span class="roadmap-tag">Current</span>Black-oil multiphase flow</div>
+            <div class="roadmap-item live" style="grid-column:5;grid-row:2"><span class="roadmap-tag">Live</span>Black-oil multiphase flow</div>
             <div class="roadmap-arrow" style="grid-column:4;grid-row:2">&#8592;</div>
-            <div class="roadmap-item future" style="grid-column:3;grid-row:2">Compositional multicomponent flow</div>
+            <div class="roadmap-item live" style="grid-column:3;grid-row:2"><span class="roadmap-tag">Live</span>Compositional multicomponent flow</div>
             <div class="roadmap-arrow roadmap-arrow--faint" style="grid-column:2;grid-row:2">&#8592;</div>
             <div class="roadmap-item horizon" style="grid-column:1;grid-row:2">
               <span class="roadmap-tag roadmap-tag--horizon">Long-term horizon</span>
