@@ -240,12 +240,35 @@ fluid = CompressibleFluid.from_constants(eos=eos, viscosity_pa_s=1.1e-5, ...)</p
                 Otherwise return to step&nbsp;1.</li>
             </ol>
             <p>
-              For networks without heat exchange the energy equation is a no-op
-              and the solver behaves identically to the isothermal compressible
-              case — no special configuration is needed.
-              For non-isothermal networks, fixed-temperature boundary conditions
-              are applied at source and sink nodes (same interface as the
+              Even without heat exchange the temperature of a real gas changes:
+              it cools as it expands (Joule-Thomson) and loses energy when it is
+              lifted. For an ideal gas on level ground the energy equation leaves
+              the temperature unchanged.
+              Fixed-temperature boundary conditions are applied at source and
+              sink nodes (same interface as the
               <a href="thermal.html">non-isothermal incompressible solver</a>).
+            </p>
+          </div>
+
+          <div class="method-block">
+            <h3>Joule-Thomson and elevation along pipes</h3>
+            <p>
+              The first law along a pipe is $\dot m\,(h_{\text{out}} - h_{\text{in}}) = -Q_{\text{wall}} - \dot m\,g\,\Delta z$.
+              The energy equation transports $\dot m\,c_p\,T$; the part of the enthalpy change
+              that $c_p\,\Delta T$ does not carry is added as a source,
+            </p>
+            <p style="text-align:center;">
+              $S = -\dot m\left\{\left[h(P_{\text{out}},T_{\text{out}}) - h(P_{\text{in}},T_{\text{in}})\right] - c_p\,(T_{\text{out}} - T_{\text{in}})\right\} - \dot m\,g\,\Delta z ,$
+            </p>
+            <p>
+              with $h = c_p T + h_{\text{dep}}(P,T)$ from the equation of state. It carries the
+              Joule-Thomson cooling (friction heating included, through the real outlet pressure)
+              and the potential energy. Junctions conserve the real enthalpy, so the temperature
+              does not jump where the gas passes from one pipe into the next, and valves are
+              isenthalpic. An adiabatic methane pipe from 80 to 50 bar reproduces
+              $h_{\text{out}} = h_{\text{in}} - g\,\Delta z$ within 0.001 K. The same model is used by
+              the compositional solver, where the enthalpy also includes the latent heat of
+              condensation (checked against thermo's PH flash).
             </p>
           </div>
 
@@ -327,10 +350,10 @@ fluid = CompressibleFluid.from_constants(eos=eos, viscosity_pa_s=1.1e-5, ...)</p
             <article class="info-card">
               <h3>Thermal coupling</h3>
               <p>
-                For networks without heat exchange the energy equation
-                produces $\Delta T \approx 0$ and the solver converges on the
-                first outer iteration — identical cost to the isothermal case.
-                When heat sources or ambient heat loss are present, both
+                For an ideal gas on level ground without heat exchange the
+                energy equation produces $\Delta T \approx 0$; a real gas cools
+                as it expands. When heat sources, ambient heat loss or
+                Joule-Thomson cooling change the temperature, both
                 $\varepsilon_\rho$ and $\varepsilon_T$ must fall below their
                 tolerances before the solve is declared converged.
               </p>
