@@ -252,7 +252,7 @@
               <tr><td>Check valve</td><td>All modes</td><td>K-factor fitting (K = 2 when open) that closes when the downstream pressure is higher, so it never passes reverse flow.</td></tr>
               <tr><td>Heat Source</td><td>Thermal modes</td><td>Heater (positive power) or cooler (negative power) with a fixed duty in W. Pressure drop rated at a reference flow, or fixed.</td></tr>
               <tr><td>Well IPR</td><td>Black-oil</td><td>Reservoir inflow between a reservoir node and the wellhead: productivity index J (m³/d/bar) with a linear or composite-Vogel IPR. Reservoir pressure is the upstream source pressure.</td></tr>
-              <tr><td>Well</td><td>Black-oil</td><td>Reservoir inflow plus production tubing (length, vertical rise, diameter, roughness). The tubing is integrated with Beggs-Brill, Hagedorn-Brown (oil wells) or Gray (gas wells), giving the well's deliverability curve; if the wellhead pressure is above the curve's maximum the well is dead.</td></tr>
+              <tr><td>Well</td><td>Black-oil</td><td>Reservoir inflow plus production tubing (length, vertical rise, diameter, roughness). The tubing is integrated with Beggs-Brill, Hagedorn-Brown (oil wells) or Gray (gas wells), giving the well's deliverability curve; if the wellhead pressure is above the curve's maximum the well is dead. The fluid cools on the way up by heat loss to the formation (Ramey's model: geothermal gradient, formation conductivity and diffusivity, time on production, optional wellbore U), and the wellhead node shows the flowing wellhead temperature.</td></tr>
             </tbody>
           </table>
 
@@ -807,7 +807,7 @@
               <span class="tutorial-num">12</span>
               <div>
                 <h4>Wells with production tubing (nodal analysis in a network)</h4>
-                <p>Tutorial 11 referred each well&#x27;s inflow to the wellhead.  Here every well carries its production tubing: 2 100 m of tubing rising 2 000 m from the bottom hole to the wellhead.  The Well component combines the reservoir inflow (IPR) and the tubing, so the network sees each well through its deliverability curve P_wh(q).</p>
+                <p>Tutorial 11 referred each well&#x27;s inflow to the wellhead.  Here every well carries its production tubing: 2 100 m of tubing rising 2 000 m from the bottom hole to the wellhead.  The Well component combines the reservoir inflow (IPR) and the tubing, so the network sees each well through its deliverability curve P_wh(q).  The tubing temperature profile is solved too: each well reaches the network at its flowing wellhead temperature.</p>
               </div>
             </div>
           </div>
