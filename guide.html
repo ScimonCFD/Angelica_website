@@ -250,6 +250,7 @@
               <tr><td>Pump</td><td>All modes</td><td>Head–flow curve, one <code>Q&nbsp;H</code> pair per line (Q in m³/h, H in m). One point gives the EPANET three-term curve; two or more are interpolated. Shaft work heats the fluid in thermal cases.</td></tr>
               <tr><td>Choke</td><td>All modes</td><td>Restriction orifice: pipe and orifice diameters, discharge coefficient. Two-phase flow uses the Sachdeva model, including critical (choked) flow.</td></tr>
               <tr><td>Check valve</td><td>All modes</td><td>K-factor fitting (K = 2 when open) that closes when the downstream pressure is higher, so it never passes reverse flow.</td></tr>
+              <tr><td>Separator</td><td>Black-oil, compositional</td><td>Liquid outlet of a separator. The connection's start node is the separator: the streams arriving there are split at its pressure and temperature (black-oil: oil with its dissolved gas, free gas, water; compositional: equation-of-state flash with free water). The outlet takes the liquid (oil + water), the oil (with a water outlet: three-phase separator) or the water (alone: free-water knockout); the gas leaves through the node's other connections or its pressure boundary. Its flow is set by the split — it stands for the level-control valve — and its pressure drop is reported; a negative drop means the liquid needs a pump. Put it first in its connection. The results list each separator's gas, oil and water masses and standard rates.</td></tr>
               <tr><td>Heat Source</td><td>Thermal modes</td><td>Heater (positive power) or cooler (negative power) with a fixed duty in W. Pressure drop rated at a reference flow, or fixed.</td></tr>
               <tr><td>Well IPR</td><td>Black-oil, compositional</td><td>Reservoir inflow between a reservoir node and the wellhead: productivity index J (m³/d/bar) with a linear or composite-Vogel IPR, or C and n of a Fetkovich (oil) or back-pressure (gas) law q = C·(P_r² − P_wf²)ⁿ. Reservoir pressure is the upstream source pressure. In compositional cases the standard gas and oil volumes come from a flash of the stream to standard conditions.</td></tr>
               <tr><td>Well</td><td>Black-oil, compositional</td><td>Reservoir inflow (linear, Vogel, Fetkovich or gas back-pressure IPR) plus production tubing (length, vertical rise, diameter, roughness). The tubing is integrated with Beggs-Brill, Hagedorn-Brown (oil wells) or Gray (gas wells), giving the well's deliverability curve; if the wellhead pressure is above the curve's maximum the well is dead. The fluid cools on the way up by heat loss to the formation (Ramey's model: geothermal gradient, formation conductivity and diffusivity, time on production, optional wellbore U), and the wellhead node shows the flowing wellhead temperature. In compositional cases (gas and gas-condensate wells) the well's fluid is flashed once on a pressure–temperature table and interpolated along the tubing. A dead well is reported with the reason (wellhead above the curve's maximum, column heavier than the reservoir, or unable to sustain its minimum stable rate). Gas lift: injection rate (Sm³/d) and depth along the tubing, optionally the lift gas gravity (black-oil) or mole fractions (compositional); the lift gas joins the produced fluid at the valve and leaves at the wellhead node.</td></tr>
@@ -410,9 +411,9 @@
           <p class="eyebrow">Tutorials</p>
           <h2>Built-in tutorial cases</h2>
           <p>
-            Angelica ships with forty-seven tutorial cases in five folders under
+            Angelica ships with forty-nine tutorial cases in five folders under
             <code>tutorials/</code>: isothermal (11), non-isothermal (8), compressible (6),
-            compositional (9) and black-oil (13).
+            compositional (10) and black-oil (14).
             Each case includes a <code>.gui.json</code> file you can open directly in the GUI,
             and a <code>run.py</code> script that solves the same network from Python.
             Open them via <em>File → Open</em>.
@@ -729,6 +730,13 @@
                 <p>A lean-gas well and a gas-condensate well produce through 3.0–3.2 km of tubing into a manifold. Shows the deliverability curves with standard gas and condensate rates, the gas cooling on the drawdown, liquid condensing up the tubing, and the condensate well — with the heavier, liquid-laden column — dying first when the separator pressure rises.</p>
               </div>
             </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">10</span>
+              <div>
+                <h4>Separator Train</h4>
+                <p>A volatile oil with free water goes through a high-pressure separator (gas to export, water to disposal) and a low-pressure stage to the stock tank. Shows the optimum separator pressure for stock-tank liquid and the extra liquid a second stage recovers.</p>
+              </div>
+            </div>
           </div>
           <p style="margin-top:2rem;font-weight:600;">Black-oil tutorials</p>
           <p style="margin-bottom:1.2rem;">Physics mode <em>Black-oil</em>. The material gives API and gas gravity; each source node sets its GOR and WOR (and optionally its own API and gas gravity).</p>
@@ -822,6 +830,13 @@
               <div>
                 <h4>Gas Lift</h4>
                 <p>A heavy, wet crude whose column outweighs the reservoir is brought to life by injecting gas into the tubing. Shows the gas-lift performance curve — oil rate rises with injection, peaks near 70 000 Sm³/d and then falls as friction wins — the effect of the injection depth, and the tubing profile with the injection point.</p>
+              </div>
+            </div>
+            <div class="tutorial-item">
+              <span class="tutorial-num">14</span>
+              <div>
+                <h4>Three-Phase Separator</h4>
+                <p>Two wells deliver to a production separator whose pressure follows from the gas export line; oil and water leave through level-control valves to the stock tank and disposal. Shows the split, how the export pressure sets the separator pressure and the wells' rates, and a liquid line too small for its flow.</p>
               </div>
             </div>
           </div>
