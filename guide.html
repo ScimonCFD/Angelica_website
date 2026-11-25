@@ -404,6 +404,17 @@
             If the solver does not converge, try reducing the pressure relaxation factor α (e.g. to 0.5)
             in the Numerics panel and increasing the turbulent iteration count. Stiff networks with
             highly varying pipe diameters often need lower relaxation.
+            <br><br>
+            A run that does not converge (black-oil and compositional) opens a message saying where it is stuck:
+            the criteria not met, the node with the largest mass imbalance, and any pipe whose flow pattern
+            (Beggs-Brill) or regime (laminar / turbulent) keeps alternating. Such a pipe sits on a boundary
+            where the pressure-drop law jumps, so it may have no solution at that flow; changing the
+            relaxation will not help, changing its diameter or the boundary pressures will.
+            <br><br>
+            Warnings appear in the status bar and in the exported report even when the run converged: for
+            black-oil, the dead-oil viscosity (Beggs-Robinson) used outside its data range of
+            21.1–146.1 °C (70–295 °F) or 16–58 °API — below that range it is extrapolated and may overstate
+            the viscosity — and nodes cut off by closed regulators, whose reported pressure is arbitrary.
           </div>
         </section>
 
