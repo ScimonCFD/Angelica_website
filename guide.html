@@ -358,8 +358,11 @@
                 <strong>Sensitivity</strong> varies one boundary or component parameter over a range and plots a
                 flow or a pressure (non-converged points are listed). <strong>Nodal Analysis</strong> splits the
                 network at a well's wellhead and plots the well's inflow curve against the outflow curve of the
-                rest of the network; they cross at the operating point the network solve gives. The same studies
-                are available from Python in <code>angelica.studies</code>.
+                rest of the network; they cross at the operating point the network solve gives. <strong>Line Sizing</strong>
+                tries candidate diameters of a pipe against a maximum pressure drop, velocity or erosional-velocity
+                ratio and selects the smallest that meets them. Pipes also carry calibration factors (friction-factor
+                and holdup multipliers) in their properties. The same studies are available from Python in
+                <code>angelica.studies</code>.
               </span>
             </li>
             <li>
