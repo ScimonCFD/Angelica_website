@@ -339,6 +339,11 @@
                 <strong>Velocity loop</strong> and <strong>Friction factor</strong> — inner loop solvers
                 (method + max iterations + tolerance) for computing V* and f at each outer iteration.
                 Fixed-point and Newton methods are available.<br><br>
+                <strong>Isothermal at (°C)</strong> — compressible, black-oil and compositional cases:
+                leave blank to solve the energy equation; enter a temperature to hold every node, pipe,
+                separator and well tubing at it. No fixed-temperature boundary is needed then, and the
+                warnings list what has no effect (heater duties, compressor heating, Joule-Thomson change
+                across valves, heat exchange of wells with the formation).<br><br>
                 <strong>Convergence criteria</strong> — the outer loop is considered converged when <em>both</em>
                 the absolute pressure correction (Pa) and the relative nodal mass imbalance
                 |ṁ<sub>in</sub> − ṁ<sub>out</sub>| / (ṁ<sub>in</sub> + ṁ<sub>out</sub>) fall below
