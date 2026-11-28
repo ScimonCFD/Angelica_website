@@ -10,7 +10,7 @@
     />
     <meta property="og:type"        content="website" />
     <meta property="og:title"       content="Angelica — Pipeline Network Simulation" />
-    <meta property="og:description" content="The open-source platform for pipeline network simulation. Validated solver, graphical interface, MIT licensed. No subscriptions. No lock-in." />
+    <meta property="og:description" content="The open-source platform for pipeline network simulation. Tested solver with a public validation record, graphical interface, MIT licensed. No subscriptions. No lock-in." />
     <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/" />
     <meta name="twitter:card"       content="summary_large_image" />
     <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
@@ -30,7 +30,7 @@
       "downloadUrl": "https://github.com/ScimonCFD/Angelica/releases/latest",
       "applicationCategory": "EngineeringApplication",
       "operatingSystem": "Windows, Linux, macOS",
-      "softwareVersion": "1.38.0",
+      "softwareVersion": "1.39.0",
       "license": "https://opensource.org/licenses/MIT",
       "author": {
         "@type": "Person",
@@ -58,6 +58,7 @@
             <a href="index.html">Home</a>
             <a href="guide.html">Guide</a>
             <a href="methods.html">Methods</a>
+            <a href="validation.html">Validation</a>
             <a href="#benchmarks">Benchmarks</a>
             <a href="#roadmap">Roadmap</a>
             <a href="#download">Download</a>
@@ -69,7 +70,7 @@
           <div class="hero-copy">
             <h1>The open&#8209;source platform for pipeline network simulation.</h1>
             <p class="hero-text">
-              Validated solver, engineer&#8209;friendly interface, isothermal,
+              Tested solver, engineer&#8209;friendly interface, isothermal,
               non&#8209;isothermal, compressible, black&#8209;oil multiphase and
               compositional flow — from water networks to oil and gas gathering
               systems. Free forever.
@@ -83,7 +84,7 @@
               <div class="stat-divider"></div>
               <div class="stat">
                 <span class="stat-value">9</span>
-                <span class="stat-label">Validation benchmarks</span>
+                <span class="stat-label">Benchmark cases</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat">
@@ -143,9 +144,10 @@
 
             <div class="value-card">
               <h3>Accuracy you can verify.</h3>
-              <p>Every result is benchmarked against published EPANET reference
-                solutions. The solver's performance is documented, reproducible,
-                and open to inspection — not a black box.</p>
+              <p>Most models carry a test that states its reference and the error
+                obtained — an analytical solution, data read in NIST or journal tables,
+                or an internal consistency check — and says plainly what is not yet
+                validated. See the <a href="validation.html">validation page</a>.</p>
             </div>
 
             <div class="value-card">
@@ -269,16 +271,18 @@
             <p class="eyebrow">Validation</p>
             <h2>Accuracy you can check.</h2>
           </div>
+          <p class="section-intro">A selection of benchmarks. Every check, its kind of evidence
+            and what is not validated are on the <a href="validation.html">validation page</a>.</p>
           <div class="cards">
             <article class="info-card">
               <h3>Hanoi benchmark</h3>
               <p>Hazen-Williams (C&nbsp;=&nbsp;130) on the 32-node Fujiwara &amp; Khang <a href="#ref-6" class="cite">[6]</a> network.</p>
-              <p class="bench-result">max head error &lt; 0.01 m across all 32 nodes</p>
+              <p class="bench-result">regression baseline: the reference heads were produced by Angelica (the paper publishes none)</p>
             </article>
             <article class="info-card">
               <h3>EPANET pump benchmark</h3>
               <p>Pump-bearing network from the official EPANET tutorial <a href="#ref-5" class="cite">[5]</a>.</p>
-              <p class="bench-result">pressures within 0.15 psi of published reference</p>
+              <p class="bench-result">pressures within 0.21 psi of the EPANET 2.2 report (Appendix C)</p>
             </article>
             <article class="info-card">
               <h3>Three-reservoir junction</h3>
@@ -359,7 +363,7 @@
               </div>
               <h3>One-click installer</h3>
               <p>No Python required. Installs to your user folder — no admin rights needed. Includes a Start&nbsp;Menu shortcut and uninstaller.</p>
-              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.38.0</p>
+              <p class="download-meta">Windows 10 / 11 &nbsp;&middot;&nbsp; 64-bit &nbsp;&middot;&nbsp; v1.39.0</p>
               <a class="button primary download-btn"
                  href="https://github.com/ScimonCFD/Angelica/releases/latest/download/AngelicaSetup.exe"
                  target="_blank" rel="noreferrer">
@@ -463,6 +467,7 @@ angelica-gui</pre>
           <a href="hydraulic.html">Hydraulic</a>
           <a href="thermal.html">Thermal</a>
           <a href="compressible.html">Compressible</a>
+            <a href="validation.html">Validation</a>
           <a href="#benchmarks">Benchmarks</a>
           <a href="#download">Download</a>
           <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>

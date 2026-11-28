@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angelica — Validation</title>
+    <meta
+      name="description"
+      content="What each part of Angelica has been checked against: data read in a source, secondary sources, analytical solutions, internal consistency, and what is not validated."
+    />
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="Angelica — Validation" />
+    <meta property="og:description" content="What each part of Angelica has been checked against, with the error obtained and the test that reproduces it." />
+    <meta property="og:url"         content="https://scimonCFD.github.io/Angelica_website/validation.html" />
+    <meta name="twitter:card"       content="summary_large_image" />
+    <meta property="og:image"       content="https://scimonCFD.github.io/Angelica_website/assets/slide_pipe.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+    <link rel="canonical" href="https://scimonCFD.github.io/Angelica_website/validation.html" />
+    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <style>
+      .vtable-wrap { overflow-x: auto; margin: 1.5rem 0 0.5rem; }
+      .vtable { width: 100%; border-collapse: collapse; font-size: 0.87rem; min-width: 640px; }
+      .vtable th { text-align: left; padding: 0.6rem 0.9rem; background: #1d2a34; color: white;
+                   font-weight: 600; font-size: 0.82rem; }
+      .vtable th:first-child { border-radius: 8px 0 0 0; }
+      .vtable th:last-child  { border-radius: 0 8px 0 0; }
+      .vtable td { padding: 0.6rem 0.9rem; border-bottom: 1px solid #e5e7eb; vertical-align: top; line-height: 1.5; }
+      .vtable td:first-child { font-weight: 600; color: #1d2a34; }
+      .vtable tr:last-child td { border-bottom: none; }
+      .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+             padding: 0.12rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+      .tag-src  { background: #dcfce7; color: #166534; }
+      .tag-sec  { background: #e0f2fe; color: #075985; }
+      .tag-ana  { background: #ede9fe; color: #5b21b6; }
+      .tag-con  { background: #f1f5f9; color: #334155; }
+      .tag-no   { background: #fee2e2; color: #991b1b; }
+      .tag-reg  { background: #fef3c7; color: #92400e; }
+      .vlist { margin: 1rem 0 0; padding-left: 1.2rem; line-height: 1.65; font-size: 0.93rem; color: #374151; }
+      .vlist li { margin-bottom: 0.45rem; }
+      .callout { border-left: 4px solid #0c6c6b; background: #f0f9f8; padding: 1rem 1.2rem; border-radius: 0 10px 10px 0;
+                 margin-top: 1.5rem; font-size: 0.93rem; line-height: 1.6; color: #1f2937; }
+      code { font-size: 0.85em; }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+
+      <header class="hero compact-hero methods-dark">
+        <nav class="topbar">
+          <a class="brand" href="index.html">
+            <span class="brand-icon">
+              <img src="assets/logomark.svg" alt="" class="brand-mark" />
+            </span>
+            <span class="brand-lockup">
+              <span class="brand-name">Angelica</span>
+              <span class="brand-tagline">Fluid networks solved</span>
+            </span>
+          </a>
+          <div class="toplinks">
+            <a href="index.html">Home</a>
+            <a href="guide.html">Guide</a>
+            <a href="methods.html">Methods</a>
+            <a href="hydraulic.html">Hydraulic</a>
+            <a href="thermal.html">Thermal</a>
+            <a href="compressible.html">Compressible</a>
+            <a href="validation.html">Validation</a>
+          </div>
+          <a class="button primary small" href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub &rarr;</a>
+        </nav>
+
+        <div class="methods-page-title">
+          <p class="eyebrow">Validation</p>
+          <h1>What each part is checked against.</h1>
+          <p class="methods-subtitle">
+            Most models in Angelica carry a test that states its reference, the kind of
+            evidence and the error obtained. This page summarises them; the full manual,
+            with one row per check and the test to rerun it, is in the repository.
+          </p>
+        </div>
+      </header>
+
+      <main>
+
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">Read this first</p>
+            <h2>Most checks are internal; data comparisons are few and named.</h2>
+          </div>
+          <p class="section-intro">
+            Each check carries one of these labels. A value recalled from memory is never
+            counted as validation, and no parameter is tuned to make a check pass.
+          </p>
+          <div class="vtable-wrap"><table class="vtable">
+            <tr><th>Label</th><th>Meaning</th></tr>
+            <tr><td><span class="tag tag-src">read in source</span></td><td>Compared with data read in the published source (NIST, a journal table).</td></tr>
+            <tr><td><span class="tag tag-sec">secondary source</span></td><td>The reference value was read where another document quotes it.</td></tr>
+            <tr><td><span class="tag tag-ana">analytical</span></td><td>An exact solution: Poiseuille flow, radial conduction, the method of images.</td></tr>
+            <tr><td><span class="tag tag-con">consistency</span></td><td>An independent code path, a conservation law or a limit of the same model.</td></tr>
+            <tr><td><span class="tag tag-reg">regression</span></td><td>Angelica's own stored output: guards against change, says nothing about accuracy.</td></tr>
+            <tr><td><span class="tag tag-no">not validated</span></td><td>No external check; recorded with the reason.</td></tr>
+          </table></div>
+          <p class="section-intro">
+            Of 193 checks collected in the manual: 100 consistency, 33 analytical,
+            15 read in a source, 12 secondary sources, 6 regression, 6 not validated,
+            19 that cite a value without saying whether it was read, and 2 from memory.
+          </p>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">Data read in a source</p>
+            <h2>The comparisons with measured or reference data.</h2>
+          </div>
+          <div class="vtable-wrap"><table class="vtable">
+            <tr><th>Model</th><th>Reference</th><th>Result</th></tr>
+            <tr><td>Heater duty in water (20&rarr;60 &deg;C, 80&rarr;10 &deg;C)</td><td>NIST Chemistry WebBook, water enthalpy</td><td>+0.048 % and &minus;0.044 %</td></tr>
+            <tr><td>Black-oil enthalpy, (&part;h/&part;P)<sub>T</sub> of gas</td><td>NIST WebBook, methane isobars, 280&ndash;320 K</td><td>&minus;2.0 to &minus;2.5 % at 5 MPa; &minus;3.9 to &minus;6.1 % at 10 MPa</td></tr>
+            <tr><td>Black-oil enthalpy, (&part;h/&part;P)<sub>T</sub> of water</td><td>NIST WebBook (IAPWS-95), 10 MPa</td><td>&minus;1.9 to &minus;2.8 %</td></tr>
+            <tr><td>Methane solubility in water (hydrate model)</td><td>B&ouml;ttger, Kamps &amp; Maurer 2016, NIST ThermoML, 13 points</td><td>&minus;4.1 to +3.5 %, all inside each point's uncertainty</td></tr>
+            <tr><td>Methane hydrate, pure water, 274&ndash;289 K</td><td>Semenov et al. 2024, <em>Data in Brief</em> 53, 110138</td><td>model 0.60&ndash;0.91 K too cold</td></tr>
+            <tr><td>Methanol inhibitor, 5&ndash;50 %, 3&ndash;13 MPa</td><td>Semenov et al. 2024 (same laboratory as the fit data, so not independent)</td><td>depression error &le; 0.07 K at 5 % to 1.39 K at 50 %; unsafe side above ~7 MPa</td></tr>
+            <tr><td>Water saturation pressure, 1&ndash;91 &deg;C</td><td>NIST WebBook (IAPWS-95)</td><td>&le; 7.2&middot;10<sup>&minus;5</sup> relative</td></tr>
+            <tr><td>EPANET 2.2 tutorial network with pump</td><td>EPANET 2.2 manual, Appendix C, Listing 2 (published output of another solver)</td><td>pressures within 0.212 psi, heads 0.022 ft, flows 0.075 gpm</td></tr>
+            <tr><td>Field-unit conversion factors</td><td>NIST SP 811, Appendix B.8</td><td>within half a unit in the 7th digit</td></tr>
+          </table></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">By area</p>
+            <h2>The strongest evidence for each part.</h2>
+          </div>
+          <div class="vtable-wrap"><table class="vtable">
+            <tr><th>Area</th><th>Best evidence</th><th>Label</th></tr>
+            <tr><td>Single-phase friction, laminar networks</td><td>Hagen-Poiseuille parallel pipes (&lt; 0.001 %); Hazen-Williams single pipe</td><td><span class="tag tag-ana">analytical</span></td></tr>
+            <tr><td>Looped networks, every fluid mode</td><td>Two-loop network: junction balance &le; 1.07&middot;10<sup>&minus;5</sup>; each pipe alone reproduces the network pressure</td><td><span class="tag tag-con">consistency</span></td></tr>
+            <tr><td>EPANET 2.2 tutorial network with pump</td><td>EPANET 2.2 manual, Appendix C report (another solver's output): pressures within 0.21 psi, flows within 0.075 gpm</td><td><span class="tag tag-src">read in source</span></td></tr>
+            <tr><td>Hanoi network (32 nodes)</td><td>Stored baseline: the reference heads and flows were produced by Angelica (the paper publishes none)</td><td><span class="tag tag-reg">regression</span></td></tr>
+            <tr><td>Gas pipelines</td><td>P&sup2; equation, series midpoint &radic;((P&#8321;&sup2;+P&#8322;&sup2;)/2)</td><td><span class="tag tag-ana">analytical</span></td></tr>
+            <tr><td>Black-oil PVT and Beggs-Brill</td><td>Formula reproduction; enthalpy vs NIST (above). Brill &amp; Mukherjee example only from memory</td><td><span class="tag tag-con">consistency</span></td></tr>
+            <tr><td>Wells (Hagedorn-Brown, Gray, Ramey, IPR, gas lift)</td><td>Hand calculations from secondary sources; no measured well data</td><td><span class="tag tag-sec">secondary source</span></td></tr>
+            <tr><td>Compositional flash and phase envelope</td><td>Pure-methane NIST values cited in a test (read status not stated); mixtures not validated</td><td><span class="tag tag-no">not validated</span> (mixtures)</td></tr>
+            <tr><td>Hydrate curves</td><td>Quadruple points within 7.3 % / 0.8 K (secondary); methane vs Semenov 2024 (above)</td><td><span class="tag tag-src">read in source</span></td></tr>
+            <tr><td>Water content, hydrate as a phase</td><td>Mass balances to 10<sup>&minus;12</sup>; leftover gas on its own curve</td><td><span class="tag tag-con">consistency</span></td></tr>
+            <tr><td>Heat transfer: layers, buried pipe</td><td>Exact radial conduction; method of images; EES shape-factor example +0.15 %</td><td><span class="tag tag-ana">analytical</span></td></tr>
+            <tr><td>Computed inner film</td><td>Gnielinski formula and range from a secondary source; not validated against measurements</td><td><span class="tag tag-sec">secondary source</span></td></tr>
+            <tr><td>Energy balance (all thermal solvers)</td><td>Global first law closed to &lt; 0.01 % in every tutorial</td><td><span class="tag tag-con">consistency</span></td></tr>
+            <tr><td>Compressor</td><td>Ideal-gas isentrope exact; EOS entropy check of the isentropic limit</td><td><span class="tag tag-ana">analytical</span></td></tr>
+            <tr><td>Chokes, separators, regulators</td><td>Limits and balances; no published equipment test</td><td><span class="tag tag-con">consistency</span></td></tr>
+          </table></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <p class="eyebrow">Not validated / known deviations</p>
+            <h2>What has no external check, and every recorded discrepancy.</h2>
+          </div>
+          <ul class="vlist">
+            <li>Natural-gas hydrate curves, multiphase pipes (Beggs-Brill), well correlations, gas lift, compositional wells, separators, regulators and compressors: no comparison with measured data &mdash; the worked examples that would close this are not in the repository.</li>
+            <li>Hydrate model: 0.6&ndash;0.9 K too cold for pure methane; CO&#8322; above ~40 MPa about 9 K low at 100 MPa; methane hydration number 5.895 against 6.04 &plusmn; 0.03 measured.</li>
+            <li>Inhibitors: fitted with methane only; above 13 MPa the model's depression keeps growing while the measured one is flat (likely unsafe); MEG checked only within its own dataset.</li>
+            <li>Water content uses ideal vapour (underestimates at high pressure); the undersaturated hydrate check is estimated 0.6&ndash;2 K warm (safe side).</li>
+            <li>Laminar/turbulent friction jump at Re 2300 and black-oil viscosity below 21.1 &deg;C: open decisions, recorded with options and numbers.</li>
+            <li>Computed inner film: not validated against measurements; no two-phase film or entrance effects (flagged).</li>
+          </ul>
+          <div class="callout">
+            The full manual &mdash; one row per check, with the reference as written, the error,
+            the tolerance and its source, and the test to rerun &mdash; is
+            <a href="https://github.com/ScimonCFD/Angelica/blob/master/docs/validation.md" target="_blank" rel="noreferrer">docs/validation.md</a>
+            in the repository. Run one check with
+            <code>pytest tests/test_hydrate.py::test_methane_against_semenov_2024</code>.
+          </div>
+        </section>
+
+      </main>
+
+      <div id="references-root"></div>
+
+      <section class="author-strip">
+        <div class="author-inner">
+          <div class="author-text">
+            <p class="author-bio">Angelica is an open&#8209;source project developed by
+              <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">Simon Rodriguez</a>,
+              Venezuelan engineer and researcher based in Dublin, Ireland.
+              For questions, suggestions, or bug reports — reach out directly.</p>
+            <p class="author-bio" style="margin-top:0.6rem;">
+              For private consulting on pipeline network simulations — engineering studies, model setup,
+              or custom solver development — get in touch via
+              <a href="mailto:simonrodriguezgas@gmail.com">simonrodriguezgas@gmail.com</a>
+              or LinkedIn.
+            </p>
+          </div>
+          <div class="author-actions">
+            <a class="button primary" href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn &rarr;</a>
+            <a class="button secondary" href="https://github.com/ScimonCFD/Angelica/issues" target="_blank" rel="noreferrer">Open an issue</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="footer-brand">
+          <span class="brand-icon brand-icon--sm">
+            <img src="assets/logomark.svg" alt="" class="brand-mark footer-mark" />
+          </span>
+          <span class="brand-name brand-name--sm">Angelica</span>
+        </div>
+        <nav class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="guide.html">Guide</a>
+          <a href="methods.html">Methods</a>
+          <a href="hydraulic.html">Hydraulic</a>
+          <a href="thermal.html">Thermal</a>
+          <a href="compressible.html">Compressible</a>
+            <a href="validation.html">Validation</a>
+          <a href="https://github.com/ScimonCFD/Angelica" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/simonrodriguezl" target="_blank" rel="noreferrer">LinkedIn</a>
+        </nav>
+        <p class="footer-copy">MIT License &nbsp;&middot;&nbsp; 2026</p>
+      </footer>
+
+    </div>
+
+    <script>
+      if ('IntersectionObserver' in window &&
+          !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const revealTargets = document.querySelectorAll(
+          '.section-head, .vtable-wrap, .callout'
+        );
+        const obs = new IntersectionObserver(
+          entries => entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+          }),
+          { threshold: 0.1 }
+        );
+        revealTargets.forEach((el, i) => {
+          el.classList.add('reveal');
+          el.style.transitionDelay = (i % 4) * 60 + 'ms';
+          obs.observe(el);
+        });
+      }
+    </script>
+    <script src="assets/references.js"></script>
+    <script data-goatcounter="https://angelica-sim.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>
